@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<title>Apple 私人小助理</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="小助理">
+<meta name="theme-color" content="#F4F0E7">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="manifest" href="manifest.json">
+<style>
+  :root{
+    --paper:#F4F0E7; --card:#FBF9F4; --ink:#1C1B18; --graphite:#6E6A60;
+    --line:#E5DFD2; --line-soft:#EFEADF; --curry:#BD851E; --curry-deep:#8F6312;
+    --curry-wash:#F3E9D2; --bad:#9c3a2a;
+    --sans:-apple-system,"SF Pro Text","PingFang HK","PingFang TC","Helvetica Neue",system-ui,sans-serif;
+    --safe-b:env(safe-area-inset-bottom,0px); --safe-t:env(safe-area-inset-top,0px);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-font-smoothing:antialiased;}
+  html,body{height:100%;}
+  body{background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.5;overflow:hidden;}
+  button,input,textarea,select{font-family:inherit;color:inherit;font-size:16px;}
+  .view{display:none;flex-direction:column;height:100%;}
+  .view.on{display:flex;}
+  .scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 22px calc(110px + var(--safe-b));}
+  .pad-t{padding-top:calc(14px + var(--safe-t));}
+
+  .eyebrow{font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--graphite);font-weight:600;}
+  .h1{font-size:27px;font-weight:600;letter-spacing:-.015em;margin-top:3px;}
+
+  /* nav bar */
+  .nav{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:calc(12px + var(--safe-t)) 22px 8px;}
+  .nav .back{font-size:16px;color:var(--curry-deep);font-weight:500;background:none;border:none;padding:4px 0;}
+  .nav .ttl{font-size:16px;font-weight:600;}
+  .nav .sp{min-width:48px;text-align:right;}
+  .nav .gear{background:none;border:none;color:var(--graphite);font-size:15px;}
+
+  /* home index */
+  .index{margin-top:20px;border-top:1px solid var(--line);}
+  .index .row{display:flex;justify-content:space-between;align-items:center;padding:14px 2px;border-bottom:1px solid var(--line);background:none;border-left:none;border-right:none;border-top:none;width:100%;text-align:left;}
+  .index .lab{font-size:14px;color:var(--graphite);}
+  .index .rt{display:flex;align-items:baseline;gap:10px;}
+  .index .val{font-variant-numeric:tabular-nums;font-weight:600;font-size:18px;}
+  .index .val.big{font-size:21px;color:var(--curry-deep);}
+  .index .ch{color:#c3bdaf;font-size:15px;}
+
+  .tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px;}
+  .tile{aspect-ratio:1/1;background:var(--card);border:1px solid var(--line);border-radius:18px;display:flex;flex-direction:column;justify-content:space-between;padding:15px;text-align:left;}
+  .tile svg{width:26px;height:26px;stroke:#4a463d;fill:none;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round;}
+  .tile .tl{display:block;font-size:15px;font-weight:600;}
+  .tile .tc{display:block;font-size:11px;color:var(--graphite);margin-top:3px;}
+
+  .dump{margin-top:14px;background:var(--ink);color:var(--paper);border-radius:18px;padding:17px 18px;display:flex;align-items:center;justify-content:space-between;border:none;width:100%;text-align:left;}
+  .dump .dt{font-size:16px;font-weight:600;letter-spacing:.06em;}
+  .dump .ds{font-size:11px;color:#c9c3b4;margin-top:3px;}
+  .dump .da{color:var(--curry);font-size:22px;font-weight:600;}
+
+  /* totals + filters + search */
+  .total{margin:20px 0 4px;}
+  .total .k{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--graphite);}
+  .total .v{font-size:34px;font-weight:600;color:var(--curry-deep);font-variant-numeric:tabular-nums;letter-spacing:-.02em;margin-top:2px;}
+  .search{width:100%;margin-top:14px;border:1px solid var(--line);background:var(--card);border-radius:12px;padding:11px 14px;font-size:15px;outline:none;}
+  .search::placeholder{color:#b4ae9f;}
+  .chips{display:flex;gap:8px;margin:14px 0 4px;flex-wrap:wrap;}
+  .chip{font-size:13px;padding:7px 14px;border-radius:999px;border:1px solid var(--line);color:var(--graphite);background:transparent;}
+  .chip.on{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+  .chip.add{border-style:dashed;color:var(--curry-deep);border-color:var(--curry);}
+
+  .list{margin-top:8px;}
+  .item{display:flex;align-items:flex-start;gap:13px;padding:15px 2px;border-bottom:1px solid var(--line-soft);}
+  .check{width:22px;height:22px;border-radius:7px;border:1.5px solid #cfc8b8;flex:none;margin-top:1px;background:none;}
+  .check.done{background:var(--curry);border-color:var(--curry);position:relative;}
+  .check.done::after{content:"\2713";color:#fff;font-size:13px;position:absolute;inset:0;display:flex;align-items:center;justify-content:center;}
+  .item .mid{flex:1;min-width:0;}
+  .item .t1{font-size:15px;font-weight:500;word-break:break-word;}
+  .item .t1.strike{text-decoration:line-through;color:#b4ae9f;font-weight:400;}
+  .item .t2{font-size:12px;color:var(--graphite);margin-top:2px;}
+  .item .amt{font-variant-numeric:tabular-nums;font-weight:600;font-size:15px;white-space:nowrap;}
+  .item .amt.muted{color:#b4ae9f;}
+  .tag{display:inline-block;font-size:10px;letter-spacing:.04em;color:var(--curry-deep);border:1px solid var(--curry);border-radius:5px;padding:1px 7px;margin-right:6px;}
+  .empty{color:#a59f90;font-size:14px;text-align:center;padding:50px 20px;line-height:1.7;}
+
+  .idea{border-left:2px solid var(--curry);background:var(--card);border-radius:0 12px 12px 0;padding:13px 14px;margin-bottom:11px;}
+  .idea .it{font-size:15px;font-weight:500;word-break:break-word;}
+  .idea .im{font-size:11px;color:var(--graphite);margin-top:5px;}
+
+  /* floating add */
+  .fab{position:absolute;left:22px;right:22px;bottom:calc(20px + var(--safe-b));background:var(--ink);color:var(--paper);text-align:center;padding:15px;border-radius:14px;font-size:15px;font-weight:600;border:none;}
+
+  /* brain dump */
+  .ta{width:100%;margin-top:16px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;height:42vh;min-height:230px;font-size:16px;line-height:1.7;resize:none;outline:none;}
+  .ta::placeholder{color:#b4ae9f;}
+  .hint{font-size:12px;color:var(--graphite);margin-top:12px;line-height:1.6;}
+  .cta{width:100%;background:var(--curry);color:#fff;text-align:center;padding:15px;border-radius:14px;font-size:15px;font-weight:600;margin-top:14px;border:none;}
+  .cta:disabled{opacity:.4;}
+
+  .group{margin-top:18px;}
+  .glab{font-size:11px;letter-spacing:.14em;color:var(--curry-deep);font-weight:700;margin-bottom:4px;}
+  .pcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:10px;}
+  .pcard .ph{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;}
+  .pcard select.type{font-size:12px;font-weight:600;color:var(--curry-deep);background:var(--curry-wash);border:1px solid var(--curry);border-radius:7px;padding:4px 8px;}
+  .pcard .inc{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--graphite);}
+  .pcard .inc input{width:18px;height:18px;accent-color:var(--curry);}
+  .pcard .frow{display:flex;gap:8px;margin-top:7px;}
+  .pcard input,.pcard select.f{width:100%;border:none;border-bottom:1px solid var(--line);background:none;padding:6px 2px;font-size:15px;outline:none;}
+
+  /* sheet (add/edit) */
+  .sheet-bg{position:absolute;inset:0;background:rgba(28,27,24,.32);display:none;z-index:20;}
+  .sheet-bg.on{display:block;}
+  .sheet{position:absolute;left:0;right:0;bottom:0;background:var(--paper);border-radius:22px 22px 0 0;padding:8px 22px calc(22px + var(--safe-b));max-height:92%;overflow-y:auto;transform:translateY(100%);transition:transform .26s cubic-bezier(.2,.8,.2,1);}
+  .sheet.on{transform:translateY(0);}
+  .grab{width:38px;height:4px;border-radius:2px;background:#d8d1c2;margin:8px auto 6px;}
+  .sheet .sh{display:flex;align-items:center;justify-content:space-between;padding:6px 0 8px;}
+  .sheet .sh .c{color:var(--graphite);background:none;border:none;font-size:15px;}
+  .sheet .sh .s{color:var(--curry-deep);background:none;border:none;font-size:15px;font-weight:600;}
+  .sheet .sh .t{font-size:16px;font-weight:600;}
+  .field{margin-top:14px;}
+  .field label{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--graphite);font-weight:600;}
+  .field input,.field select,.field textarea{width:100%;margin-top:7px;border:none;border-bottom:1px solid var(--line);background:none;padding:9px 2px;font-size:16px;outline:none;}
+  .twocol{display:flex;gap:16px;}
+  .twocol .field{flex:1;}
+  .seg{display:flex;gap:8px;margin-top:9px;flex-wrap:wrap;}
+  .seg button{font-size:13px;padding:7px 13px;border-radius:8px;border:1px solid var(--line);color:var(--graphite);background:none;}
+  .seg button.on{background:var(--curry-wash);border-color:var(--curry);color:var(--curry-deep);font-weight:600;}
+  .del{margin-top:22px;width:100%;text-align:center;color:var(--bad);background:none;border:none;font-size:14px;padding:8px;}
+
+  /* setup / settings */
+  .setup{padding:0 26px;display:flex;flex-direction:column;justify-content:center;height:100%;}
+  .setup .lead{font-size:14px;color:var(--graphite);margin-top:8px;line-height:1.7;}
+  .setup .field input{font-size:15px;}
+
+  /* toast */
+  .toast{position:absolute;left:50%;bottom:calc(96px + var(--safe-b));transform:translateX(-50%) translateY(10px);background:var(--ink);color:var(--paper);font-size:13px;padding:10px 18px;border-radius:999px;opacity:0;transition:.25s;pointer-events:none;z-index:40;white-space:nowrap;}
+  .toast.on{opacity:1;transform:translateX(-50%) translateY(0);}
+  .spin{color:#a59f90;font-size:14px;text-align:center;padding:40px;}
+</style>
+</head>
+<body>
+
+<!-- ===== SETUP（首次設定）===== -->
+<section id="v-setup" class="view">
+  <div class="setup">
+    <div class="eyebrow">首次設定</div>
+    <div class="h1">連接你的雲端</div>
+    <div class="lead">貼上你 Supabase 專案的兩個資料，只需做一次，之後會記住。（部署教學有圖文步驟）</div>
+    <div class="field"><label>Project URL</label><input id="su-url" placeholder="https://xxxx.supabase.co" autocapitalize="off" autocorrect="off"></div>
+    <div class="field"><label>Anon Public Key</label><input id="su-key" placeholder="貼上 anon public key" autocapitalize="off" autocorrect="off"></div>
+    <button class="cta" id="su-save" style="margin-top:26px">儲存並開始</button>
+    <div class="hint" id="su-msg" style="text-align:center"></div>
+  </div>
+</section>
+
+<!-- ===== HOME ===== -->
+<section id="v-home" class="view">
+  <div class="scroll pad-t">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start">
+      <div><div class="eyebrow" id="home-date">—</div><div class="h1">早晨</div></div>
+      <button class="nav gear" onclick="go('settings')" style="margin-top:6px">設定</button>
+    </div>
+    <div class="index">
+      <button class="row" onclick="go('claims')"><span class="lab">待收總額</span><span class="rt"><span class="val big" id="s-claim">$0</span><span class="ch">›</span></span></button>
+      <button class="row" onclick="go('todos')"><span class="lab">今日待辦</span><span class="rt"><span class="val" id="s-todo">0</span><span class="ch">›</span></span></button>
+      <button class="row" onclick="go('purchases')"><span class="lab">未完成採購</span><span class="rt"><span class="val" id="s-buy">0</span><span class="ch">›</span></span></button>
+    </div>
+    <div class="tiles">
+      <button class="tile" onclick="go('claims')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5v9"/><path d="M14.2 9.3c-.6-.7-1.5-1-2.4-1-1.2 0-2.2.7-2.2 1.7 0 2.4 4.8 1.2 4.8 3.6 0 1-1 1.7-2.3 1.7-1 0-1.9-.4-2.5-1.1"/></svg><span><span class="tl">待收款項</span><span class="tc" id="t-claim">—</span></span></button>
+      <button class="tile" onclick="go('todos')"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3.5"/><path d="M8 12.5l2.4 2.4 5-5.6"/></svg><span><span class="tl">待辦事項</span><span class="tc" id="t-todo">—</span></span></button>
+      <button class="tile" onclick="go('purchases')"><svg viewBox="0 0 24 24"><path d="M6.5 9h11l-1 10.5h-9L6.5 9z"/><path d="M9.2 9V7.2a2.8 2.8 0 0 1 5.6 0V9"/></svg><span><span class="tl">採購清單</span><span class="tc" id="t-buy">—</span></span></button>
+      <button class="tile" onclick="go('ideas')"><svg viewBox="0 0 24 24"><path d="M12 3.5a5 5 0 0 0-3 9c.6.5 1 1.2 1 2h4c0-.8.4-1.5 1-2a5 5 0 0 0-3-9z"/><path d="M10 18h4"/><path d="M10.6 20.3h2.8"/></svg><span><span class="tl">小點子</span><span class="tc" id="t-idea">—</span></span></button>
+    </div>
+    <button class="dump" onclick="go('dump')"><span><span class="dt">清空腦袋</span><span class="ds">倒低亂嘅嘢，自動幫你分類</span></span><span class="da">＋</span></button>
+  </div>
+</section>
+
+<!-- ===== CLAIMS ===== -->
+<section id="v-claims" class="view">
+  <div class="nav"><button class="back" onclick="go('home')">‹ 首頁</button><span class="ttl">待收款項</span><span class="sp"></span></div>
+  <div class="scroll">
+    <div class="total"><div class="k">待收總額</div><div class="v" id="c-total">$0</div></div>
+    <input class="search" id="c-search" placeholder="搜尋名稱或用途" oninput="renderClaims()">
+    <div class="chips" id="c-chips"></div>
+    <div class="list" id="c-list"></div>
+  </div>
+  <button class="fab" onclick="openSheet('claim')">＋ 新增一筆</button>
+</section>
+
+<!-- ===== TODOS ===== -->
+<section id="v-todos" class="view">
+  <div class="nav"><button class="back" onclick="go('home')">‹ 首頁</button><span class="ttl">待辦事項</span><span class="sp"></span></div>
+  <div class="scroll">
+    <input class="search" id="td-search" placeholder="搜尋待辦" oninput="renderTodos()" style="margin-top:16px">
+    <div class="chips" id="td-chips"></div>
+    <div class="list" id="td-list"></div>
+  </div>
+  <button class="fab" onclick="openSheet('todo')">＋ 新增待辦</button>
+</section>
+
+<!-- ===== PURCHASES ===== -->
+<section id="v-purchases" class="view">
+  <div class="nav"><button class="back" onclick="go('home')">‹ 首頁</button><span class="ttl">採購清單</span><span class="sp"></span></div>
+  <div class="scroll">
+    <input class="search" id="p-search" placeholder="搜尋物品" oninput="renderPurchases()" style="margin-top:16px">
+    <div class="chips" id="p-chips"></div>
+    <div class="list" id="p-list"></div>
+  </div>
+  <button class="fab" onclick="openSheet('purchase')">＋ 新增物品</button>
+</section>
+
+<!-- ===== IDEAS ===== -->
+<section id="v-ideas" class="view">
+  <div class="nav"><button class="back" onclick="go('home')">‹ 首頁</button><span class="ttl">小點子</span><span class="sp"></span></div>
+  <div class="scroll">
+    <input class="search" id="i-search" placeholder="搜尋點子" oninput="renderIdeas()" style="margin-top:16px">
+    <div class="chips" id="i-chips"></div>
+    <div class="list" id="i-list"></div>
+  </div>
+  <button class="fab" onclick="openSheet('idea')">＋ 新增點子</button>
+</section>
+
+<!-- ===== DUMP ===== -->
+<section id="v-dump" class="view">
+  <div class="nav"><button class="back" onclick="go('home')">‹ 首頁</button><span class="ttl">清空腦袋</span><span class="sp"></span></div>
+  <div class="scroll">
+    <div class="eyebrow" style="margin-top:6px">將腦海嘅嘢全部倒出嚟</div>
+    <textarea class="ta" id="dump-text" placeholder="例如：&#10;Joe欠我380蚊材料費，記得買外賣碗500個，星期五搵供應商傾牛肉價，修改套餐海報，不如試吓用 Huge AI 整個自動訂位…"></textarea>
+    <div class="hint">唔使分類、唔使排好。寫低就得，下一步會自動幫你拆開、再由你確認。</div>
+    <button class="cta" id="dump-go" onclick="runDump()">整理一下 →</button>
+  </div>
+</section>
+
+<!-- ===== DUMP RESULT ===== -->
+<section id="v-dumpResult" class="view">
+  <div class="nav"><button class="back" onclick="go('dump')">‹ 重寫</button><span class="ttl">建議分類</span><span class="sp"></span></div>
+  <div class="scroll">
+    <div class="hint" style="margin-top:6px">幫你拆咗做以下幾項，改一改、剔走唔啱嘅，再確認。</div>
+    <div id="dr-list"></div>
+    <button class="cta" id="dr-confirm" onclick="confirmDump()" style="margin-top:6px">確認加入</button>
+  </div>
+</section>
+
+<!-- ===== SETTINGS ===== -->
+<section id="v-settings" class="view">
+  <div class="nav"><button class="back" onclick="go('home')">‹ 首頁</button><span class="ttl">設定</span><span class="sp"></span></div>
+  <div class="scroll">
+    <div class="field"><label>已連接的雲端</label><div style="margin-top:8px;font-size:14px;color:var(--graphite);word-break:break-all" id="set-url">—</div></div>
+    <div class="hint" style="margin-top:18px;line-height:1.8">所有資料都存喺你自己的 Supabase 雲端，換手機唔會無。<br>呢部機嘅連接資料存喺機內，換機只需再輸入一次。</div>
+    <button class="del" style="margin-top:30px" onclick="resetConfig()">更改雲端連接</button>
+  </div>
+</section>
+
+<!-- sheet + toast -->
+<div class="sheet-bg" id="sheet-bg" onclick="closeSheet()"></div>
+<div class="sheet" id="sheet"></div>
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+"use strict";
+const $ = s => document.querySelector(s);
+const CATS = ['家庭','圓圓','CurryBoy','設計','文件','其他'];
+let db = null, ideaCats = ['CurryBoy','Huge AI'];
+let cClaims=[], cTodos=[], cPurch=[], cIdeas=[];
+let fClaim='unpaid', fTodo='今日', fPurch='to_buy', fIdea='全部';
+let dumpItems=[];
+
+/* ---------- helpers ---------- */
+const money = n => '$' + (Number(n)||0).toLocaleString('en-US');
+function pad(n){return (n<10?'0':'')+n;}
+function todayStr(){const d=new Date();return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+function fmtDate(s){if(!s)return '';const [y,m,d]=s.split('-');return Number(m)+'月'+Number(d)+'日';}
+function weekdayName(){const w=['日','一','二','三','四','五','六'];return '星期'+w[new Date().getDay()];}
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on'),1800);}
+function go(v){document.querySelectorAll('.view').forEach(x=>x.classList.remove('on'));$('#v-'+v).classList.add('on');
+  if(v==='home')loadHome(); if(v==='claims')loadClaims(); if(v==='todos')loadTodos();
+  if(v==='purchases')loadPurch(); if(v==='ideas')loadIdeas(); if(v==='settings')$('#set-url').textContent=localStorage.getItem('sb_url')||'—';
+  document.querySelector('#v-'+v+' .scroll')?.scrollTo(0,0);
+}
+
+/* ---------- config / boot ---------- */
+function startApp(){
+  db = window.supabase.createClient(localStorage.getItem('sb_url'), localStorage.getItem('sb_key'));
+  $('#home-date').textContent = weekdayName()+' · '+fmtDate(todayStr());
+  go('home');
+  loadIdeaCats();
+}
+function resetConfig(){ if(confirm('更改雲端連接？資料唔會刪除，只係重新輸入連接。')){localStorage.removeItem('sb_url');localStorage.removeItem('sb_key');location.reload();} }
+window.addEventListener('load', ()=>{
+  if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
+  $('#su-save').onclick = ()=>{
+    const u=$('#su-url').value.trim().replace(/\/+$/,''), k=$('#su-key').value.trim();
+    if(!u||!k){$('#su-msg').textContent='兩格都要填';return;}
+    if(!/^https:\/\/.+\.supabase\.co$/.test(u)){$('#su-msg').textContent='Project URL 格式好似唔啱，應該係 https://xxxx.supabase.co';return;}
+    localStorage.setItem('sb_url',u);localStorage.setItem('sb_key',k);startApp();
+  };
+  if(localStorage.getItem('sb_url')&&localStorage.getItem('sb_key')){startApp();}
+  else{$('#v-setup').classList.add('on');}
+});
+
+/* ---------- HOME ---------- */
+async function loadHome(){
+  const [{data:cl},{data:td},{data:pu},{data:id}] = await Promise.all([
+    db.from('claims').select('amount,status'),
+    db.from('todos').select('date,status'),
+    db.from('purchases').select('status'),
+    db.from('ideas').select('id')
+  ]);
+  const unpaid=(cl||[]).filter(x=>x.status==='unpaid');
+  const total=unpaid.reduce((a,b)=>a+(Number(b.amount)||0),0);
+  const todayTodo=(td||[]).filter(x=>x.status==='pending'&&x.date===todayStr()).length;
+  const pendTodo=(td||[]).filter(x=>x.status==='pending').length;
+  const tobuy=(pu||[]).filter(x=>x.status==='to_buy').length;
+  $('#s-claim').textContent=money(total); $('#s-todo').textContent=todayTodo; $('#s-buy').textContent=tobuy;
+  $('#t-claim').textContent=unpaid.length+' 筆未收';
+  $('#t-todo').textContent=(todayTodo?todayTodo+' 項今日':pendTodo+' 項待辦');
+  $('#t-buy').textContent=tobuy+' 項未買';
+  $('#t-idea').textContent=(id||[]).length+' 則';
+}
+
+/* ---------- generic chip render ---------- */
+function chips(host,opts,active,fn){
+  host.innerHTML='';
+  opts.forEach(o=>{const b=document.createElement('button');b.className='chip'+(o.v===active?' on':'');b.textContent=o.t;b.onclick=()=>fn(o.v);host.appendChild(b);});
+}
+
+/* ---------- CLAIMS ---------- */
+async function loadClaims(){
+  chips($('#c-chips'),[{t:'未收',v:'unpaid'},{t:'已收',v:'paid'},{t:'全部',v:'all'}],fClaim,v=>{fClaim=v;renderClaims();});
+  const {data}=await db.from('claims').select('*').order('created_at',{ascending:false});
+  cClaims=data||[]; renderClaims();
+}
+function renderClaims(){
+  const q=$('#c-search').value.trim();
+  const total=cClaims.filter(x=>x.status==='unpaid').reduce((a,b)=>a+(Number(b.amount)||0),0);
+  $('#c-total').textContent=money(total);
+  let rows=cClaims.filter(x=>fClaim==='all'||x.status===fClaim);
+  if(q)rows=rows.filter(x=>((x.person_name||'')+(x.purpose||'')+(x.note||'')).includes(q));
+  const L=$('#c-list');
+  if(!rows.length){L.innerHTML='<div class="empty">未有記錄。<br>㩒下面「＋」加一筆。</div>';return;}
+  L.innerHTML=rows.map(x=>{const done=x.status==='paid';
+    return `<div class="item"><button class="check ${done?'done':''}" onclick="event.stopPropagation();toggleClaim('${x.id}','${x.status}')"></button>
+    <div class="mid" onclick="openSheet('claim','${x.id}')"><div class="t1 ${done?'strike':''}">${esc(x.person_name)||'（無名）'}</div>
+    <div class="t2">${esc(x.purpose)||''}${x.date?' · '+fmtDate(x.date):''}</div></div>
+    <div class="amt ${done?'muted':''}" onclick="openSheet('claim','${x.id}')">${money(x.amount)}</div></div>`;}).join('');
+}
+async function toggleClaim(id,st){await db.from('claims').update({status:st==='unpaid'?'paid':'unpaid'}).eq('id',id);loadClaims();}
+
+/* ---------- TODOS ---------- */
+async function loadTodos(){
+  chips($('#td-chips'),[{t:'今日',v:'今日'},{t:'全部',v:'全部'},...CATS.map(c=>({t:c,v:c}))],fTodo,v=>{fTodo=v;renderTodos();});
+  const {data}=await db.from('todos').select('*').order('created_at',{ascending:false});
+  cTodos=data||[]; renderTodos();
+}
+function renderTodos(){
+  const q=$('#td-search').value.trim();
+  let rows=cTodos.slice();
+  if(fTodo==='今日')rows=rows.filter(x=>x.date===todayStr());
+  else if(fTodo!=='全部')rows=rows.filter(x=>x.category===fTodo);
+  if(q)rows=rows.filter(x=>(x.content||'').includes(q));
+  rows.sort((a,b)=>(a.status===b.status)?0:(a.status==='pending'?-1:1));
+  const L=$('#td-list');
+  if(!rows.length){L.innerHTML='<div class="empty">未有待辦。</div>';return;}
+  L.innerHTML=rows.map(x=>{const done=x.status==='done';
+    return `<div class="item"><button class="check ${done?'done':''}" onclick="event.stopPropagation();toggleTodo('${x.id}','${x.status}')"></button>
+    <div class="mid" onclick="openSheet('todo','${x.id}')"><div class="t1 ${done?'strike':''}"><span class="tag">${esc(x.category)||'其他'}</span>${esc(x.content)||''}</div>
+    <div class="t2">${done?'已完成':(x.date?fmtDate(x.date):'')}</div></div></div>`;}).join('');
+}
+async function toggleTodo(id,st){await db.from('todos').update({status:st==='pending'?'done':'pending'}).eq('id',id);loadTodos();}
+
+/* ---------- PURCHASES ---------- */
+async function loadPurch(){
+  chips($('#p-chips'),[{t:'未買',v:'to_buy'},{t:'已買',v:'bought'},{t:'全部',v:'all'}],fPurch,v=>{fPurch=v;renderPurchases();});
+  const {data}=await db.from('purchases').select('*').order('created_at',{ascending:false});
+  cPurch=data||[]; renderPurchases();
+}
+function renderPurchases(){
+  const q=$('#p-search').value.trim();
+  let rows=cPurch.filter(x=>fPurch==='all'||x.status===fPurch);
+  if(q)rows=rows.filter(x=>((x.item_name||'')+(x.note||'')).includes(q));
+  const L=$('#p-list');
+  if(!rows.length){L.innerHTML='<div class="empty">未有採購項目。</div>';return;}
+  L.innerHTML=rows.map(x=>{const done=x.status==='bought';
+    return `<div class="item"><button class="check ${done?'done':''}" onclick="event.stopPropagation();togglePurch('${x.id}','${x.status}')"></button>
+    <div class="mid" onclick="openSheet('purchase','${x.id}')"><div class="t1 ${done?'strike':''}">${esc(x.item_name)||''}</div>
+    <div class="t2"><span class="tag">${esc(x.category)||'其他'}</span>${esc(x.quantity)||''}</div></div></div>`;}).join('');
+}
+async function togglePurch(id,st){await db.from('purchases').update({status:st==='to_buy'?'bought':'to_buy'}).eq('id',id);loadPurch();}
+
+/* ---------- IDEAS ---------- */
+async function loadIdeaCats(){const {data}=await db.from('idea_categories').select('name').order('created_at');if(data&&data.length)ideaCats=data.map(x=>x.name);}
+async function loadIdeas(){
+  await loadIdeaCats();
+  chips($('#i-chips'),[{t:'全部',v:'全部'},...ideaCats.map(c=>({t:c,v:c}))],fIdea,v=>{fIdea=v;renderIdeas();});
+  const add=document.createElement('button');add.className='chip add';add.textContent='＋ 新增分類';add.onclick=addIdeaCat;$('#i-chips').appendChild(add);
+  const {data}=await db.from('ideas').select('*').order('created_at',{ascending:false});
+  cIdeas=data||[]; renderIdeas();
+}
+function renderIdeas(){
+  const q=$('#i-search').value.trim();
+  let rows=cIdeas.filter(x=>fIdea==='全部'||x.category===fIdea);
+  if(q)rows=rows.filter(x=>(x.content||'').includes(q));
+  const L=$('#i-list');
+  if(!rows.length){L.innerHTML='<div class="empty">未有點子。<br>諗到咩隨手記低。</div>';return;}
+  L.innerHTML=rows.map(x=>`<div class="idea" onclick="openSheet('idea','${x.id}')"><div class="it">${esc(x.content)||''}</div>
+    <div class="im"><span class="tag">${esc(x.category)||''}</span>${fmtDate(x.created_at?x.created_at.slice(0,10):'')}</div></div>`).join('');
+}
+async function addIdeaCat(){const name=prompt('新分類名稱');if(!name)return;const n=name.trim();if(!n)return;
+  await db.from('idea_categories').insert({name:n});await loadIdeas();toast('已加分類');}
+
+/* ---------- SHEET (add / edit) ---------- */
+function field(label,id,val,type){return `<div class="field"><label>${label}</label><input id="${id}" type="${type||'text'}" value="${val?esc(val):''}"></div>`;}
+function catSeg(id,list,cur){return `<div class="field"><label>分類</label><div class="seg" id="${id}">`+list.map(c=>`<button type="button" class="${c===cur?'on':''}" onclick="pickSeg('${id}',this)">${c}</button>`).join('')+`</div></div>`;}
+let segVal={};
+function pickSeg(id,btn){segVal[id]=btn.textContent;btn.parentNode.querySelectorAll('button').forEach(b=>b.classList.remove('on'));btn.classList.add('on');}
+
+function openSheet(type,id){
+  const editing = !!id;
+  let rec={};
+  if(editing){const src={claim:cClaims,todo:cTodos,purchase:cPurch,idea:cIdeas}[type];rec=src.find(x=>x.id===id)||{};}
+  let title={claim:'待收款項',todo:'待辦事項',purchase:'採購項目',idea:'小點子'}[type];
+  let body='';
+  segVal={};
+  if(type==='claim'){
+    body=field('對方名稱','f-name',rec.person_name)
+      +`<div class="twocol">${field('金額','f-amt',rec.amount,'number')}${field('日期','f-date',rec.date||todayStr(),'date')}</div>`
+      +field('用途','f-purpose',rec.purpose)+field('備註','f-note',rec.note);
+  } else if(type==='todo'){
+    segVal['seg']=rec.category||'家庭';
+    body=field('內容','f-content',rec.content)+field('日期','f-date',rec.date||todayStr(),'date')+catSeg('seg',CATS,rec.category||'家庭');
+  } else if(type==='purchase'){
+    segVal['seg']=rec.category||'CurryBoy';
+    body=field('物品名稱','f-item',rec.item_name)+field('數量','f-qty',rec.quantity)+catSeg('seg',CATS,rec.category||'CurryBoy')+field('備註','f-note',rec.note);
+  } else if(type==='idea'){
+    segVal['seg']=rec.category||ideaCats[0];
+    body=field('內容','f-content',rec.content)+catSeg('seg',ideaCats,rec.category||ideaCats[0])+field('備註','f-note',rec.note);
+  }
+  const del = editing?`<button class="del" onclick="delRec('${type}','${id}')">刪除</button>`:'';
+  $('#sheet').innerHTML=`<div class="grab"></div>
+    <div class="sh"><button class="c" onclick="closeSheet()">取消</button><span class="t">${editing?'編輯':'新增'} ${title}</span><button class="s" onclick="saveRec('${type}','${id||''}')">儲存</button></div>
+    ${body}${del}`;
+  $('#sheet-bg').classList.add('on');requestAnimationFrame(()=>$('#sheet').classList.add('on'));
+}
+function closeSheet(){$('#sheet').classList.remove('on');$('#sheet-bg').classList.remove('on');}
+
+async function saveRec(type,id){
+  let row={},table;
+  if(type==='claim'){table='claims';row={person_name:$('#f-name').value.trim(),amount:Number($('#f-amt').value)||0,date:$('#f-date').value||null,purpose:$('#f-purpose').value.trim(),note:$('#f-note').value.trim()};if(!id)row.status='unpaid';}
+  if(type==='todo'){table='todos';row={content:$('#f-content').value.trim(),date:$('#f-date').value||null,category:segVal['seg']||'其他'};if(!id)row.status='pending';if(!row.content){toast('內容唔可以空白');return;}}
+  if(type==='purchase'){table='purchases';row={item_name:$('#f-item').value.trim(),quantity:$('#f-qty').value.trim(),category:segVal['seg']||'其他',note:$('#f-note').value.trim()};if(!id)row.status='to_buy';if(!row.item_name){toast('物品名稱唔可以空白');return;}}
+  if(type==='idea'){table='ideas';row={content:$('#f-content').value.trim(),category:segVal['seg']||ideaCats[0],note:$('#f-note').value.trim()};if(!row.content){toast('內容唔可以空白');return;}}
+  let err;
+  if(id){({error:err}=await db.from(table).update(row).eq('id',id));}
+  else{({error:err}=await db.from(table).insert(row));}
+  if(err){toast('儲存失敗，請檢查連接');return;}
+  closeSheet();toast('已儲存');
+  ({claim:loadClaims,todo:loadTodos,purchase:loadPurch,idea:loadIdeas}[type])();
+}
+async function delRec(type,id){
+  if(!confirm('確定刪除？'))return;
+  const table={claim:'claims',todo:'todos',purchase:'purchases',idea:'ideas'}[type];
+  await db.from(table).delete().eq('id',id);closeSheet();toast('已刪除');
+  ({claim:loadClaims,todo:loadTodos,purchase:loadPurch,idea:loadIdeas}[type])();
+}
+
+/* ---------- BRAIN DUMP (keyword parser) ---------- */
+function guessCat(t){
+  if(/圓圓|女兒|bb|尿片|奶粉|湊女/i.test(t))return '圓圓';
+  if(/海報|設計|logo|poster|menu|餐牌|排版|改圖|稿/i.test(t))return '設計';
+  if(/curry|供應商|牛肉|外賣|餐廳|食材|樓面|廚房|套餐|出餐|落單|食物/i.test(t))return 'CurryBoy';
+  if(/文件|報稅|交稅|表格|合約|單據|form|invoice|報價/i.test(t))return '文件';
+  if(/屋企|傢俬|水電|家用|家庭|家務/i.test(t))return '家庭';
+  return '其他';
+}
+function guessDate(t){
+  if(/今日|今天|today/i.test(t))return todayStr();
+  if(/聽日|明日|明天|tomorrow/i.test(t)){const d=new Date();d.setDate(d.getDate()+1);return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+  if(/後日/.test(t)){const d=new Date();d.setDate(d.getDate()+2);return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+  const wd=t.match(/(?:星期|禮拜|週)([一二三四五六日天])/);
+  if(wd){const map={'一':1,'二':2,'三':3,'四':4,'五':5,'六':6,'日':0,'天':0};const target=map[wd[1]];const d=new Date();let diff=(target-d.getDay()+7)%7;if(diff===0)diff=7;d.setDate(d.getDate()+diff);return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+  return null;
+}
+function parseDump(text){
+  const parts=text.split(/[，,。.；;、\n]+/).map(s=>s.trim()).filter(Boolean);
+  return parts.map(p=>{
+    if(/欠|還錢|找數|找返|代付|代墊|墊支|claim/i.test(p)){
+      const amt=(p.match(/(\d[\d,]*(?:\.\d+)?)/)||[])[1];
+      const name=(p.split(/欠|代付|代墊/)[0]||'').replace(/^我|你|佢/,'').trim();
+      const purpose=p.replace(/.*?(欠|還錢|找數|代付|代墊|墊支)/,'').replace(/我|你|佢/,'').replace(/(\d[\d,]*(?:\.\d+)?)\s*(蚊|元|塊|hkd|\$)?/i,'').trim();
+      return {type:'claim',include:true,person_name:name||p.slice(0,4),amount:amt?amt.replace(/,/g,''):'',purpose:purpose};
+    }
+    if(/買|入貨|補貨|採購|攞貨|添置|入返/.test(p)&&!/訂位/.test(p)){
+      const qm=p.match(/(\d+(?:\.\d+)?)\s*(個|包|箱|kg|公斤|克|打|份|支|樽|盒|張|套|斤|磅|塊|排|條)/i);
+      const qty=qm?qm[0]:'';
+      const item=p.replace(/記得|想|要|買返|買|入貨|補貨|採購|攞貨|添置|入返/g,'').replace(qty,'').trim();
+      return {type:'purchase',include:true,item_name:item||p,quantity:qty,category:guessCat(p)};
+    }
+    if(/試吓|試下|不如|諗住|諗緊|將來|未來|idea|點子|構思|可以試/i.test(p)){
+      let cat=ideaCats[0];
+      if(/ai|系統|自動|app|程式/i.test(p)&&ideaCats.includes('Huge AI'))cat='Huge AI';
+      else if(/curry|餐|外賣|套餐|食/i.test(p)&&ideaCats.includes('CurryBoy'))cat='CurryBoy';
+      const c=p.replace(/不如|諗住|諗緊|試吓|試下/g,'').trim();
+      return {type:'idea',include:true,content:c||p,category:cat};
+    }
+    return {type:'todo',include:true,content:p.replace(/記得|今日|聽日|明日|後日|(?:星期|禮拜)[一二三四五六日天]/g,'').trim()||p,date:guessDate(p),category:guessCat(p)};
+  });
+}
+function runDump(){
+  const t=$('#dump-text').value.trim();
+  if(!t){toast('寫啲嘢先');return;}
+  dumpItems=parseDump(t);
+  renderDump();go('dumpResult');
+}
+const TYPELABEL={claim:'待收款項',purchase:'採購清單',todo:'待辦事項',idea:'小點子'};
+function renderDump(){
+  const L=$('#dr-list');
+  L.innerHTML=dumpItems.map((it,i)=>{
+    const sel=`<select class="type" onchange="changeType(${i},this.value)">`+Object.keys(TYPELABEL).map(k=>`<option value="${k}" ${k===it.type?'selected':''}>${TYPELABEL[k]}</option>`).join('')+`</select>`;
+    let f='';
+    if(it.type==='claim')f=`<div class="frow"><input placeholder="對方" value="${esc(it.person_name||'')}" oninput="upd(${i},'person_name',this.value)"><input placeholder="金額" inputmode="decimal" value="${esc(it.amount||'')}" oninput="upd(${i},'amount',this.value)" style="max-width:90px"></div><div class="frow"><input placeholder="用途" value="${esc(it.purpose||'')}" oninput="upd(${i},'purpose',this.value)"></div>`;
+    else if(it.type==='purchase')f=`<div class="frow"><input placeholder="物品" value="${esc(it.item_name||'')}" oninput="upd(${i},'item_name',this.value)"><input placeholder="數量" value="${esc(it.quantity||'')}" oninput="upd(${i},'quantity',this.value)" style="max-width:100px"></div>${catSel(i,CATS,it.category)}`;
+    else if(it.type==='idea')f=`<div class="frow"><input placeholder="內容" value="${esc(it.content||'')}" oninput="upd(${i},'content',this.value)"></div>${catSel(i,ideaCats,it.category)}`;
+    else f=`<div class="frow"><input placeholder="內容" value="${esc(it.content||'')}" oninput="upd(${i},'content',this.value)"></div>${catSel(i,CATS,it.category)}`;
+    return `<div class="pcard"><div class="ph">${sel}<label class="inc"><input type="checkbox" ${it.include?'checked':''} onchange="upd(${i},'include',this.checked)">加入</label></div>${f}</div>`;
+  }).join('');
+  $('#dr-confirm').textContent='確認加入（'+dumpItems.filter(x=>x.include).length+' 項）';
+}
+function catSel(i,list,cur){return `<div class="frow"><select class="f" onchange="upd(${i},'category',this.value)">`+list.map(c=>`<option ${c===cur?'selected':''}>${c}</option>`).join('')+`</select></div>`;}
+function upd(i,k,v){dumpItems[i][k]=v;if(k==='include')$('#dr-confirm').textContent='確認加入（'+dumpItems.filter(x=>x.include).length+' 項）';}
+function changeType(i,v){const o=dumpItems[i];const text=o.content||o.purpose||o.item_name||o.person_name||'';dumpItems[i]={type:v,include:o.include,content:text,purpose:text,item_name:text,person_name:o.person_name||'',amount:o.amount||'',quantity:o.quantity||'',date:o.date||null,category:o.category||(v==='idea'?ideaCats[0]:'其他')};renderDump();}
+
+async function confirmDump(){
+  const chosen=dumpItems.filter(x=>x.include);
+  if(!chosen.length){toast('未揀任何項目');return;}
+  const ins={claims:[],todos:[],purchases:[],ideas:[]};
+  chosen.forEach(it=>{
+    if(it.type==='claim')ins.claims.push({person_name:it.person_name||'',amount:Number(it.amount)||0,purpose:it.purpose||'',date:todayStr(),status:'unpaid'});
+    else if(it.type==='purchase')ins.purchases.push({item_name:it.item_name||'',quantity:it.quantity||'',category:it.category||'其他',status:'to_buy'});
+    else if(it.type==='idea')ins.ideas.push({content:it.content||'',category:it.category||ideaCats[0]});
+    else ins.todos.push({content:it.content||'',date:it.date||null,category:it.category||'其他',status:'pending'});
+  });
+  try{
+    for(const [t,arr] of Object.entries(ins)){if(arr.length)await db.from(t).insert(arr);}
+    $('#dump-text').value='';dumpItems=[];
+    toast('已加入 '+chosen.length+' 項');go('home');
+  }catch(e){toast('加入失敗，請檢查連接');}
+}
+
+function esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+</script>
+</body>
+</html>
