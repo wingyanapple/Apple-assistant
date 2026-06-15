@@ -109,7 +109,7 @@
   /* sheet (add/edit) */
   .sheet-bg{position:absolute;inset:0;background:rgba(28,27,24,.32);display:none;z-index:20;}
   .sheet-bg.on{display:block;}
-  .sheet{position:absolute;left:0;right:0;bottom:0;background:var(--paper);border-radius:22px 22px 0 0;padding:8px 22px calc(22px + var(--safe-b));max-height:92%;overflow-y:auto;transform:translateY(100%);transition:transform .26s cubic-bezier(.2,.8,.2,1);}
+  .sheet{position:absolute;z-index:30;left:0;right:0;bottom:0;background:var(--paper);border-radius:22px 22px 0 0;padding:8px 22px calc(22px + var(--safe-b));max-height:92%;overflow-y:auto;transform:translateY(100%);transition:transform .26s cubic-bezier(.2,.8,.2,1);}
   .sheet.on{transform:translateY(0);}
   .grab{width:38px;height:4px;border-radius:2px;background:#d8d1c2;margin:8px auto 6px;}
   .sheet .sh{display:flex;align-items:center;justify-content:space-between;padding:6px 0 8px;}
