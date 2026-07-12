@@ -172,6 +172,21 @@
   .ttoggle button.on.in{background:#E7F0E9;border-color:#5C9468;color:#3f7350;}
   .ttoggle button.on.ex{background:#F3E9D2;border-color:var(--curry);color:var(--curry-deep);}
 
+  /* lock screen */
+  .lockwrap{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 40px calc(24px + var(--safe-b));}
+  .lockmark{width:54px;height:54px;border-radius:15px;background:var(--card);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;margin-bottom:18px;}
+  .lockmark span{width:20px;height:20px;transform:rotate(45deg);background:var(--curry);border-radius:4px;display:block;}
+  .lockt{font-size:17px;font-weight:700;color:var(--ink);}
+  .locks{font-size:13px;color:var(--graphite);margin-top:6px;min-height:18px;text-align:center;padding:0 10px;}
+  .locks.err{color:var(--bad);}
+  .pins{display:flex;gap:16px;margin:24px 0 8px;}
+  .pins .pin{width:14px;height:14px;border-radius:50%;border:1.5px solid #cfc8b8;}
+  .pins .pin.on{background:var(--curry);border-color:var(--curry);}
+  .keys{display:grid;grid-template-columns:repeat(3,74px);gap:18px;margin-top:24px;}
+  .keys .key{width:74px;height:74px;border-radius:50%;background:var(--card);border:1px solid var(--line);font-size:27px;font-weight:500;color:var(--ink);}
+  .keys .key:active{background:var(--curry-wash);}
+  .keys .keyb{background:none;border:none;font-size:14px;color:var(--graphite);}
+
   /* toast */
   .toast{position:absolute;left:50%;bottom:calc(96px + var(--safe-b));transform:translateX(-50%) translateY(10px);background:var(--ink);color:var(--paper);font-size:13px;padding:10px 18px;border-radius:999px;opacity:0;transition:.25s;pointer-events:none;z-index:40;white-space:nowrap;}
   .toast.on{opacity:1;transform:translateX(-50%) translateY(0);}
@@ -190,6 +205,22 @@
     <div class="field"><label>Anon Public Key</label><input id="su-key" placeholder="貼上 anon public key" autocapitalize="off" autocorrect="off"></div>
     <button class="cta" id="su-save" style="margin-top:26px">儲存並開始</button>
     <div class="hint" id="su-msg" style="text-align:center"></div>
+  </div>
+</section>
+
+<!-- ===== LOCK（開 App 密碼）===== -->
+<section id="v-lock" class="view">
+  <div class="lockwrap">
+    <div class="lockmark"><span></span></div>
+    <div class="lockt">小助理</div>
+    <div class="locks" id="lock-msg">輸入密碼</div>
+    <div class="pins" id="lock-pins"><span class="pin"></span><span class="pin"></span><span class="pin"></span><span class="pin"></span></div>
+    <div class="keys" id="lock-keys">
+      <button class="key">1</button><button class="key">2</button><button class="key">3</button>
+      <button class="key">4</button><button class="key">5</button><button class="key">6</button>
+      <button class="key">7</button><button class="key">8</button><button class="key">9</button>
+      <button class="key keyb" data-k="hint">提示</button><button class="key">0</button><button class="key keyb" data-k="del">刪除</button>
+    </div>
   </div>
 </section>
 
@@ -212,7 +243,6 @@
       <button class="tile" onclick="go('purchases')"><svg viewBox="0 0 24 24"><path d="M6.5 9h11l-1 10.5h-9L6.5 9z"/><path d="M9.2 9V7.2a2.8 2.8 0 0 1 5.6 0V9"/></svg><span><span class="tl">採購清單</span><span class="tc" id="t-buy">—</span></span></button>
       <button class="tile" onclick="go('ideas')"><svg viewBox="0 0 24 24"><path d="M12 3.5a5 5 0 0 0-3 9c.6.5 1 1.2 1 2h4c0-.8.4-1.5 1-2a5 5 0 0 0-3-9z"/><path d="M10 18h4"/><path d="M10.6 20.3h2.8"/></svg><span><span class="tl">小點子</span><span class="tc" id="t-idea">—</span></span></button>
     </div>
-    <button class="dump" onclick="go('dump')"><span><span class="dt">清空腦袋</span><span class="ds">倒低亂嘅嘢，自動幫你分類</span></span><span class="da">＋</span></button>
   </div>
 </section>
 
@@ -304,8 +334,11 @@
   <div class="nav"><button class="back" onclick="go('home')">‹ 首頁</button><span class="ttl">設定</span><span class="sp"></span></div>
   <div class="scroll">
     <div class="field"><label>已連接的雲端</label><div style="margin-top:8px;font-size:14px;color:var(--graphite);word-break:break-all" id="set-url">—</div></div>
+    <div class="field" style="margin-top:6px"><label>開 App 密碼</label></div>
+    <button onclick="changePin()" style="width:100%;margin-top:10px;background:var(--ink);color:var(--paper);border:none;border-radius:13px;padding:14px;font-size:15px;font-weight:600">更改開 App 密碼</button>
+    <button onclick="lockNow()" style="width:100%;margin-top:10px;background:none;border:1px solid var(--line);border-radius:13px;padding:12px;font-size:14px;color:var(--ink)">立即上鎖</button>
     <div class="hint" style="margin-top:18px;line-height:1.8">所有資料都存喺你自己的 Supabase 雲端，換手機唔會無。<br>呢部機嘅連接資料存喺機內，換機只需再輸入一次。</div>
-    <button class="del" style="margin-top:30px" onclick="resetConfig()">更改雲端連接</button>
+    <button class="del" style="margin-top:24px" onclick="resetConfig()">更改雲端連接</button>
   </div>
 </section>
 
@@ -348,8 +381,46 @@ function startApp(){
   db = window.supabase.createClient(localStorage.getItem('sb_url'), localStorage.getItem('sb_key'));
   finMonth = todayStr().slice(0,7);
   $('#home-date').textContent = weekdayName()+' · '+fmtDate(todayStr());
-  go('home');
-  loadIdeaCats();
+  ensureUnlock();
+}
+function afterUnlock(){ go('home'); loadIdeaCats(); }
+
+/* ---------- 開 App 密碼鎖 ---------- */
+let lockHash='', lockHint='', lockPin='';
+async function sha256(s){const b=await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');}
+async function ensureUnlock(){
+  if(sessionStorage.getItem('unlocked')==='1'){ afterUnlock(); return; }
+  try{ const {data}=await db.from('app_settings').select('pin_hash,pin_hint').eq('id','main').maybeSingle();
+       lockHash=(data&&data.pin_hash)||''; lockHint=(data&&data.pin_hint)||''; }catch(e){ lockHash=''; }
+  if(!lockHash){ lockHash=await sha256('1713'); lockHint='4 位數字';
+    try{ await db.from('app_settings').upsert({id:'main',pin_hash:lockHash,pin_hint:lockHint}); }catch(e){} }
+  showLock();
+}
+function showLock(){ document.querySelectorAll('.view').forEach(x=>x.classList.remove('on')); $('#v-lock').classList.add('on'); lockPin=''; renderPins(); $('#lock-msg').textContent='輸入密碼'; $('#lock-msg').classList.remove('err'); }
+function renderPins(){ document.querySelectorAll('#lock-pins .pin').forEach((p,i)=>p.classList.toggle('on', i<lockPin.length)); }
+async function lockKey(k){
+  const msg=$('#lock-msg'); msg.classList.remove('err');
+  if(k==='del'){ lockPin=lockPin.slice(0,-1); renderPins(); return; }
+  if(k==='hint'){ msg.textContent='提示：'+(lockHint||'（未設定）'); return; }
+  if(!/^\d$/.test(k)) return;
+  if(lockPin.length>=4) return;
+  lockPin+=k; renderPins();
+  if(lockPin.length===4){
+    const h=await sha256(lockPin);
+    if(h===lockHash){ sessionStorage.setItem('unlocked','1'); afterUnlock(); }
+    else{ msg.textContent='密碼唔啱，再試一次'; msg.classList.add('err'); lockPin=''; setTimeout(renderPins,140); }
+  }
+}
+function lockNow(){ sessionStorage.removeItem('unlocked'); showLock(); }
+async function changePin(){
+  const cur=prompt('輸入而家嘅開 App 密碼'); if(cur===null) return;
+  if(await sha256(cur.trim())!==lockHash){ alert('現有密碼唔啱'); return; }
+  const np=prompt('輸入新嘅 4 位數字密碼'); if(np===null) return;
+  if(!/^\d{4}$/.test(np.trim())){ alert('要 4 位數字'); return; }
+  const hint=prompt('密碼提示（提你自己記，可留空）')||'';
+  const nh=await sha256(np.trim());
+  try{ await db.from('app_settings').upsert({id:'main',pin_hash:nh,pin_hint:hint,updated_at:new Date().toISOString()}); lockHash=nh; lockHint=hint; toast('密碼已更改'); }
+  catch(e){ toast('儲存失敗，請確認已建立 app_settings 表'); }
 }
 function resetConfig(){ if(confirm('更改雲端連接？資料唔會刪除，只係重新輸入連接。')){localStorage.removeItem('sb_url');localStorage.removeItem('sb_key');location.reload();} }
 window.addEventListener('load', ()=>{
@@ -362,6 +433,7 @@ window.addEventListener('load', ()=>{
     if(!/^https:\/\/.+\.supabase\.co$/.test(u)){$('#su-msg').textContent='Project URL 格式好似唔啱，應該係 https://xxxx.supabase.co';return;}
     localStorage.setItem('sb_url',u);localStorage.setItem('sb_key',k);startApp();
   };
+  document.querySelectorAll('#lock-keys .key').forEach(b=>b.addEventListener('click',()=>lockKey(b.dataset.k||b.textContent.trim())));
   if(localStorage.getItem('sb_url')&&localStorage.getItem('sb_key')){startApp();}
   else{$('#v-setup').classList.add('on');}
 });
