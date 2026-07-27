@@ -505,12 +505,8 @@
     <div class="dpsl"><span>進行中小目標</span><button class="more" onclick="go('goals')">全部 ›</button></div>
     <div id="home-goals"></div>
 
-    <div class="dpsl"><span>捷徑</span></div>
-    <div class="dphub">
-      <button class="dpmini" onclick="go('finance')"><div class="mt">收支</div><div class="mv" id="hm-fin">$0</div></button>
-      <button class="dpmini" onclick="go('todos')"><div class="mt">待辦</div><div class="mv" id="hm-todo">0 項</div></button>
-      <button class="dpmini" onclick="go('purchases')"><div class="mt">採購</div><div class="mv" id="hm-buy">0 項</div></button>
-    </div>
+    <div class="dpsl"><span>進行中小計劃</span><button class="more" onclick="go('plans')">全部 ›</button></div>
+    <div id="home-plans"></div>
 
     <div class="hubsec" style="--c:#FF9F0A;margin-top:24px">人生</div>
     <div class="hubgrid">
@@ -653,6 +649,7 @@
 <section id="v-maint" class="view">
   <div class="dpnav"><button class="bk" onclick="go('home')">‹ 首頁</button><span class="nt">資產保養</span><span class="sp"></span></div>
   <div class="scroll">
+    <div style="display:flex;align-items:center;gap:8px;margin:12px 2px 6px"><span style="font-size:12px;color:#8a8a8e">排序</span><div class="dptabs" style="margin:0"><button class="dptab" id="msort-created" onclick="setMaintSort('created')">輸入日期</button><button class="dptab" id="msort-due" onclick="setMaintSort('due')">到期日</button></div></div>
     <div id="maint-list"></div>
   </div>
   <button class="fab" onclick="openAsset()">＋ 新增資產</button>
@@ -988,8 +985,6 @@ async function loadHome(){
   const tobuy=(pu||[]).filter(x=>x.status==='to_buy').length;
   $('#hq-claim').textContent=money(unpaidTotal);
   $('#hq-todo').textContent=pendTodo;
-  $('#hm-todo').textContent=pendTodo+' 項';
-  $('#hm-buy').textContent=tobuy+' 項';
   // 本月收支
   const m=todayStr().slice(0,7);
   let tx=[];
@@ -999,10 +994,26 @@ async function loadHome(){
   const exp=mtx.filter(x=>x.type==='expense').reduce((a,b)=>a+(+b.amount||0),0);
   const net=inc-exp;
   $('#hq-net').textContent=money(net);
-  $('#hm-fin').textContent=money(net);
 
-  await Promise.all([loadHomeVerse(), loadHomeMood(), loadHomeRel(), loadHomeGoals()]);
+  await Promise.all([loadHomeVerse(), loadHomeMood(), loadHomeRel(), loadHomeGoals(), loadHomePlans()]);
   await loadHomeDue();
+}
+async function loadHomePlans(){
+  try{
+    const {data:plans}=await db.from('plans').select('*').eq('status','active').order('created_at',{ascending:false}).limit(3);
+    const host=$('#home-plans');
+    if(!plans||!plans.length){ host.innerHTML='<div class="empty" style="padding:16px 4px;text-align:left;color:#a59f90;font-size:13px">未有進行中計劃。撳「全部」新增一個。</div>'; return; }
+    const ids=plans.map(p=>p.id);
+    const [{data:kpis},{data:mils},{data:tds}]=await Promise.all([
+      db.from('plan_kpis').select('plan_id,target_value,current_value').in('plan_id',ids),
+      db.from('plan_milestones').select('plan_id,done').in('plan_id',ids),
+      db.from('plan_todos').select('plan_id,done').in('plan_id',ids)
+    ]);
+    host.innerHTML=plans.map(p=>{
+      const pct=planProgress(p.id,kpis,mils,tds);
+      return `<button class="goalcard" onclick="openPlanDetail('${p.id}')"><div class="gtop"><span class="gname">${esc(p.name)}</span><span class="gp" style="color:#14B8A6">${pct}%</span></div><div class="dptrack thin"><div class="dpfill" style="width:${pct}%;background:#14B8A6"></div></div><div class="gsub">${p.target_date?('目標 '+fmtDateFull(p.target_date)):(p.description?esc(p.description):'未設目標日')}</div></button>`;
+    }).join('');
+  }catch(e){ $('#home-plans').innerHTML=''; }
 }
 
 /* ---------- 首頁：情緒 / 關係 概覽 ---------- */
@@ -1802,7 +1813,7 @@ function esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;'
 let curAssetId=null, curAsset=null, assetPhotos=[], assetItems=[], assetRepairs=[];
 
 function daysSince(dateStr){ if(!dateStr) return null; const d=new Date(dateStr.slice(0,10)+'T00:00:00'); const t=new Date(todayStr()+'T00:00:00'); return Math.round((t-d)/86400000); }
-function dueInfo(dateStr,win){ win=win||14; const n=daysSince(dateStr); if(n===null) return null; const remain=-n;
+function dueInfo(dateStr,win){ win=win||30; const n=daysSince(dateStr); if(n===null) return null; const remain=-n;
   if(remain<0) return {level:'red',label:'已到期',col:'#FF3B30',bg:'#FFE7E5'};
   if(remain<=win) return {level:'yellow',label:(remain===0?'今日到期':remain+' 日內'),col:'#B77500',bg:'#FFF1DB'};
   return {level:'green'}; }
@@ -1813,18 +1824,39 @@ function assetStatsHTML(a){
   const cell=(k,v,ac)=>`<div style="flex:1;background:${ac?'#E7F3FF':'#F3F4F6'};border-radius:10px;padding:11px 6px;text-align:center;min-width:0"><div style="font-size:11px;color:${ac?'#2E9BFF':'#8a8a8e'}">${k}</div><div style="font-size:15px;font-weight:800;margin-top:3px;color:${ac?'#2E9BFF':'var(--dp-ink)'};font-variant-numeric:tabular-nums">${v}</div></div>`;
   return `<div style="display:flex;gap:8px">${cell('購買價',price!=null?money(price):'—')}${cell('已持有',held!=null?held+' 日':'—')}${cell('每日成本',daily!=null?money(Math.round(daily)):'—',true)}</div>`;
 }
+/* ---- 保養共用：週期 / 到期類型 / 提醒欄位 ---- */
+const MAINT_CYCLES=[['每月',30],['每季',91],['每半年',182],['每年',365],['每2年',730],['每5年',1825],['每10年',3650],['唔設','']];
+function cycleLabelFromDays(d){ if(!d) return ''; const f=MAINT_CYCLES.find(c=>String(c[1])===String(d)); return f?f[0]:('每 '+d+' 日'); }
+function pickChip(rowId,hidId,val){ $('#'+hidId).value=val; document.querySelectorAll('#'+rowId+' .dptab').forEach(b=>b.classList.toggle('on', b.dataset.d===String(val))); }
+function cycleChips(rowId,hidId,cur){ const c=(cur==null||cur==='')?'':String(cur); return `<div class="dptabs" id="${rowId}">`+MAINT_CYCLES.map(([lab,d])=>`<button type="button" class="dptab ${String(d)===c?'on':''}" data-d="${d}" onclick="pickChip('${rowId}','${hidId}','${d}')">${lab}</button>`).join('')+`</div><input type="hidden" id="${hidId}" value="${c}">`; }
+function dtypeChips(rowId,hidId,cur){ cur=cur||'due'; return `<div class="dptabs" id="${rowId}"><button type="button" class="dptab ${cur==='due'?'on':''}" data-d="due" onclick="pickChip('${rowId}','${hidId}','due')">到期日</button><button type="button" class="dptab ${cur==='renew'?'on':''}" data-d="renew" onclick="pickChip('${rowId}','${hidId}','renew')">續期日</button></div><input type="hidden" id="${hidId}" value="${cur}">`; }
+function kindChips(rowId,hidId,cur){ cur=cur||'maintain'; return `<div class="dptabs" id="${rowId}"><button type="button" class="dptab ${cur==='maintain'?'on':''}" data-d="maintain" onclick="pickChip('${rowId}','${hidId}','maintain')">保養</button><button type="button" class="dptab ${cur==='consumable'?'on':''}" data-d="consumable" onclick="pickChip('${rowId}','${hidId}','consumable')">耗材</button></div><input type="hidden" id="${hidId}" value="${cur}">`; }
+function reminderFields(pfx,it){ it=it||{}; return `
+    <div class="dpfield"><label>提醒名稱</label><input id="${pfx}-name" value="${esc(it.name||'')}" placeholder="例如 換機油 / 換濾芯"></div>
+    <div class="dpfield"><label>類型</label>${kindChips(pfx+'-kind-row',pfx+'-kind',it.kind||'maintain')}</div>
+    <div class="dpfield"><label>幾耐處理一次</label>${cycleChips(pfx+'-cyc-row',pfx+'-cyc',it.cycle_days)}</div>
+    <div class="dpfield"><label>日期係邊種</label>${dtypeChips(pfx+'-dt-row',pfx+'-dt',it.due_type||'due')}</div>
+    <div class="dpfield"><label>日期（到期／續期）</label><input id="${pfx}-date" type="date" value="${it.next_due?it.next_due.slice(0,10):''}"></div>`; }
 
+let maintSort=localStorage.getItem('maintSort')||'created';
+function setMaintSort(s){ maintSort=s; localStorage.setItem('maintSort',s); loadMaint(); }
+function syncMaintSortUI(){ $('#msort-created')&&$('#msort-created').classList.toggle('on',maintSort==='created'); $('#msort-due')&&$('#msort-due').classList.toggle('on',maintSort==='due'); }
 async function loadMaint(){
+  syncMaintSortUI();
   const L=$('#maint-list');
   try{
     const [{data:assets},{data:items}]=await Promise.all([
-      db.from('maint_assets').select('*').order('created_at',{ascending:false}),
+      db.from('maint_assets').select('*'),
       db.from('maint_items').select('asset_id,next_due')
     ]);
     if(!assets||!assets.length){ L.innerHTML='<div class="empty">未有資產。撳右下角「＋ 新增資產」開始。</div>'; return; }
-    const byAsset={};
-    (items||[]).forEach(it=>{ const info=dueInfo(it.next_due); if(info&&info.level!=='green'){ const cur=byAsset[it.asset_id]; if(!cur||(info.level==='red'&&cur.level!=='red')) byAsset[it.asset_id]=info; } });
-    L.innerHTML=assets.map(a=>{
+    const byAsset={}, minDue={};
+    (items||[]).forEach(it=>{ const info=dueInfo(it.next_due); if(info&&info.level!=='green'){ const cur=byAsset[it.asset_id]; if(!cur||(info.level==='red'&&cur.level!=='red')) byAsset[it.asset_id]=info; }
+      if(it.next_due){ const t=new Date(it.next_due.slice(0,10)).getTime(); if(minDue[it.asset_id]==null||t<minDue[it.asset_id]) minDue[it.asset_id]=t; } });
+    let list=assets.slice();
+    if(maintSort==='due'){ list.sort((a,b)=>(minDue[a.id]??Infinity)-(minDue[b.id]??Infinity)); }
+    else { list.sort((a,b)=> new Date(b.created_at).getTime()-new Date(a.created_at).getTime()); }
+    L.innerHTML=list.map(a=>{
       const held=a.purchase_date?Math.max(1,daysSince(a.purchase_date)):null;
       const price=(a.purchase_price!=null&&a.purchase_price!=='')?Number(a.purchase_price):null;
       const daily=(price!=null&&held)?money(Math.round(price/held)):null;
@@ -1843,14 +1875,23 @@ function openAsset(){
     <div class="dpfield"><label>分類（可留空）</label><input id="a-cat" placeholder="例如 電器 / 車"></div>
     <div class="dpfield"><label>購買價（可留空）</label><input id="a-price" type="number" inputmode="decimal" placeholder="40000"></div>
     <div class="dpfield"><label>購買日期（可留空）</label><input id="a-date" type="date"></div>
-    <div class="dpfield"><label>備註（可留空）</label><textarea class="dpta" id="a-notes"></textarea></div>`;
+    <div class="dpfield"><label>備註（可留空）</label><textarea class="dpta" id="a-notes"></textarea></div>
+    <div class="dpsl" style="margin:8px 0 2px"><span>保養提醒（可選，即刻設定，唔使再入去）</span></div>
+    ${reminderFields('ar',{})}`;
   $('#sheet-bg').classList.add('on'); requestAnimationFrame(()=>$('#sheet').classList.add('on'));
 }
 async function saveAsset(){
   const name=$('#a-name').value.trim(); if(!name){ toast('請輸入資產名稱'); return; }
   const rec={name, category:$('#a-cat').value.trim()||null, purchase_price:$('#a-price').value?Number($('#a-price').value):null, purchase_date:$('#a-date').value||null, notes:$('#a-notes').value.trim()||null};
-  try{ await db.from('maint_assets').insert(rec); closeSheet(); toast('已新增'); loadMaint(); }
-  catch(e){ toast('儲存失敗，請確認已建立 maint_assets 表'); }
+  try{
+    const {data:ins}=await db.from('maint_assets').insert(rec).select().maybeSingle();
+    const rName=$('#ar-name')?$('#ar-name').value.trim():''; const rDate=$('#ar-date')?$('#ar-date').value:'';
+    if(ins&&(rName||rDate)){
+      const cyc=$('#ar-cyc').value; const dt=$('#ar-dt').value||'due';
+      await db.from('maint_items').insert({asset_id:ins.id, name:rName||(dt==='renew'?'續期':'保養'), kind:$('#ar-kind').value||'maintain', due_type:dt, next_due:rDate||null, cycle_days:cyc?parseInt(cyc,10):null});
+    }
+    closeSheet(); toast('已新增'); loadMaint(); loadHomeDue();
+  }catch(e){ toast('儲存失敗，請確認已建立 maint_assets 表'); }
 }
 async function openMaintItemDetail(id){
   curAssetId=id; go('maintItem');
@@ -1939,7 +1980,10 @@ async function loadAssetItems(){
     L.innerHTML=assetItems.map(it=>{
       const info=dueInfo(it.next_due);
       const badge=it.next_due?(info&&info.level!=='green'?`<span style="font-size:11px;background:${info.bg};color:${info.col};padding:3px 8px;border-radius:6px;white-space:nowrap">${fmtDate(it.next_due)} · ${info.label}</span>`:`<span class="t2">${fmtDate(it.next_due)}</span>`):'';
-      return `<div class="dprow"><div class="m"><div class="t1">${esc(it.name)}</div><div class="t2">${it.kind==='consumable'?'耗材':'保養'}${it.cycle_days?(' · 每 '+it.cycle_days+' 日'):''}</div></div><div style="display:flex;gap:6px;align-items:center;flex-shrink:0">${badge}<button class="minibtn" onclick="markItemDone('${it.id}')">做咗</button><button class="minibtn" onclick="openReminder('${it.id}')">✎</button></div></div>`;
+      const dtLabel=it.due_type==='renew'?'續期日':'到期日';
+      const cycLabel=cycleLabelFromDays(it.cycle_days);
+      const meta=[it.kind==='consumable'?'耗材':'保養', cycLabel||null, it.next_due?dtLabel:null].filter(Boolean).join(' · ');
+      return `<div class="dprow"><div class="m"><div class="t1">${esc(it.name)}</div><div class="t2">${meta}</div></div><div style="display:flex;gap:6px;align-items:center;flex-shrink:0">${badge}<button class="minibtn" onclick="markItemDone('${it.id}')">做咗</button><button class="minibtn" onclick="openReminder('${it.id}')">✎</button></div></div>`;
     }).join('');
   }catch(e){ L.innerHTML='<div class="empty" style="padding:14px 4px;text-align:left">未能載入提醒。</div>'; }
 }
@@ -1948,25 +1992,21 @@ function openReminder(id){
   const build=(it)=>{ it=it||{kind:'maintain'};
     $('#sheet').innerHTML=`<div class="grab"></div>
       <div class="sh"><button class="c" onclick="closeSheet()">取消</button><span class="t">${edit?'編輯提醒':'新增保養／耗材'}</span><button class="s" onclick="saveReminder(${edit?`'${id}'`:'null'})">儲存</button></div>
-      <div class="dpfield"><label>名稱</label><input id="mi-name" value="${esc(it.name||'')}" placeholder="例如 換機油 / 換濾芯"></div>
-      <input type="hidden" id="mi-kind" value="${it.kind||'maintain'}">
-      <div class="dpfield"><label>類型</label><div class="dptabs" id="mi-kind-row"><button class="dptab ${(it.kind||'maintain')==='maintain'?'on':''}" data-k="maintain" onclick="pickKind('maintain')">保養</button><button class="dptab ${it.kind==='consumable'?'on':''}" data-k="consumable" onclick="pickKind('consumable')">耗材</button></div></div>
-      <div class="dpfield"><label>下次到期日</label><input id="mi-due" type="date" value="${it.next_due?it.next_due.slice(0,10):''}"></div>
-      <div class="dpfield"><label>週期（日數，可留空）</label><input id="mi-cycle" type="number" inputmode="numeric" value="${it.cycle_days||''}" placeholder="填咗撳「做咗」會自動順延"></div>
+      ${reminderFields('mi',it)}
       <div class="dpfield"><label>備註（可留空）</label><textarea class="dpta" id="mi-notes">${esc(it.notes||'')}</textarea></div>
       ${edit?`<button class="del" onclick="deleteReminder('${id}')">刪除</button>`:''}`;
     $('#sheet-bg').classList.add('on'); requestAnimationFrame(()=>$('#sheet').classList.add('on'));
   };
   if(edit){ db.from('maint_items').select('*').eq('id',id).maybeSingle().then(({data})=>build(data)); } else build(null);
 }
-function pickKind(k){ $('#mi-kind').value=k; document.querySelectorAll('#mi-kind-row .dptab').forEach(b=>b.classList.toggle('on', b.dataset.k===k)); }
 async function saveReminder(id){
   const name=$('#mi-name').value.trim(); if(!name){ toast('請輸入名稱'); return; }
-  const rec={name, kind:$('#mi-kind').value||'maintain', next_due:$('#mi-due').value||null, cycle_days:$('#mi-cycle').value?parseInt($('#mi-cycle').value,10):null, notes:$('#mi-notes').value.trim()||null};
+  const cyc=$('#mi-cyc').value;
+  const rec={name, kind:$('#mi-kind').value||'maintain', due_type:$('#mi-dt').value||'due', next_due:$('#mi-date').value||null, cycle_days:cyc?parseInt(cyc,10):null, notes:$('#mi-notes').value.trim()||null};
   try{
     if(id){ await db.from('maint_items').update(rec).eq('id',id); }
     else { rec.asset_id=curAssetId; await db.from('maint_items').insert(rec); }
-    closeSheet(); toast('已儲存'); loadAssetItems();
+    closeSheet(); toast('已儲存'); loadAssetItems(); loadHomeDue();
   }catch(e){ toast('儲存失敗，請確認已建立 maint_items 表'); }
 }
 async function deleteReminder(id){ if(!confirm('刪除呢個提醒？'))return; try{ await db.from('maint_items').delete().eq('id',id); closeSheet(); toast('已刪除'); loadAssetItems(); }catch(e){ toast('刪除失敗'); } }
