@@ -193,7 +193,7 @@
     --dp-emo:#FF9F0A; --dp-rel:#FF375F; --dp-grow:#3B82F6; --dp-goal:#8B5CF6; --dp-plan:#14B8A6;
     --dp-green:#34C759; --dp-yellow:#F5A300; --dp-red:#FF3B30;
   }
-  #v-home,#v-hub,#v-mood,#v-relationships,#v-relationship,#v-goals,#v-goal,#v-achievements,#v-celebrate,#v-verse,#v-maint,#v-maintItem,#v-plans,#v-plan,#v-assets,#v-insure,#v-insurePolicy,#v-grow,#v-growItem,#v-vault{background:#fff;color:var(--dp-ink);}
+  #v-home,#v-hub,#v-mood,#v-relationships,#v-relationship,#v-goals,#v-goal,#v-achievements,#v-celebrate,#v-verse,#v-maint,#v-maintItem,#v-plans,#v-plan,#v-assets,#v-insure,#v-insurePolicy,#v-grow,#v-growItem,#v-vault,#v-habits{background:#fff;color:var(--dp-ink);}
   #v-home .scroll,#v-hub .scroll,#v-mood .scroll,#v-relationships .scroll,#v-relationship .scroll,#v-goals .scroll,#v-goal .scroll,#v-achievements .scroll,#v-verse .scroll,#v-maint .scroll,#v-maintItem .scroll,#v-plans .scroll,#v-plan .scroll,#v-assets .scroll,#v-insure .scroll,#v-insurePolicy .scroll,#v-grow .scroll,#v-growItem .scroll,#v-vault .scroll{padding:0 18px calc(110px + var(--safe-b));}
   .ma-photos{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;}
   .ma-ph{position:relative;width:72px;height:72px;border-radius:10px;overflow:hidden;border:0.5px solid #e2e4e8;background:#F3F4F6;padding:0;flex:0 0 auto;}
@@ -201,6 +201,16 @@
   .ma-ph .rm{position:absolute;top:2px;right:2px;width:20px;height:20px;border-radius:50%;border:none;background:rgba(0,0,0,.55);color:#fff;font-size:14px;line-height:20px;padding:0;}
   .ma-ph.add{display:flex;align-items:center;justify-content:center;font-size:26px;color:#2E9BFF;border:1px dashed #c8cace;background:#fff;}
   .minibtn{font-size:12px;padding:4px 10px;border-radius:8px;border:0.5px solid #d7d4c8;background:#fff;color:var(--dp-ink);}
+  #v-habits .scroll{padding:0 18px calc(110px + var(--safe-b));}
+  .hcard{border:1px solid var(--dp-line);border-radius:14px;padding:12px 13px;margin-bottom:10px;}
+  .hhd{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;}
+  .hname{font-size:15px;font-weight:800;color:var(--dp-ink);}
+  .hedit{background:none;border:none;color:#8a8a8e;font-size:14px;}
+  .hgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+  .hcell{aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;font-size:11px;border-radius:6px;font-variant-numeric:tabular-nums;border:none;padding:0;}
+  .hcell.empty{background:none;}
+  .hfoot{display:flex;align-items:center;justify-content:space-between;margin-top:10px;font-size:13px;font-weight:800;color:var(--dp-ink);}
+  .hdot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:middle;}
   .dpnav{display:flex;align-items:center;justify-content:space-between;padding:calc(12px + var(--safe-t)) 2px 4px;}
   .dpnav .bk{font-size:15px;color:#2E7CF6;font-weight:500;background:none;border:none;}
   .dpnav .nt{font-size:16px;font-weight:800;color:var(--dp-ink);}
@@ -357,6 +367,7 @@
 <linearGradient id="ic_grow_s" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFE07A"/><stop offset="1" stop-color="#F5B301"/></linearGradient>
 <radialGradient id="ic_goal" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#B79CFF"/><stop offset="1" stop-color="#7C4DFF"/></radialGradient>
 <linearGradient id="ic_plan" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#43E4CE"/><stop offset="1" stop-color="#0EA5A0"/></linearGradient>
+<linearGradient id="ic_habit" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5CE08A"/><stop offset="1" stop-color="#22B34E"/></linearGradient>
 <linearGradient id="ic_ach" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE07A"/><stop offset="1" stop-color="#E0A31E"/></linearGradient>
 <linearGradient id="ic_money" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5FE68A"/><stop offset="1" stop-color="#16A34A"/></linearGradient>
 <linearGradient id="ic_coin" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFE07A"/><stop offset="1" stop-color="#F5B301"/></linearGradient>
@@ -389,6 +400,7 @@
 <symbol id="i-plan" viewBox="0 0 100 100"><g filter="url(#dpSH)"><rect x="30" y="24" width="6" height="56" rx="3" fill="#0d857f"/><path d="M36 27 h30 l-8 9 8 9 h-30 z" fill="url(#ic_plan)"/>
 <ellipse cx="47" cy="31" rx="9" ry="3.5" fill="#fff" opacity=".4"/><circle cx="33" cy="24" r="5" fill="#12b3a6"/></g></symbol>
 
+<symbol id="i-habit" viewBox="0 0 100 100"><g filter="url(#dpSH)"><rect x="24" y="30" width="52" height="46" rx="10" fill="url(#ic_habit)"/><rect x="24" y="30" width="52" height="13" rx="10" fill="#1F9E48"/><rect x="36" y="24" width="6" height="12" rx="3" fill="#1F9E48"/><rect x="58" y="24" width="6" height="12" rx="3" fill="#1F9E48"/><path d="M39 58 l7 7 15-16" stroke="#fff" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g></symbol>
 <symbol id="i-ach" viewBox="0 0 100 100"><g filter="url(#dpSH)"><path d="M34 26 h32 v10 a16 16 0 0 1 -32 0 z" fill="url(#ic_ach)"/>
 <path d="M34 28 h-8 v4 a10 10 0 0 0 10 10" fill="none" stroke="#E0A31E" stroke-width="4"/><path d="M66 28 h8 v4 a10 10 0 0 1 -10 10" fill="none" stroke="#E0A31E" stroke-width="4"/>
 <rect x="45" y="52" width="10" height="12" fill="#E0A31E"/><rect x="36" y="64" width="28" height="8" rx="3" fill="#D2941A"/>
@@ -516,6 +528,7 @@
       <button class="hubtile" onclick="go('goals')"><svg><use href="#i-goal"/></svg><div class="l">小目標</div></button>
       <button class="hubtile" onclick="go('plans')"><svg><use href="#i-plan"/></svg><div class="l">小計劃</div></button>
       <button class="hubtile" onclick="go('achievements')"><svg><use href="#i-ach"/></svg><div class="l">成就</div></button>
+      <button class="hubtile" onclick="go('habits')"><svg><use href="#i-habit"/></svg><div class="l">習慣打卡</div></button>
     </div>
     <div class="hubsec" style="--c:#14B8A6">財務</div>
     <div class="hubgrid">
@@ -697,6 +710,16 @@
     <div id="pl-todos"></div>
     <button class="dpcta" id="pl-complete" style="background:#14B8A6" onclick="completePlan()">標記為完成</button>
   </div>
+</section>
+
+<!-- ===== 習慣打卡 ===== -->
+<section id="v-habits" class="view">
+  <div class="dpnav"><button class="bk" onclick="go('home')">‹ 首頁</button><span class="nt">習慣打卡</span><span class="sp"></span></div>
+  <div class="scroll">
+    <div id="habits-month" style="font-size:13px;color:#8a8a8e;margin:12px 2px 8px"></div>
+    <div id="habits-list"></div>
+  </div>
+  <button class="fab" onclick="openHabit()">＋ 新增習慣</button>
 </section>
 
 <!-- ===== 密碼記錄（帳戶 Vault）===== -->
@@ -900,7 +923,7 @@ function go(v){document.querySelectorAll('.view').forEach(x=>x.classList.remove(
   if(v==='purchases')loadPurch(); if(v==='ideas')loadIdeas(); if(v==='finance')loadFinance();
   if(v==='mood')loadMood(); if(v==='relationships')loadRelationships();
   if(v==='goals')loadGoals(); if(v==='achievements')loadAchievements();
-  if(v==='verse')loadVersePage(); if(v==='maint')loadMaint(); if(v==='plans')loadPlans(); if(v==='assets')loadAssets(); if(v==='insure')loadInsure(); if(v==='grow')loadGrow(); if(v==='vault')loadVault();
+  if(v==='verse')loadVersePage(); if(v==='maint')loadMaint(); if(v==='plans')loadPlans(); if(v==='assets')loadAssets(); if(v==='insure')loadInsure(); if(v==='grow')loadGrow(); if(v==='vault')loadVault(); if(v==='habits')loadHabits();
   if(v==='settings')$('#set-url').textContent=sbUrl()||'—';
   document.querySelector('#v-'+v+' .scroll')?.scrollTo(0,0);
 }
@@ -2689,6 +2712,73 @@ async function saveVault(id){
   catch(e){ toast('儲存失敗，請確認已建立 vault_accounts 表'); }
 }
 async function deleteVault(id){ if(!confirm('刪除呢個記錄？'))return; try{ await db.from('vault_accounts').delete().eq('id',id); closeSheet(); toast('已刪除'); loadVault(); }catch(e){ toast('刪除失敗'); } }
+
+/* ==================== 習慣打卡 ==================== */
+const HABIT_COLORS=['#34C759','#FF9F0A','#FF375F','#3B82F6','#8B5CF6','#14B8A6','#FF6E88','#F5A300'];
+async function loadHabits(){
+  const L=$('#habits-list');
+  const now=new Date(); const y=now.getFullYear(), mo=now.getMonth();
+  $('#habits-month').textContent=y+' 年 '+(mo+1)+' 月';
+  try{
+    const {data:habits}=await db.from('habits').select('*').eq('archived',false).order('sort',{ascending:true}).order('created_at',{ascending:true});
+    if(!habits||!habits.length){ L.innerHTML='<div class="empty">未有習慣。撳右下角「＋ 新增習慣」開始建立。</div>'; return; }
+    const dim=new Date(y,mo+1,0).getDate();
+    const first=y+'-'+pad(mo+1)+'-01', last=y+'-'+pad(mo+1)+'-'+pad(dim);
+    const {data:logs}=await db.from('habit_logs').select('habit_id,date').gte('date',first).lte('date',last);
+    const byH={}; (logs||[]).forEach(l=>{ (byH[l.habit_id]=byH[l.habit_id]||new Set()).add(Number(l.date.slice(8,10))); });
+    L.innerHTML=habits.map(h=>habitCardHTML(h, byH[h.id]||new Set(), y, mo, dim)).join('');
+  }catch(e){ L.innerHTML='<div class="empty">未能載入。請先確認已建立 habits 表。</div>'; }
+}
+function habitCardHTML(h, done, y, mo, dim){
+  const col=h.color||'#34C759';
+  const today=new Date(); const isThisMonth=(today.getFullYear()===y&&today.getMonth()===mo); const todayD=today.getDate();
+  const firstWd=new Date(y,mo,1).getDay();
+  let cells='';
+  for(let i=0;i<firstWd;i++) cells+='<div class="hcell empty"></div>';
+  for(let d=1;d<=dim;d++){
+    const isDone=done.has(d), isFuture=isThisMonth&&d>todayD, isToday=isThisMonth&&d===todayD;
+    let style;
+    if(isDone) style=`background:${col};color:#fff;font-weight:800;`;
+    else if(isFuture) style='color:#c8c8cc;background:#F5F5F7;';
+    else style=`color:#6b6b70;background:#F5F5F7;${isToday?'box-shadow:inset 0 0 0 2px '+col+';':''}`;
+    const tap=isFuture?'':`onclick="toggleHabit('${h.id}','${y}-${pad(mo+1)}-${pad(d)}')"`;
+    cells+=`<button class="hcell" style="${style}" ${tap}>${d}</button>`;
+  }
+  const elapsed=isThisMonth?todayD:dim, cnt=done.size, pct=elapsed>0?Math.round(cnt/elapsed*100):0;
+  return `<div class="hcard">
+    <div class="hhd"><span class="hname">${esc(h.name)}</span><button class="hedit" onclick="openHabit('${h.id}')">✎ 編輯</button></div>
+    <div class="hgrid">${cells}</div>
+    <div class="hfoot"><span><span class="hdot" style="background:${col}"></span>${pct}%</span><span>${cnt} 次</span></div>
+  </div>`;
+}
+async function toggleHabit(id,dateStr){
+  try{
+    const {data}=await db.from('habit_logs').select('id').eq('habit_id',id).eq('date',dateStr).maybeSingle();
+    if(data){ await db.from('habit_logs').delete().eq('id',data.id); }
+    else { await db.from('habit_logs').insert({habit_id:id,date:dateStr}); }
+    loadHabits();
+  }catch(e){ toast('打卡失敗'); }
+}
+function openHabit(id){
+  const edit=typeof id==='string';
+  const build=(h)=>{ h=h||{color:'#34C759'};
+    $('#sheet').innerHTML=`<div class="grab"></div>
+      <div class="sh"><button class="c" onclick="closeSheet()">取消</button><span class="t">${edit?'編輯習慣':'新增習慣'}</span><button class="s" onclick="saveHabit(${edit?`'${id}'`:'null'})">儲存</button></div>
+      <div class="dpfield"><label>習慣名稱</label><input id="h-name" value="${esc(h.name||'')}" placeholder="例如 每天喝水 / 早晨伸展"></div>
+      <div class="dpfield"><label>顏色</label><div id="h-color-row" style="display:flex;gap:10px;flex-wrap:wrap">${HABIT_COLORS.map(c=>`<button type="button" data-c="${c}" onclick="pickHabitColor('${c}')" style="width:32px;height:32px;border-radius:50%;background:${c};border:3px solid ${((h.color||'#34C759')===c)?'#1C1B1F':'transparent'}"></button>`).join('')}</div><input type="hidden" id="h-color" value="${h.color||'#34C759'}"></div>
+      ${edit?`<button class="del" onclick="deleteHabit('${id}')">刪除習慣</button>`:''}`;
+    $('#sheet-bg').classList.add('on'); requestAnimationFrame(()=>$('#sheet').classList.add('on'));
+  };
+  if(edit){ db.from('habits').select('*').eq('id',id).maybeSingle().then(({data})=>build(data)); } else build(null);
+}
+function pickHabitColor(c){ $('#h-color').value=c; document.querySelectorAll('#h-color-row button').forEach(b=>b.style.borderColor=(b.dataset.c===c?'#1C1B1F':'transparent')); }
+async function saveHabit(id){
+  const name=$('#h-name').value.trim(); if(!name){ toast('請輸入名稱'); return; }
+  const rec={name, color:$('#h-color').value||'#34C759'};
+  try{ if(id){ await db.from('habits').update(rec).eq('id',id); } else { await db.from('habits').insert(rec); } closeSheet(); toast('已儲存'); loadHabits(); }
+  catch(e){ toast('儲存失敗，請確認已建立 habits 表'); }
+}
+async function deleteHabit(id){ if(!confirm('刪除呢個習慣？所有打卡記錄都會刪走'))return; try{ await db.from('habits').delete().eq('id',id); closeSheet(); toast('已刪除'); loadHabits(); }catch(e){ toast('刪除失敗'); } }
 </script>
 </body>
 </html>
