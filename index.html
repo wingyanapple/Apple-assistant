@@ -193,8 +193,8 @@
     --dp-emo:#FF9F0A; --dp-rel:#FF375F; --dp-grow:#3B82F6; --dp-goal:#8B5CF6; --dp-plan:#14B8A6;
     --dp-green:#34C759; --dp-yellow:#F5A300; --dp-red:#FF3B30;
   }
-  #v-home,#v-hub,#v-mood,#v-relationships,#v-relationship,#v-goals,#v-goal,#v-achievements,#v-celebrate,#v-verse,#v-maint,#v-maintItem,#v-plans,#v-plan,#v-assets,#v-insure,#v-insurePolicy,#v-grow,#v-growItem{background:#fff;color:var(--dp-ink);}
-  #v-home .scroll,#v-hub .scroll,#v-mood .scroll,#v-relationships .scroll,#v-relationship .scroll,#v-goals .scroll,#v-goal .scroll,#v-achievements .scroll,#v-verse .scroll,#v-maint .scroll,#v-maintItem .scroll,#v-plans .scroll,#v-plan .scroll,#v-assets .scroll,#v-insure .scroll,#v-insurePolicy .scroll,#v-grow .scroll,#v-growItem .scroll{padding:0 18px calc(110px + var(--safe-b));}
+  #v-home,#v-hub,#v-mood,#v-relationships,#v-relationship,#v-goals,#v-goal,#v-achievements,#v-celebrate,#v-verse,#v-maint,#v-maintItem,#v-plans,#v-plan,#v-assets,#v-insure,#v-insurePolicy,#v-grow,#v-growItem,#v-vault{background:#fff;color:var(--dp-ink);}
+  #v-home .scroll,#v-hub .scroll,#v-mood .scroll,#v-relationships .scroll,#v-relationship .scroll,#v-goals .scroll,#v-goal .scroll,#v-achievements .scroll,#v-verse .scroll,#v-maint .scroll,#v-maintItem .scroll,#v-plans .scroll,#v-plan .scroll,#v-assets .scroll,#v-insure .scroll,#v-insurePolicy .scroll,#v-grow .scroll,#v-growItem .scroll,#v-vault .scroll{padding:0 18px calc(110px + var(--safe-b));}
   .ma-photos{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;}
   .ma-ph{position:relative;width:72px;height:72px;border-radius:10px;overflow:hidden;border:0.5px solid #e2e4e8;background:#F3F4F6;padding:0;flex:0 0 auto;}
   .ma-ph img{width:100%;height:100%;object-fit:cover;display:block;}
@@ -539,7 +539,7 @@
     <div class="hubgrid">
       <button class="hubtile soon" onclick="toast('給家人的信：Phase 3 加入')"><svg><use href="#i-letter"/></svg><div class="l">給家人的信</div></button>
       <button class="hubtile soon" onclick="toast('家人入口：Phase 3 加入')"><svg><use href="#i-family"/></svg><div class="l">家人入口</div></button>
-      <button class="hubtile soon" onclick="toast('密碼記錄：Phase 3 加入')"><svg><use href="#i-vault"/></svg><div class="l">密碼記錄</div></button>
+      <button class="hubtile" onclick="go('vault')"><svg><use href="#i-vault"/></svg><div class="l">密碼記錄</div></button>
       <button class="hubtile" onclick="go('settings')"><svg><use href="#i-settings"/></svg><div class="l">設定</div></button>
     </div>
   </div>
@@ -700,6 +700,16 @@
     <div id="pl-todos"></div>
     <button class="dpcta" id="pl-complete" style="background:#14B8A6" onclick="completePlan()">標記為完成</button>
   </div>
+</section>
+
+<!-- ===== 密碼記錄（帳戶 Vault）===== -->
+<section id="v-vault" class="view">
+  <div class="dpnav"><button class="bk" onclick="go('home')">‹ 首頁</button><span class="nt">密碼記錄</span><span class="sp"></span></div>
+  <div class="scroll">
+    <div style="font-size:12px;color:#8a8a8e;margin:12px 2px 6px;line-height:1.5">呢度淨係一個記事清單。密碼建議自己打星遮蔽（例如 ab****12），App 唔會幫你還原。</div>
+    <div id="vault-list"></div>
+  </div>
+  <button class="fab" onclick="openVault()">＋ 新增</button>
 </section>
 
 <!-- ===== 自我提升：列表 ===== -->
@@ -893,7 +903,7 @@ function go(v){document.querySelectorAll('.view').forEach(x=>x.classList.remove(
   if(v==='purchases')loadPurch(); if(v==='ideas')loadIdeas(); if(v==='finance')loadFinance();
   if(v==='mood')loadMood(); if(v==='relationships')loadRelationships();
   if(v==='goals')loadGoals(); if(v==='achievements')loadAchievements();
-  if(v==='verse')loadVersePage(); if(v==='maint')loadMaint(); if(v==='plans')loadPlans(); if(v==='assets')loadAssets(); if(v==='insure')loadInsure(); if(v==='grow')loadGrow();
+  if(v==='verse')loadVersePage(); if(v==='maint')loadMaint(); if(v==='plans')loadPlans(); if(v==='assets')loadAssets(); if(v==='insure')loadInsure(); if(v==='grow')loadGrow(); if(v==='vault')loadVault();
   if(v==='settings')$('#set-url').textContent=sbUrl()||'—';
   document.querySelector('#v-'+v+' .scroll')?.scrollTo(0,0);
 }
@@ -2604,6 +2614,41 @@ async function deleteGrowPhoto(id){
   try{ if(p&&p.path){ try{ await db.storage.from('maint-photos').remove([p.path]); }catch(e){} } await db.from('growth_photos').delete().eq('id',id); loadGrowPhotos(); }
   catch(e){ toast('刪除失敗'); }
 }
+
+/* ==================== 密碼記錄（帳戶 Vault，Phase 3） ==================== */
+async function loadVault(){
+  const L=$('#vault-list');
+  try{
+    const {data}=await db.from('vault_accounts').select('*').order('created_at',{ascending:false});
+    if(!data||!data.length){ L.innerHTML='<div class="empty">未有記錄。撳右下角「＋ 新增」開始。</div>'; return; }
+    L.innerHTML=data.map(v=>{
+      const sub=[v.username?esc(v.username):null, v.url?esc(v.url):null].filter(Boolean).join(' · ');
+      return `<button class="goalcard" onclick="openVault('${v.id}')"><div class="gtop"><span class="gname">${esc(v.name)}</span></div><div class="gsub">${sub||'撳入去睇 / 編輯'}</div></button>`;
+    }).join('');
+  }catch(e){ L.innerHTML='<div class="empty">未能載入。請先確認已建立 vault_accounts 表。</div>'; }
+}
+async function openVault(id){
+  const edit=typeof id==='string';
+  const build=(v)=>{ v=v||{};
+    $('#sheet').innerHTML=`<div class="grab"></div>
+      <div class="sh"><button class="c" onclick="closeSheet()">取消</button><span class="t">${edit?'編輯記錄':'新增記錄'}</span><button class="s" onclick="saveVault(${edit?`'${id}'`:'null'})">儲存</button></div>
+      <div class="dpfield"><label>服務 / 網站</label><input id="vt-name" value="${esc(v.name||'')}" placeholder="例如 淘寶 / 銀行網銀"></div>
+      <div class="dpfield"><label>帳號 / 登入名（可留空）</label><input id="vt-user" value="${esc(v.username||'')}"></div>
+      <div class="dpfield"><label>密碼（建議自己打星遮蔽，例如 ab****12）</label><input id="vt-secret" value="${esc(v.secret||'')}"></div>
+      <div class="dpfield"><label>網址（可留空）</label><input id="vt-url" value="${esc(v.url||'')}"></div>
+      <div class="dpfield"><label>備註（可留空）</label><textarea class="dpta" id="vt-notes">${esc(v.notes||'')}</textarea></div>
+      ${edit?`<button class="del" onclick="deleteVault('${id}')">刪除記錄</button>`:''}`;
+    $('#sheet-bg').classList.add('on'); requestAnimationFrame(()=>$('#sheet').classList.add('on'));
+  };
+  if(edit){ db.from('vault_accounts').select('*').eq('id',id).maybeSingle().then(({data})=>build(data)); } else build(null);
+}
+async function saveVault(id){
+  const name=$('#vt-name').value.trim(); if(!name){ toast('請輸入服務名'); return; }
+  const rec={name, username:$('#vt-user').value.trim()||null, secret:$('#vt-secret').value.trim()||null, url:$('#vt-url').value.trim()||null, notes:$('#vt-notes').value.trim()||null};
+  try{ if(id){ await db.from('vault_accounts').update(rec).eq('id',id); } else { await db.from('vault_accounts').insert(rec); } closeSheet(); toast('已儲存'); loadVault(); }
+  catch(e){ toast('儲存失敗，請確認已建立 vault_accounts 表'); }
+}
+async function deleteVault(id){ if(!confirm('刪除呢個記錄？'))return; try{ await db.from('vault_accounts').delete().eq('id',id); closeSheet(); toast('已刪除'); loadVault(); }catch(e){ toast('刪除失敗'); } }
 </script>
 </body>
 </html>
