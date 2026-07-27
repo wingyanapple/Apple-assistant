@@ -193,8 +193,8 @@
     --dp-emo:#FF9F0A; --dp-rel:#FF375F; --dp-grow:#3B82F6; --dp-goal:#8B5CF6; --dp-plan:#14B8A6;
     --dp-green:#34C759; --dp-yellow:#F5A300; --dp-red:#FF3B30;
   }
-  #v-home,#v-hub,#v-mood,#v-relationships,#v-relationship,#v-goals,#v-goal,#v-achievements,#v-celebrate,#v-verse,#v-maint,#v-maintItem,#v-plans,#v-plan,#v-assets{background:#fff;color:var(--dp-ink);}
-  #v-home .scroll,#v-hub .scroll,#v-mood .scroll,#v-relationships .scroll,#v-relationship .scroll,#v-goals .scroll,#v-goal .scroll,#v-achievements .scroll,#v-verse .scroll,#v-maint .scroll,#v-maintItem .scroll,#v-plans .scroll,#v-plan .scroll,#v-assets .scroll{padding:0 18px calc(110px + var(--safe-b));}
+  #v-home,#v-hub,#v-mood,#v-relationships,#v-relationship,#v-goals,#v-goal,#v-achievements,#v-celebrate,#v-verse,#v-maint,#v-maintItem,#v-plans,#v-plan,#v-assets,#v-insure,#v-insurePolicy{background:#fff;color:var(--dp-ink);}
+  #v-home .scroll,#v-hub .scroll,#v-mood .scroll,#v-relationships .scroll,#v-relationship .scroll,#v-goals .scroll,#v-goal .scroll,#v-achievements .scroll,#v-verse .scroll,#v-maint .scroll,#v-maintItem .scroll,#v-plans .scroll,#v-plan .scroll,#v-assets .scroll,#v-insure .scroll,#v-insurePolicy .scroll{padding:0 18px calc(110px + var(--safe-b));}
   .ma-photos{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;}
   .ma-ph{position:relative;width:72px;height:72px;border-radius:10px;overflow:hidden;border:0.5px solid #e2e4e8;background:#F3F4F6;padding:0;flex:0 0 auto;}
   .ma-ph img{width:100%;height:100%;object-fit:cover;display:block;}
@@ -526,7 +526,7 @@
       <button class="hubtile" onclick="go('finance')"><svg><use href="#i-money"/></svg><div class="l">收支</div></button>
       <button class="hubtile" onclick="go('claims')"><svg><use href="#i-claim"/></svg><div class="l">Claim</div></button>
       <button class="hubtile" onclick="go('assets')"><svg><use href="#i-asset"/></svg><div class="l">資產</div></button>
-      <button class="hubtile soon" onclick="toast('保險：Phase 2 加入')"><svg><use href="#i-insure"/></svg><div class="l">保險</div></button>
+      <button class="hubtile" onclick="go('insure')"><svg><use href="#i-insure"/></svg><div class="l">保險</div></button>
     </div>
     <div class="hubsec" style="--c:#8B5CF6">生活</div>
     <div class="hubgrid">
@@ -702,6 +702,25 @@
   </div>
 </section>
 
+<!-- ===== 保險：保單列表 ===== -->
+<section id="v-insure" class="view">
+  <div class="dpnav"><button class="bk" onclick="go('home')">‹ 首頁</button><span class="nt">保險</span><span class="sp"></span></div>
+  <div class="scroll"><div id="insure-list"></div></div>
+  <button class="fab" onclick="openPolicy()">＋ 新增保單</button>
+</section>
+
+<!-- ===== 保險：保單詳情 ===== -->
+<section id="v-insurePolicy" class="view">
+  <div class="dpnav"><button class="bk" onclick="go('insure')">‹ 保險</button><span class="nt" id="ip-name">—</span><button class="sp" onclick="editPolicyCurrent()">編輯</button></div>
+  <div class="scroll">
+    <div class="scoreh"><div id="ip-stats"></div></div>
+    <div class="dpsl"><span>保單資料</span></div>
+    <div id="ip-info"></div>
+    <div class="dpsl"><span>保費歷史</span><button class="more" onclick="openPremium()">＋ 新增</button></div>
+    <div id="ip-premiums"></div>
+  </div>
+</section>
+
 <!-- ===== 資產管理：銀行戶口 + 資金歸屬 ===== -->
 <section id="v-assets" class="view">
   <div class="dpnav"><button class="bk" onclick="go('home')">‹ 首頁</button><span class="nt">資產</span><span class="sp"></span></div>
@@ -845,7 +864,7 @@ function go(v){document.querySelectorAll('.view').forEach(x=>x.classList.remove(
   if(v==='purchases')loadPurch(); if(v==='ideas')loadIdeas(); if(v==='finance')loadFinance();
   if(v==='mood')loadMood(); if(v==='relationships')loadRelationships();
   if(v==='goals')loadGoals(); if(v==='achievements')loadAchievements();
-  if(v==='verse')loadVersePage(); if(v==='maint')loadMaint(); if(v==='plans')loadPlans(); if(v==='assets')loadAssets();
+  if(v==='verse')loadVersePage(); if(v==='maint')loadMaint(); if(v==='plans')loadPlans(); if(v==='assets')loadAssets(); if(v==='insure')loadInsure();
   if(v==='settings')$('#set-url').textContent=sbUrl()||'—';
   document.querySelector('#v-'+v+' .scroll')?.scrollTo(0,0);
 }
@@ -1977,6 +1996,10 @@ async function loadHomeDue(){
     const {data:leases}=await db.from('leases').select('*').not('end_date','is',null);
     (leases||[]).forEach(l=>{ const info=dueInfo(l.end_date,60); if(info&&info.level!=='green'){ cards.push({lvl:info.level==='red'?0:1, days:daysSince(l.end_date), col:info.col, label:info.level==='red'?'租約已到期':info.label, title:`${l.name||'租約'} · ${l.kind==='flex'?'生約':'死約'}到期`, date:l.end_date, onclick:`openLeasesTab()`}); } });
   }catch(e){}
+  try{
+    const {data:pols}=await db.from('insurance_policies').select('*').not('renewal_date','is',null);
+    (pols||[]).forEach(p=>{ const info=dueInfo(p.renewal_date,30); if(info&&info.level!=='green'){ cards.push({lvl:info.level==='red'?0:1, days:daysSince(p.renewal_date), col:info.col, label:info.level==='red'?'續保已過':('續保 '+info.label), title:`${p.name||'保單'} · 續保`, date:p.renewal_date, onclick:`openInsurePolicy('${p.id}')`}); } });
+  }catch(e){}
   if(!cards.length) return;
   cards.sort((a,b)=>(a.lvl-b.lvl)||(b.days-a.days));
   host.innerHTML=`<div class="dpsl"><span>即將到期</span></div>`+cards.map(c=>`<button class="bar" onclick="${c.onclick}">
@@ -2314,6 +2337,128 @@ async function saveLease(id){
   catch(e){ toast('儲存失敗，請確認已建立 leases 表'); }
 }
 async function deleteLease(id){ if(!confirm('刪除呢個租約？'))return; try{ await db.from('leases').delete().eq('id',id); closeSheet(); toast('已刪除'); loadLeases(); }catch(e){ toast('刪除失敗'); } }
+
+/* ==================== 保險模組（Phase 2） ==================== */
+let curPolicyId=null, curPolicy=null;
+function cycleLabel(c){ return c==='monthly'?'月繳':c==='quarterly'?'季繳':'年繳'; }
+async function loadInsure(){
+  const L=$('#insure-list');
+  try{
+    const {data}=await db.from('insurance_policies').select('*').order('created_at',{ascending:false});
+    if(!data||!data.length){ L.innerHTML='<div class="empty">未有保單。撳右下角「＋ 新增保單」開始。</div>'; return; }
+    L.innerHTML=data.map(p=>{
+      const info=p.renewal_date?dueInfo(p.renewal_date,30):null;
+      let badge='';
+      if(info&&info.level!=='green'){ badge=`<span style="font-size:11px;background:${info.bg};color:${info.col};padding:3px 8px;border-radius:6px;white-space:nowrap">續保 ${info.level==='red'?'已過':info.label}</span>`; }
+      else if(p.renewal_date){ badge=`<span class="gp" style="color:#6366F1">${fmtDate(p.renewal_date)}</span>`; }
+      const sub=[p.category?esc(p.category):null, p.insurer?esc(p.insurer):null, p.coverage!=null?('保額 '+money(p.coverage)):null].filter(Boolean).join(' · ');
+      return `<button class="goalcard" onclick="openInsurePolicy('${p.id}')"><div class="gtop"><span class="gname">${esc(p.name)}</span>${badge}</div><div class="gsub">${sub||'未填資料'}</div></button>`;
+    }).join('');
+  }catch(e){ L.innerHTML='<div class="empty">未能載入。請先確認已建立 insurance_policies 表。</div>'; }
+}
+function policyStatsHTML(p){
+  let renew='—';
+  if(p.renewal_date){ const d=-daysSince(p.renewal_date); renew=d<0?'已過期':(d===0?'今日':d+' 日'); }
+  const cell=(k,v,ac)=>`<div style="flex:1;background:${ac?'#EEF0FE':'#F3F4F6'};border-radius:10px;padding:11px 6px;text-align:center;min-width:0"><div style="font-size:11px;color:${ac?'#6366F1':'#8a8a8e'}">${k}</div><div style="font-size:15px;font-weight:800;margin-top:3px;color:${ac?'#6366F1':'var(--dp-ink)'}">${v}</div></div>`;
+  return `<div style="display:flex;gap:8px">${cell('保額', p.coverage!=null?money(p.coverage):'—')}${cell('保費', p.premium!=null?money(p.premium):'—')}${cell('續保', renew, true)}</div>`;
+}
+function policyInfoHTML(p){
+  const ownerName=Object.fromEntries(assetOwners.map(o=>[o.id,o.name]));
+  const rows=[
+    ['保險公司', p.insurer], ['保單號碼', p.policy_no], ['類型', p.category],
+    ['受保人', p.insured], ['受益人', p.beneficiary], ['繳費週期', cycleLabel(p.premium_cycle)],
+    ['續保日', p.renewal_date?fmtDateFull(p.renewal_date):null],
+    ['資金歸屬', p.owner_id?(ownerName[p.owner_id]||null):null], ['備註', p.notes]
+  ].filter(r=>r[1]);
+  if(!rows.length) return '<div class="empty" style="padding:14px 4px;text-align:left">未填其他資料。撳右上「編輯」加。</div>';
+  return rows.map(r=>`<div class="dprow" style="border-bottom:1px solid #F1F1F4"><div class="m"><div class="t2">${r[0]}</div><div class="t1">${esc(String(r[1]))}</div></div></div>`).join('');
+}
+async function openInsurePolicy(id){
+  curPolicyId=id; go('insurePolicy');
+  await ensureOwners();
+  const {data:p}=await db.from('insurance_policies').select('*').eq('id',id).maybeSingle();
+  if(!p) return; curPolicy=p;
+  $('#ip-name').textContent=p.name;
+  $('#ip-stats').innerHTML=policyStatsHTML(p);
+  $('#ip-info').innerHTML=policyInfoHTML(p);
+  await loadPremiums();
+}
+async function openPolicy(id){
+  await ensureOwners();
+  const edit=typeof id==='string';
+  const cats=['人壽','醫療','危疾','意外','財產','車','其他'];
+  const build=(p)=>{ p=p||{category:'人壽',premium_cycle:'yearly'};
+    const cyc=p.premium_cycle||'yearly';
+    $('#sheet').innerHTML=`<div class="grab"></div>
+      <div class="sh"><button class="c" onclick="closeSheet()">取消</button><span class="t">${edit?'編輯保單':'新增保單'}</span><button class="s" onclick="savePolicy(${edit?`'${id}'`:'null'})">儲存</button></div>
+      <div class="dpfield"><label>保單名稱</label><input id="po-name" value="${esc(p.name||'')}" placeholder="例如 家庭醫療保"></div>
+      <div class="dpfield"><label>類型</label><div class="dptabs" id="po-cat-row">${cats.map(c=>`<button type="button" class="dptab ${(p.category||'人壽')===c?'on':''}" data-c="${c}" onclick="pickPoCat('${c}')">${c}</button>`).join('')}</div><input type="hidden" id="po-cat" value="${p.category||'人壽'}"></div>
+      <div class="dpfield"><label>保險公司（可留空）</label><input id="po-insurer" value="${esc(p.insurer||'')}" placeholder="例如 AIA"></div>
+      <div class="dpfield"><label>保單號碼（可留空）</label><input id="po-no" value="${esc(p.policy_no||'')}"></div>
+      <div class="dpfield"><label>受保人（可留空）</label><input id="po-insured" value="${esc(p.insured||'')}"></div>
+      <div class="dpfield"><label>受益人（可留空）</label><input id="po-benef" value="${esc(p.beneficiary||'')}"></div>
+      <div class="dpfield"><label>保額（可留空）</label><input id="po-cov" type="number" inputmode="decimal" value="${p.coverage!=null?p.coverage:''}" placeholder="1000000"></div>
+      <div class="dpfield"><label>保費（可留空）</label><input id="po-prem" type="number" inputmode="decimal" value="${p.premium!=null?p.premium:''}" placeholder="12000"></div>
+      <div class="dpfield"><label>繳費週期</label><div class="dptabs" id="po-cycle-row"><button type="button" class="dptab ${cyc==='yearly'?'on':''}" data-cy="yearly" onclick="pickPoCycle('yearly')">年繳</button><button type="button" class="dptab ${cyc==='monthly'?'on':''}" data-cy="monthly" onclick="pickPoCycle('monthly')">月繳</button><button type="button" class="dptab ${cyc==='quarterly'?'on':''}" data-cy="quarterly" onclick="pickPoCycle('quarterly')">季繳</button></div><input type="hidden" id="po-cycle" value="${cyc}"></div>
+      <div class="dpfield"><label>開始日期（可留空）</label><input id="po-start" type="date" value="${p.start_date?p.start_date.slice(0,10):''}"></div>
+      <div class="dpfield"><label>續保日期</label><input id="po-renew" type="date" value="${p.renewal_date?p.renewal_date.slice(0,10):''}"></div>
+      <div class="dpfield"><label>資金歸屬（可留空）</label>${ownerFieldHTML('po-owner-row','po-owner',p.owner_id||null)}</div>
+      <div class="dpfield"><label>備註（可留空）</label><textarea class="dpta" id="po-notes">${esc(p.notes||'')}</textarea></div>
+      ${edit?`<button class="del" onclick="deletePolicy('${id}')">刪除保單</button>`:''}`;
+    $('#sheet-bg').classList.add('on'); requestAnimationFrame(()=>$('#sheet').classList.add('on'));
+  };
+  if(edit){ db.from('insurance_policies').select('*').eq('id',id).maybeSingle().then(({data})=>build(data)); } else build(null);
+}
+function editPolicyCurrent(){ if(curPolicyId) openPolicy(curPolicyId); }
+function pickPoCat(c){ $('#po-cat').value=c; document.querySelectorAll('#po-cat-row .dptab').forEach(b=>b.classList.toggle('on', b.dataset.c===c)); }
+function pickPoCycle(c){ $('#po-cycle').value=c; document.querySelectorAll('#po-cycle-row .dptab').forEach(b=>b.classList.toggle('on', b.dataset.cy===c)); }
+function policyRecFromForm(){
+  return {name:$('#po-name').value.trim(), category:$('#po-cat').value, insurer:$('#po-insurer').value.trim()||null, policy_no:$('#po-no').value.trim()||null, insured:$('#po-insured').value.trim()||null, beneficiary:$('#po-benef').value.trim()||null, coverage:$('#po-cov').value?Number($('#po-cov').value):null, premium:$('#po-prem').value?Number($('#po-prem').value):null, premium_cycle:$('#po-cycle').value||'yearly', start_date:$('#po-start').value||null, renewal_date:$('#po-renew').value||null, owner_id:$('#po-owner').value||null, notes:$('#po-notes').value.trim()||null};
+}
+async function savePolicy(id){
+  const rec=policyRecFromForm(); if(!rec.name){ toast('請輸入保單名稱'); return; }
+  try{
+    if(id){ await db.from('insurance_policies').update(rec).eq('id',id); closeSheet(); toast('已更新'); openInsurePolicy(id); }
+    else { await db.from('insurance_policies').insert(rec); closeSheet(); toast('已新增'); loadInsure(); }
+    loadHomeDue();
+  }catch(e){ toast('儲存失敗，請確認已建立 insurance_policies 表'); }
+}
+async function deletePolicy(id){
+  if(!confirm('確定刪除呢張保單？連保費歷史都會一齊刪走'))return;
+  try{ await db.from('insurance_policies').delete().eq('id',id); closeSheet(); toast('已刪除'); go('insure'); loadHomeDue(); }catch(e){ toast('刪除失敗'); }
+}
+/* ---- 保費歷史（獨立表，唔覆蓋）---- */
+async function loadPremiums(){
+  const L=$('#ip-premiums');
+  try{
+    const {data}=await db.from('insurance_premium_history').select('*').eq('policy_id',curPolicyId).order('date',{ascending:false});
+    if(!data||!data.length){ L.innerHTML='<div class="empty" style="padding:14px 4px;text-align:left">未有保費記錄。每次交保費加一筆，舊記錄唔會被覆蓋。</div>'; return; }
+    L.innerHTML=data.map(h=>`<div class="dprow" onclick="openPremium('${h.id}')"><div class="m"><div class="t1">${h.amount!=null?money(h.amount):'—'}</div><div class="t2">${h.date?fmtDateFull(h.date):''}${h.note?(' · '+esc(h.note)):''}</div></div></div>`).join('');
+  }catch(e){ L.innerHTML='<div class="empty" style="padding:14px 4px;text-align:left">未能載入。請確認已建立 insurance_premium_history 表。</div>'; }
+}
+function openPremium(id){
+  const edit=typeof id==='string';
+  const build=(h)=>{ h=h||{};
+    $('#sheet').innerHTML=`<div class="grab"></div>
+      <div class="sh"><button class="c" onclick="closeSheet()">取消</button><span class="t">${edit?'編輯保費記錄':'新增保費記錄'}</span><button class="s" onclick="savePremium(${edit?`'${id}'`:'null'})">儲存</button></div>
+      <div class="dpfield"><label>日期</label><input id="pm-date" type="date" value="${h.date?h.date.slice(0,10):todayStr()}"></div>
+      <div class="dpfield"><label>保費金額</label><input id="pm-amt" type="number" inputmode="decimal" value="${h.amount!=null?h.amount:''}" placeholder="12000"></div>
+      <div class="dpfield"><label>備註（可留空）</label><input id="pm-note" value="${esc(h.note||'')}" placeholder="例如 2026 年續保"></div>
+      ${edit?`<button class="del" onclick="deletePremium('${id}')">刪除</button>`:''}`;
+    $('#sheet-bg').classList.add('on'); requestAnimationFrame(()=>$('#sheet').classList.add('on'));
+  };
+  if(edit){ db.from('insurance_premium_history').select('*').eq('id',id).maybeSingle().then(({data})=>build(data)); } else build(null);
+}
+async function savePremium(id){
+  const amt=$('#pm-amt').value; if(!amt){ toast('請輸入金額'); return; }
+  const rec={date:$('#pm-date').value||todayStr(), amount:Number(amt), note:$('#pm-note').value.trim()||null};
+  try{
+    if(id){ await db.from('insurance_premium_history').update(rec).eq('id',id); }
+    else { rec.policy_id=curPolicyId; await db.from('insurance_premium_history').insert(rec); }
+    closeSheet(); toast('已儲存'); loadPremiums();
+  }catch(e){ toast('儲存失敗，請確認已建立 insurance_premium_history 表'); }
+}
+async function deletePremium(id){ if(!confirm('刪除呢筆保費記錄？'))return; try{ await db.from('insurance_premium_history').delete().eq('id',id); closeSheet(); toast('已刪除'); loadPremiums(); }catch(e){ toast('刪除失敗'); } }
 </script>
 </body>
 </html>
