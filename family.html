@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="zh-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>家人入口</title>
+<style>
+  :root{--ink:#1C1B1F;--grey:#8A8A8E;--line:#ECECEF;--accent:#2E7CF6;--safe-t:env(safe-area-inset-top,0px);--safe-b:env(safe-area-inset-bottom,0px);}
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  body{background:#fff;color:var(--ink);font-family:-apple-system,"PingFang HK","PingFang TC",system-ui,sans-serif;line-height:1.55;padding:calc(20px + var(--safe-t)) 18px calc(30px + var(--safe-b));max-width:560px;margin:0 auto;}
+  h1{font-size:20px;font-weight:800;margin-bottom:4px;}
+  .sub{font-size:13px;color:var(--grey);margin-bottom:22px;}
+  .card{border:1px solid var(--line);border-radius:14px;padding:14px 15px;margin-bottom:11px;}
+  .sec{font-size:13px;font-weight:800;color:var(--ink);margin:22px 2px 10px;}
+  button{font-family:inherit;}
+  .pick{display:block;width:100%;text-align:left;border:1px solid var(--line);border-radius:13px;padding:15px 16px;margin-bottom:10px;background:#fff;font-size:16px;font-weight:600;color:var(--ink);}
+  .pick:active{background:#F5F5F7;}
+  input{width:100%;border:1px solid var(--line);border-radius:12px;padding:13px 14px;font-size:17px;outline:none;margin-top:12px;font-variant-numeric:tabular-nums;}
+  .cta{width:100%;background:var(--ink);color:#fff;border:none;border-radius:13px;padding:15px;font-size:16px;font-weight:700;margin-top:14px;}
+  .link{background:none;border:none;color:var(--accent);font-size:14px;margin-top:16px;padding:6px;}
+  .row{display:flex;justify-content:space-between;gap:10px;font-size:14px;padding:5px 0;}
+  .row .k{color:var(--grey);}
+  .row .v{font-weight:600;text-align:right;font-variant-numeric:tabular-nums;}
+  .title{font-size:15px;font-weight:800;margin-bottom:6px;}
+  .err{color:#D14343;font-size:13px;margin-top:10px;}
+  .lbody{white-space:pre-wrap;font-size:15px;line-height:1.7;margin-top:8px;}
+  .muted{color:var(--grey);font-size:13px;}
+  .hide{display:none;}
+  .bar{height:8px;border-radius:5px;background:#EDEDF1;overflow:hidden;margin-top:6px;}
+  .bar>span{display:block;height:100%;background:#14B8A6;}
+</style>
+</head>
+<body>
+<div id="app"><div class="sub">載入中…</div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SB_URL='https://xwumcrjyaglslwzmnats.supabase.co';
+const SB_KEY='sb_publishable_Q8QMMZUvN3Bdo1h9nfplMA_xSjUiRTM';
+const RECIPIENTS=[['arthur','哥哥 Arthur'],['joe','老公 Joe'],['dad','爸爸'],['mom','媽媽'],['yuen','女兒圓圓']];
+let db, curKey=null;
+const $=s=>document.querySelector(s);
+const esc=s=>(s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const money=n=>'$'+(Number(n)||0).toLocaleString('en-US');
+function fmtD(s){ if(!s) return ''; const [y,m,d]=s.slice(0,10).split('-'); return y+'年'+Number(m)+'月'+Number(d)+'日'; }
+async function sha256(s){ const b=await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)); return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join(''); }
+function recipLabel(k){ const f=RECIPIENTS.find(r=>r[0]===k); return f?f[1]:k; }
+
+function screenPick(){
+  $('#app').innerHTML=`<h1>家人入口</h1><div class="sub">請揀返你係邊位，然後輸入你嘅出生日期。</div>`+
+    RECIPIENTS.map(([k,lab])=>`<button class="pick" onclick="screenBday('${k}')">${lab}</button>`).join('');
+}
+function screenBday(k){
+  curKey=k;
+  $('#app').innerHTML=`<h1>${recipLabel(k)}</h1><div class="sub">請輸入你嘅出生日期（8 位數字，例 19900125）。</div>
+    <input id="bday" inputmode="numeric" maxlength="8" placeholder="YYYYMMDD" autofocus>
+    <button class="cta" onclick="verify()">進入</button>
+    <div id="err" class="err hide"></div>
+    <button class="link" onclick="screenPick()">‹ 揀返其他身份</button>`;
+}
+async function verify(){
+  const v=($('#bday').value||'').trim();
+  const err=$('#err');
+  if(!/^\d{8}$/.test(v)){ err.textContent='出生日期要 8 位數字，例 19900125'; err.classList.remove('hide'); return; }
+  try{
+    const {data:r}=await db.from('family_access').select('*').eq('id',curKey).maybeSingle();
+    const h=await sha256(v);
+    if(!r||!r.enabled||!r.birthday_hash){ err.textContent='呢位家人未開通，請聯絡本人。'; err.classList.remove('hide'); return; }
+    if(r.birthday_hash!==h){ err.textContent='出生日期唔啱，請再試。'; err.classList.remove('hide'); return; }
+    screenData();
+  }catch(e){ err.textContent='載入失敗，請稍後再試。'; err.classList.remove('hide'); }
+}
+
+async function screenData(){
+  $('#app').innerHTML=`<h1>${recipLabel(curKey)}，你好</h1><div class="sub">以下係唯讀資料。</div><div id="data"><div class="sub">載入中…</div></div><button class="link" onclick="location.reload()">‹ 返去登出</button>`;
+  const host=$('#data');
+  let html='';
+  try{
+    const [owners,banks,morts,leases,pols,letters]=await Promise.all([
+      db.from('asset_owners').select('*'),
+      db.from('bank_accounts').select('*'),
+      db.from('mortgages').select('*'),
+      db.from('leases').select('*'),
+      db.from('insurance_policies').select('*'),
+      db.from('family_letters').select('*')
+    ]);
+    const oName=Object.fromEntries((owners.data||[]).map(o=>[o.id,o.name]));
+
+    /* 資產 */
+    html+='<div class="sec">資產</div>';
+    const b=banks.data||[];
+    if(b.length){ b.forEach(a=>{ html+=`<div class="card"><div class="title">${esc(a.bank_name)}</div>
+      <div class="row"><span class="k">結餘</span><span class="v">${esc(a.currency||'HKD')} ${(Number(a.balance)||0).toLocaleString('en-US')}</span></div>
+      ${a.account_type?`<div class="row"><span class="k">類型</span><span class="v">${esc(a.account_type)}</span></div>`:''}
+      ${a.owner_id&&oName[a.owner_id]?`<div class="row"><span class="k">歸屬</span><span class="v">${esc(oName[a.owner_id])}</span></div>`:''}</div>`; }); }
+    (morts.data||[]).forEach(m=>{ const term=Number(m.term_months)||0; const el=m.start_date?Math.min(term,Math.max(0,monthsSince(m.start_date))):0; const rem=Math.max(0,term-el); const pct=term>0?Math.round(el/term*100):0;
+      html+=`<div class="card"><div class="title">${esc(m.name||'按揭')}（按揭）</div>
+      ${m.lender?`<div class="row"><span class="k">銀行</span><span class="v">${esc(m.lender)}</span></div>`:''}
+      ${m.monthly_payment!=null?`<div class="row"><span class="k">月供</span><span class="v">${money(m.monthly_payment)}</span></div>`:''}
+      <div class="row"><span class="k">還款進度</span><span class="v">${pct}%（剩 ${Math.floor(rem/12)} 年 ${rem%12} 個月）</span></div>
+      <div class="bar"><span style="width:${pct}%"></span></div></div>`; });
+    (leases.data||[]).forEach(l=>{ html+=`<div class="card"><div class="title">${esc(l.name||'租約')}（${l.kind==='flex'?'生約':'死約'}）</div>
+      ${l.monthly_rent!=null?`<div class="row"><span class="k">租金</span><span class="v">${money(l.monthly_rent)}</span></div>`:''}
+      ${l.end_date?`<div class="row"><span class="k">到期</span><span class="v">${fmtD(l.end_date)}</span></div>`:''}</div>`; });
+    if(!b.length&&!(morts.data||[]).length&&!(leases.data||[]).length) html+='<div class="card muted">未有資產資料。</div>';
+
+    /* 保險 */
+    html+='<div class="sec">保險</div>';
+    const p=pols.data||[];
+    if(p.length){ p.forEach(x=>{ html+=`<div class="card"><div class="title">${esc(x.name)}</div>
+      ${x.insurer?`<div class="row"><span class="k">公司</span><span class="v">${esc(x.insurer)}</span></div>`:''}
+      ${x.category?`<div class="row"><span class="k">類型</span><span class="v">${esc(x.category)}</span></div>`:''}
+      ${x.coverage!=null?`<div class="row"><span class="k">保額</span><span class="v">${money(x.coverage)}</span></div>`:''}
+      ${x.policy_no?`<div class="row"><span class="k">保單號</span><span class="v">${esc(x.policy_no)}</span></div>`:''}
+      ${x.beneficiary?`<div class="row"><span class="k">受益人</span><span class="v">${esc(x.beneficiary)}</span></div>`:''}
+      ${x.renewal_date?`<div class="row"><span class="k">續保日</span><span class="v">${fmtD(x.renewal_date)}</span></div>`:''}</div>`; }); }
+    else html+='<div class="card muted">未有保險資料。</div>';
+
+    /* 我的信 */
+    html+='<div class="sec">給我的信</div>';
+    const mine=(letters.data||[]).filter(l=>(l.recipients||'').split(',').includes(curKey));
+    if(mine.length){ mine.forEach((l,i)=>{
+      if(l.pass_hash){
+        html+=`<div class="card"><div class="title">${esc(l.title)} 🔒</div>
+        ${l.pass_hint?`<div class="muted">提示：${esc(l.pass_hint)}</div>`:''}
+        <input id="lp${i}" placeholder="輸入呢封信嘅密碼">
+        <button class="cta" style="margin-top:10px" onclick="unlock(${i})">開啟</button>
+        <div id="le${i}" class="err hide"></div><div id="lc${i}"></div></div>`;
+      } else {
+        html+=`<div class="card"><div class="title">${esc(l.title)}</div><div class="lbody">${esc(l.body||'')}</div></div>`;
+      }
+    }); window._mine=mine; }
+    else html+='<div class="card muted">未有寫俾你嘅信。</div>';
+
+    host.innerHTML=html;
+  }catch(e){ host.innerHTML='<div class="card muted">載入資料時出錯，請稍後再試。</div>'; }
+}
+function monthsSince(s){ if(!s) return 0; const d=new Date(s.slice(0,10)+'T00:00:00'); const t=new Date(); const t0=new Date(t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0')+'T00:00:00'); let m=(t0.getFullYear()-d.getFullYear())*12+(t0.getMonth()-d.getMonth()); if(t0.getDate()<d.getDate()) m--; return m; }
+async function unlock(i){
+  const l=window._mine[i]; const v=($('#lp'+i).value||'').trim(); const err=$('#le'+i);
+  if(!v){ return; }
+  const h=await sha256(v);
+  if(h===l.pass_hash){ $('#lc'+i).innerHTML=`<div class="lbody">${esc(l.body||'')}</div>`; $('#lp'+i).classList.add('hide'); err.classList.add('hide'); }
+  else { err.textContent='密碼唔啱，請再試。'; err.classList.remove('hide'); }
+}
+
+(function init(){ try{ db=window.supabase.createClient(SB_URL,SB_KEY); screenPick(); }catch(e){ $('#app').innerHTML='<div class="sub">初始化失敗。</div>'; } })();
+</script>
+</body>
+</html>
