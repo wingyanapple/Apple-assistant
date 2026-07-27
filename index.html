@@ -193,8 +193,8 @@
     --dp-emo:#FF9F0A; --dp-rel:#FF375F; --dp-grow:#3B82F6; --dp-goal:#8B5CF6; --dp-plan:#14B8A6;
     --dp-green:#34C759; --dp-yellow:#F5A300; --dp-red:#FF3B30;
   }
-  #v-home,#v-hub,#v-mood,#v-relationships,#v-relationship,#v-goals,#v-goal,#v-achievements,#v-celebrate,#v-verse,#v-maint,#v-maintItem,#v-plans,#v-plan{background:#fff;color:var(--dp-ink);}
-  #v-home .scroll,#v-hub .scroll,#v-mood .scroll,#v-relationships .scroll,#v-relationship .scroll,#v-goals .scroll,#v-goal .scroll,#v-achievements .scroll,#v-verse .scroll,#v-maint .scroll,#v-maintItem .scroll,#v-plans .scroll,#v-plan .scroll{padding:0 18px calc(110px + var(--safe-b));}
+  #v-home,#v-hub,#v-mood,#v-relationships,#v-relationship,#v-goals,#v-goal,#v-achievements,#v-celebrate,#v-verse,#v-maint,#v-maintItem,#v-plans,#v-plan,#v-assets{background:#fff;color:var(--dp-ink);}
+  #v-home .scroll,#v-hub .scroll,#v-mood .scroll,#v-relationships .scroll,#v-relationship .scroll,#v-goals .scroll,#v-goal .scroll,#v-achievements .scroll,#v-verse .scroll,#v-maint .scroll,#v-maintItem .scroll,#v-plans .scroll,#v-plan .scroll,#v-assets .scroll{padding:0 18px calc(110px + var(--safe-b));}
   .ma-photos{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;}
   .ma-ph{position:relative;width:72px;height:72px;border-radius:10px;overflow:hidden;border:0.5px solid #e2e4e8;background:#F3F4F6;padding:0;flex:0 0 auto;}
   .ma-ph img{width:100%;height:100%;object-fit:cover;display:block;}
@@ -525,7 +525,7 @@
     <div class="hubgrid">
       <button class="hubtile" onclick="go('finance')"><svg><use href="#i-money"/></svg><div class="l">收支</div></button>
       <button class="hubtile" onclick="go('claims')"><svg><use href="#i-claim"/></svg><div class="l">Claim</div></button>
-      <button class="hubtile soon" onclick="toast('資產管理：Phase 2 加入')"><svg><use href="#i-asset"/></svg><div class="l">資產</div></button>
+      <button class="hubtile" onclick="go('assets')"><svg><use href="#i-asset"/></svg><div class="l">資產</div></button>
       <button class="hubtile soon" onclick="toast('保險：Phase 2 加入')"><svg><use href="#i-insure"/></svg><div class="l">保險</div></button>
     </div>
     <div class="hubsec" style="--c:#8B5CF6">生活</div>
@@ -702,6 +702,13 @@
   </div>
 </section>
 
+<!-- ===== 資產管理：銀行戶口 + 資金歸屬 ===== -->
+<section id="v-assets" class="view">
+  <div class="dpnav"><button class="bk" onclick="go('home')">‹ 首頁</button><span class="nt">資產</span><span class="sp"></span></div>
+  <div class="scroll"><div id="assets-body"></div></div>
+  <button class="fab" onclick="openAccount()">＋ 新增戶口</button>
+</section>
+
 <!-- ===== HOME (old content removed) ===== -->
 <section id="v-claims" class="view">
   <div class="nav"><button class="back" onclick="go('home')">‹ 首頁</button><span class="ttl">待收款項</span><span class="sp"></span></div>
@@ -835,7 +842,7 @@ function go(v){document.querySelectorAll('.view').forEach(x=>x.classList.remove(
   if(v==='purchases')loadPurch(); if(v==='ideas')loadIdeas(); if(v==='finance')loadFinance();
   if(v==='mood')loadMood(); if(v==='relationships')loadRelationships();
   if(v==='goals')loadGoals(); if(v==='achievements')loadAchievements();
-  if(v==='verse')loadVersePage(); if(v==='maint')loadMaint(); if(v==='plans')loadPlans();
+  if(v==='verse')loadVersePage(); if(v==='maint')loadMaint(); if(v==='plans')loadPlans(); if(v==='assets')loadAssets();
   if(v==='settings')$('#set-url').textContent=sbUrl()||'—';
   document.querySelector('#v-'+v+' .scroll')?.scrollTo(0,0);
 }
@@ -2112,6 +2119,82 @@ async function loadPlanTodos(){
 }
 function openPlanTodo(){ const t=prompt('To Do 內容'); if(!t)return; db.from('plan_todos').insert({plan_id:curPlanId,content:t.trim(),done:false}).then(()=>{loadPlanTodos();refreshPlanProgress();}).catch(()=>toast('儲存失敗，請確認已建立 plan_todos 表')); }
 async function togglePlanTodo(id,done){ await db.from('plan_todos').update({done:!done}).eq('id',id); loadPlanTodos(); refreshPlanProgress(); }
+
+/* ==================== 資產管理：銀行戶口 + 資金歸屬（Phase 2） ==================== */
+let assetOwners=[];
+async function ensureOwners(){ try{ const {data}=await db.from('asset_owners').select('*').order('created_at',{ascending:true}); assetOwners=data||[]; }catch(e){ assetOwners=[]; } return assetOwners; }
+async function loadAssets(){
+  const host=$('#assets-body');
+  try{
+    await ensureOwners();
+    const {data:accs}=await db.from('bank_accounts').select('*').order('created_at',{ascending:false});
+    const ownerName=Object.fromEntries(assetOwners.map(o=>[o.id,o.name]));
+    const total=(accs||[]).reduce((a,b)=>a+(Number(b.balance)||0),0);
+    const byOwner={};
+    (accs||[]).forEach(a=>{ const key=a.owner_id||'__none'; byOwner[key]=(byOwner[key]||0)+(Number(a.balance)||0); });
+    let summary=`<div class="scoreh"><div class="row"><span class="lab">資金總額</span><span class="big" style="color:#14B8A6">${money(Math.round(total))}</span></div>`;
+    const entries=Object.entries(byOwner).sort((a,b)=>b[1]-a[1]);
+    if(entries.length){
+      summary+=`<div style="margin-top:12px">`+entries.map(([k,v])=>{
+        const nm=k==='__none'?'未分配':(ownerName[k]||'未知');
+        const pct=total>0?Math.round(v/total*100):0;
+        return `<div style="margin:9px 0"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px"><span>${esc(nm)}</span><span style="color:#14B8A6;font-weight:800">${money(Math.round(v))} · ${pct}%</span></div><div class="dptrack"><div class="dpfill" style="width:${pct}%;background:#14B8A6"></div></div></div>`;
+      }).join('')+`</div>`;
+    }
+    summary+=`</div>`;
+    let list;
+    if(!accs||!accs.length){ list='<div class="empty">未有戶口。撳右下角「＋ 新增戶口」開始。</div>'; }
+    else { list=`<div class="dpsl"><span>戶口</span></div>`+accs.map(a=>{
+      const owner=a.owner_id?(ownerName[a.owner_id]||'—'):'未分配';
+      const sub=[a.account_type||null, a.label?esc(a.label):null, owner].filter(Boolean).join(' · ');
+      return `<button class="goalcard" onclick="openAccount('${a.id}')"><div class="gtop"><span class="gname">${esc(a.bank_name)}</span><span class="gp">${esc(a.currency||'HKD')} ${fmtNum(a.balance)}</span></div><div class="gsub">${sub}</div></button>`;
+    }).join(''); }
+    host.innerHTML=summary+list;
+  }catch(e){ host.innerHTML='<div class="empty">未能載入。請先確認已建立 bank_accounts 表。</div>'; }
+}
+function ownerChipsHTML(selectedId){
+  return assetOwners.map(o=>`<button type="button" class="dptab ${o.id===selectedId?'on':''}" data-oid="${o.id}" onclick="pickOwner('${o.id}')">${esc(o.name)}</button>`).join('')+`<button type="button" class="dptab" onclick="addOwnerInline()">＋ 新擁有人</button>`;
+}
+function pickOwner(id){ $('#acc-owner').value=id; document.querySelectorAll('#acc-owner-row .dptab').forEach(b=>b.classList.toggle('on', b.dataset.oid===id)); }
+async function addOwnerInline(){
+  const name=prompt('擁有人名（例如 自己 / 圓圓 / 共同）'); if(!name||!name.trim()) return;
+  try{
+    const {data}=await db.from('asset_owners').insert({name:name.trim()}).select().maybeSingle();
+    await ensureOwners();
+    const row=$('#acc-owner-row');
+    if(row){ row.innerHTML=ownerChipsHTML(data?data.id:null); if(data) $('#acc-owner').value=data.id; }
+  }catch(e){ toast('新增擁有人失敗'); }
+}
+async function openAccount(id){
+  await ensureOwners();
+  const edit=typeof id==='string';
+  const types=['儲蓄','往來','定期','外幣','投資','其他'];
+  const build=(a)=>{ a=a||{account_type:'儲蓄',currency:'HKD'};
+    $('#sheet').innerHTML=`<div class="grab"></div>
+      <div class="sh"><button class="c" onclick="closeSheet()">取消</button><span class="t">${edit?'編輯戶口':'新增戶口'}</span><button class="s" onclick="saveAccount(${edit?`'${id}'`:'null'})">儲存</button></div>
+      <div class="dpfield"><label>銀行 / 機構</label><input id="acc-bank" value="${esc(a.bank_name||'')}" placeholder="例如 匯豐 / 中銀"></div>
+      <div class="dpfield"><label>戶口類型</label><div class="dptabs" id="acc-type-row">${types.map(t=>`<button type="button" class="dptab ${(a.account_type||'儲蓄')===t?'on':''}" data-tp="${t}" onclick="pickAccType('${t}')">${t}</button>`).join('')}</div><input type="hidden" id="acc-type" value="${a.account_type||'儲蓄'}"></div>
+      <div class="dpfield"><label>備註標籤（可留空，例如尾4位）</label><input id="acc-label" value="${esc(a.label||'')}" placeholder="例如 *1234"></div>
+      <div class="dpfield"><label>結餘</label><input id="acc-bal" type="number" inputmode="decimal" value="${a.balance!=null?a.balance:''}" placeholder="0"></div>
+      <div class="dpfield"><label>貨幣</label><input id="acc-cur" value="${esc(a.currency||'HKD')}" placeholder="HKD"></div>
+      <div class="dpfield"><label>資金歸屬（擁有人）</label><div class="dptabs" id="acc-owner-row">${ownerChipsHTML(a.owner_id||null)}</div><input type="hidden" id="acc-owner" value="${a.owner_id||''}"></div>
+      <div class="dpfield"><label>備註（可留空）</label><textarea class="dpta" id="acc-notes">${esc(a.notes||'')}</textarea></div>
+      ${edit?`<button class="del" onclick="deleteAccount('${id}')">刪除戶口</button>`:''}`;
+    $('#sheet-bg').classList.add('on'); requestAnimationFrame(()=>$('#sheet').classList.add('on'));
+  };
+  if(edit){ db.from('bank_accounts').select('*').eq('id',id).maybeSingle().then(({data})=>build(data)); } else build(null);
+}
+function pickAccType(t){ $('#acc-type').value=t; document.querySelectorAll('#acc-type-row .dptab').forEach(b=>b.classList.toggle('on', b.dataset.tp===t)); }
+async function saveAccount(id){
+  const bank=$('#acc-bank').value.trim(); if(!bank){ toast('請輸入銀行／機構'); return; }
+  const rec={bank_name:bank, account_type:$('#acc-type').value||'儲蓄', label:$('#acc-label').value.trim()||null, balance:$('#acc-bal').value?Number($('#acc-bal').value):0, currency:$('#acc-cur').value.trim()||'HKD', owner_id:$('#acc-owner').value||null, notes:$('#acc-notes').value.trim()||null};
+  try{
+    if(id){ await db.from('bank_accounts').update(rec).eq('id',id); }
+    else { await db.from('bank_accounts').insert(rec); }
+    closeSheet(); toast('已儲存'); loadAssets();
+  }catch(e){ toast('儲存失敗，請確認已建立 bank_accounts 表'); }
+}
+async function deleteAccount(id){ if(!confirm('刪除呢個戶口？'))return; try{ await db.from('bank_accounts').delete().eq('id',id); closeSheet(); toast('已刪除'); loadAssets(); }catch(e){ toast('刪除失敗'); } }
 </script>
 </body>
 </html>
