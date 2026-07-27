@@ -187,6 +187,154 @@
   .keys .key:active{background:var(--curry-wash);}
   .keys .keyb{background:none;border:none;font-size:14px;color:var(--graphite);}
 
+  /* ================= Phase 1: 人生 Dashboard（白底 + 多巴胺） ================= */
+  :root{
+    --dp-ink:#1C1B1F; --dp-grey:#8A8A8E; --dp-line:#ECECEF; --dp-track:#EDEDF1;
+    --dp-emo:#FF9F0A; --dp-rel:#FF375F; --dp-grow:#3B82F6; --dp-goal:#8B5CF6; --dp-plan:#14B8A6;
+    --dp-green:#34C759; --dp-yellow:#F5A300; --dp-red:#FF3B30;
+  }
+  #v-home,#v-hub,#v-mood,#v-relationships,#v-relationship,#v-goals,#v-goal,#v-achievements,#v-celebrate,#v-verse{background:#fff;color:var(--dp-ink);}
+  #v-home .scroll,#v-hub .scroll,#v-mood .scroll,#v-relationships .scroll,#v-relationship .scroll,#v-goals .scroll,#v-goal .scroll,#v-achievements .scroll,#v-verse .scroll{padding:0 18px calc(110px + var(--safe-b));}
+  .dpnav{display:flex;align-items:center;justify-content:space-between;padding:calc(12px + var(--safe-t)) 2px 4px;}
+  .dpnav .bk{font-size:15px;color:#2E7CF6;font-weight:500;background:none;border:none;}
+  .dpnav .nt{font-size:16px;font-weight:800;color:var(--dp-ink);}
+  .dpnav .sp{min-width:44px;text-align:right;color:#2E7CF6;font-size:13px;font-weight:600;background:none;border:none;}
+  .dphd{display:flex;justify-content:space-between;align-items:center;margin-top:4px;}
+  .dphd .date{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--dp-grey);font-weight:700;}
+  .dphd .hi{font-size:21px;font-weight:800;margin-top:1px;color:var(--dp-ink);}
+  .dpgear{width:30px;height:30px;border-radius:50%;background:#F2F2F5;border:none;display:flex;align-items:center;justify-content:center;}
+  .dpgear svg{width:16px;height:16px;stroke:#8a8a8e;fill:none;stroke-width:1.7;}
+
+  .dpqs{display:flex;margin-top:12px;border:1px solid var(--dp-line);border-radius:13px;overflow:hidden;}
+  .dpqs button{flex:1;padding:9px 4px;text-align:center;border-right:1px solid var(--dp-line);background:none;}
+  .dpqs button:last-child{border-right:none;}
+  .dpqs .k{font-size:10px;color:var(--dp-grey);font-weight:600;}
+  .dpqs .v{font-size:14px;font-weight:800;margin-top:2px;font-variant-numeric:tabular-nums;color:var(--dp-ink);}
+
+  .verse{margin-top:11px;border:1px solid var(--dp-line);border-radius:13px;padding:11px 13px;position:relative;background:linear-gradient(180deg,#FFFDF7,#fff);text-align:left;width:100%;}
+  .verse .vl{font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:#C9962E;font-weight:700;}
+  .verse .vt{font-size:13.5px;font-weight:600;line-height:1.6;margin-top:3px;color:#26251f;}
+  .verse .vs{font-size:11px;color:var(--dp-grey);margin-top:4px;}
+  .verse .fav{position:absolute;top:11px;right:12px;background:none;border:none;padding:0;}
+  .verse .fav svg{width:17px;height:17px;fill:none;stroke:#D9B85E;stroke-width:1.6;}
+  .verse .fav.on svg{fill:#E3C77A;stroke:#D9B85E;}
+
+  .dpsl{font-size:11px;font-weight:800;color:#6b6b70;margin:16px 2px 9px;display:flex;justify-content:space-between;align-items:center;}
+  .dpsl .more{font-size:11px;color:#2E7CF6;font-weight:600;background:none;border:none;}
+
+  .bar{margin-bottom:12px;width:100%;background:none;border:none;text-align:left;display:block;padding:0;}
+  .bhead{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+  .bic{width:22px;height:22px;flex:none;}
+  .bic svg{width:22px;height:22px;}
+  .bl{font-size:14px;font-weight:700;flex:1;color:var(--dp-ink);}
+  .bp{font-size:14px;font-weight:800;font-variant-numeric:tabular-nums;}
+  .dptrack{height:9px;border-radius:6px;background:var(--dp-track);overflow:hidden;}
+  .dptrack.thick{height:13px;} .dptrack.thin{height:7px;}
+  .dpfill{height:100%;border-radius:6px;}
+
+  .duebox{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:11px;margin-bottom:7px;font-size:13px;width:100%;background:none;border:none;text-align:left;}
+  .duebox .dt{flex:1;font-weight:600;}
+  .duebox .dd{font-size:12px;font-weight:800;}
+  .duebox.r{background:#FFF0EF;color:#C0392B;} .duebox.r .dd{color:var(--dp-red);}
+  .duebox.y{background:#FFF7E6;color:#8a6d1e;} .duebox.y .dd{color:#C9902A;}
+  .duebox .dot{width:8px;height:8px;border-radius:50%;flex:none;}
+  .duebox.r .dot{background:var(--dp-red);} .duebox.y .dot{background:var(--dp-yellow);}
+
+  .goalcard{border:1px solid var(--dp-line);border-radius:14px;padding:12px 13px;margin-bottom:9px;width:100%;background:none;text-align:left;display:block;}
+  .goalcard .gtop{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px;}
+  .goalcard .gname{font-size:14px;font-weight:700;color:var(--dp-ink);}
+  .goalcard .gp{font-size:13px;font-weight:800;color:var(--dp-goal);font-variant-numeric:tabular-nums;}
+  .goalcard .gsub{font-size:10.5px;color:var(--dp-grey);margin-top:6px;}
+
+  .dphub{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+  .dpmini{background:#F7F7F9;border:1px solid #EFEFF2;border-radius:12px;padding:10px 9px;text-align:left;}
+  .dpmini .mt{font-size:11.5px;color:#55555a;font-weight:600;}
+  .dpmini .mv{font-size:12.5px;font-weight:700;margin-top:3px;color:var(--dp-ink);}
+
+  /* hub */
+  .hubsec{font-size:13px;font-weight:800;color:var(--dp-ink);margin:20px 2px 12px;display:flex;align-items:center;gap:8px;}
+  .hubsec::before{content:"";width:6px;height:16px;border-radius:3px;background:var(--c,#ccc);}
+  .hubgrid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:14px 4px;}
+  .hubtile{text-align:center;background:none;border:none;}
+  .hubtile svg{width:52px;height:52px;}
+  .hubtile .l{font-size:10.5px;color:#333;margin-top:5px;font-weight:600;}
+  .hubtile.soon{opacity:.4;}
+
+  /* tabs */
+  .dptabs{display:flex;gap:7px;margin:10px 0 4px;flex-wrap:wrap;}
+  .dptab{font-size:12px;padding:6px 12px;border-radius:999px;border:1px solid var(--dp-line);color:var(--dp-grey);background:none;}
+  .dptab.on{background:var(--dp-ink);color:#fff;border-color:var(--dp-ink);}
+
+  /* score header */
+  .scoreh{border:1px solid var(--dp-line);border-radius:15px;padding:14px 15px;margin-top:4px;}
+  .scoreh .row{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:9px;}
+  .scoreh .lab{font-size:13px;font-weight:700;color:#444;}
+  .scoreh .big{font-size:30px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1;}
+  .scoreh .big small{font-size:14px;color:var(--dp-grey);font-weight:600;}
+  .scoreh .sub{font-size:11px;color:var(--dp-grey);margin-top:8px;}
+  .spark{display:flex;align-items:flex-end;gap:4px;height:40px;margin-top:8px;}
+  .spark i{flex:1;border-radius:3px 3px 0 0;display:block;}
+
+  /* emotion chips */
+  .emorow{display:flex;gap:7px;flex-wrap:wrap;}
+  .ecbtn{font-size:12.5px;padding:8px 12px 8px 10px;border-radius:999px;border:1.5px solid var(--dp-line);display:inline-flex;align-items:center;gap:6px;color:#444;background:none;}
+  .ecbtn::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--c,#ccc);}
+  .ecbtn.on{border-color:var(--c);background:color-mix(in srgb,var(--c) 12%,#fff);font-weight:700;}
+
+  .starpick{font-size:30px;letter-spacing:8px;color:#D9A62A;background:none;border:none;padding:0;}
+  .starpick .off{color:#E3E3E7;}
+  .impact{margin-top:14px;border:1px solid var(--dp-line);border-radius:12px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;}
+  .impact .k{font-size:12px;color:var(--dp-grey);} .impact .v{font-size:17px;font-weight:800;font-variant-numeric:tabular-nums;}
+
+  .dprow{display:flex;align-items:flex-start;gap:10px;padding:11px 2px;border-bottom:1px solid #F1F1F4;text-align:left;background:none;border-left:none;border-right:none;border-top:none;width:100%;}
+  .dprow .m{flex:1;min-width:0;} .dprow .t1{font-size:14px;font-weight:600;color:var(--dp-ink);} .dprow .t2{font-size:11.5px;color:var(--dp-grey);margin-top:2px;}
+  .dprow .rt{font-size:13px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap;}
+
+  /* relationship card */
+  .rcard{border:1px solid var(--dp-line);border-radius:15px;padding:12px 13px;margin-bottom:10px;width:100%;text-align:left;background:none;display:block;}
+  .rcard.self{background:#FFF3F5;border-color:#FFD6DF;}
+  .rc-top{display:flex;align-items:center;gap:11px;}
+  .rc-av{width:42px;height:42px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:#fff;}
+  .rc-name{font-size:15px;font-weight:800;color:var(--dp-ink);} .rc-sub{font-size:11px;color:var(--dp-grey);margin-top:1px;}
+  .rc-pct{margin-left:auto;text-align:right;} .rc-pct b{font-size:16px;color:var(--dp-green);} .rc-pct span{display:block;font-size:10px;color:var(--dp-grey);}
+
+  /* timeline */
+  .dptl{margin-top:6px;}
+  .dptli{display:flex;gap:11px;padding:2px 0 12px;position:relative;}
+  .dptli .tld{width:11px;height:11px;border-radius:50%;flex:none;margin-top:3px;box-shadow:0 0 0 3px #fff;}
+  .dptli::before{content:"";position:absolute;left:5px;top:14px;bottom:0;width:1.5px;background:#EDEDF1;}
+  .dptli:last-child::before{display:none;}
+  .dptli .c .a{font-size:13px;font-weight:700;color:var(--dp-ink);} .dptli .c .b{font-size:12px;color:#555;margin-top:2px;} .dptli .c .d{font-size:11px;color:var(--dp-grey);margin-top:3px;}
+
+  /* slider */
+  .dpslide{margin-top:9px;} .dpslrow{display:flex;justify-content:space-between;font-size:11px;color:var(--dp-grey);}
+  .dpsltrack{-webkit-appearance:none;width:100%;height:7px;border-radius:5px;background:var(--dp-track);margin-top:8px;}
+  .dpsltrack::-webkit-slider-thumb{-webkit-appearance:none;width:19px;height:19px;border-radius:50%;background:#fff;border:2.5px solid var(--dp-goal);}
+
+  /* form field (dp) */
+  .dpfield{margin-top:14px;} .dpfield label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--dp-grey);font-weight:700;}
+  .dpfield input,.dpfield select,.dpfield textarea{width:100%;margin-top:7px;border:none;border-bottom:1px solid var(--dp-line);background:none;padding:9px 2px;font-size:16px;color:var(--dp-ink);outline:none;}
+  .dpta{width:100%;margin-top:7px;border:1px solid var(--dp-line);border-radius:12px;padding:11px;font-size:14px;min-height:80px;outline:none;color:var(--dp-ink);}
+  .dpcta{width:100%;text-align:center;border-radius:13px;padding:14px;font-size:14px;font-weight:800;color:#fff;border:none;margin-top:16px;}
+
+  /* achievement banner */
+  .achbig{border-radius:16px;padding:16px;background:linear-gradient(135deg,#8B5CF6,#5B8DEF);color:#fff;text-align:center;margin-top:4px;}
+  .achbig .an{font-size:34px;font-weight:800;line-height:1;} .achbig .al{font-size:12px;opacity:.9;margin-top:6px;}
+  .ystat{display:flex;align-items:flex-end;gap:8px;height:60px;margin-top:10px;}
+  .ystat .b{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;}
+  .ystat .bar2{width:100%;border-radius:5px 5px 0 0;background:var(--dp-goal);}
+  .ystat .yl{font-size:9px;color:var(--dp-grey);}
+
+  /* celebration */
+  .celebrate{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 34px;position:relative;overflow:hidden;text-align:center;}
+  .conf{position:absolute;width:8px;height:8px;border-radius:2px;opacity:.9;}
+  .ring{width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,#8B5CF6,#5B8DEF);display:flex;align-items:center;justify-content:center;margin-bottom:22px;box-shadow:0 12px 30px -8px rgba(91,141,239,.6);}
+  .ring svg{width:48px;height:48px;stroke:#fff;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;}
+  .celebrate .c1{font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--dp-goal);font-weight:700;}
+  .celebrate .c2{font-size:23px;font-weight:800;margin-top:8px;color:var(--dp-ink);}
+  .celebrate .c3{font-size:13px;color:var(--dp-grey);margin-top:10px;line-height:1.7;}
+  .celebrate .c4{margin-top:24px;background:var(--dp-goal);color:#fff;border-radius:13px;padding:13px 26px;font-size:14px;font-weight:800;border:none;}
+
   /* toast */
   .toast{position:absolute;left:50%;bottom:calc(96px + var(--safe-b));transform:translateX(-50%) translateY(10px);background:var(--ink);color:var(--paper);font-size:13px;padding:10px 18px;border-radius:999px;opacity:0;transition:.25s;pointer-events:none;z-index:40;white-space:nowrap;}
   .toast.on{opacity:1;transform:translateX(-50%) translateY(0);}
@@ -194,6 +342,100 @@
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute">
+<defs>
+<filter id="dpSH" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="3" stdDeviation="2.4" flood-color="#2a1a3a" flood-opacity="0.22"/></filter>
+<radialGradient id="ic_emo" cx="38%" cy="30%" r="75%"><stop offset="0" stop-color="#FFE79A"/><stop offset="55%" stop-color="#FFC24A"/><stop offset="100%" stop-color="#FF9312"/></radialGradient>
+<radialGradient id="ic_rel" cx="38%" cy="28%" r="80%"><stop offset="0" stop-color="#FFA9C2"/><stop offset="55%" stop-color="#FF5E86"/><stop offset="100%" stop-color="#FF2D63"/></radialGradient>
+<linearGradient id="ic_grow" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7FB6FF"/><stop offset="1" stop-color="#2E7CF6"/></linearGradient>
+<linearGradient id="ic_grow_s" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFE07A"/><stop offset="1" stop-color="#F5B301"/></linearGradient>
+<radialGradient id="ic_goal" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#B79CFF"/><stop offset="1" stop-color="#7C4DFF"/></radialGradient>
+<linearGradient id="ic_plan" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#43E4CE"/><stop offset="1" stop-color="#0EA5A0"/></linearGradient>
+<linearGradient id="ic_ach" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE07A"/><stop offset="1" stop-color="#E0A31E"/></linearGradient>
+<linearGradient id="ic_money" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5FE68A"/><stop offset="1" stop-color="#16A34A"/></linearGradient>
+<linearGradient id="ic_coin" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFE07A"/><stop offset="1" stop-color="#F5B301"/></linearGradient>
+<linearGradient id="ic_claim" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF7E6"/><stop offset="1" stop-color="#F1E1BE"/></linearGradient>
+<linearGradient id="ic_asset" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8B7BFF"/><stop offset="1" stop-color="#6D5AF0"/></linearGradient>
+<linearGradient id="ic_insure" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5FA0FF"/><stop offset="1" stop-color="#2E6BF0"/></linearGradient>
+<linearGradient id="ic_shop" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF7EA6"/><stop offset="1" stop-color="#FF3D77"/></linearGradient>
+<linearGradient id="ic_todo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B18CFF"/><stop offset="1" stop-color="#8B5CF6"/></linearGradient>
+<linearGradient id="ic_maint" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5CC8FF"/><stop offset="1" stop-color="#2E9BFF"/></linearGradient>
+<linearGradient id="ic_letter" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFCE6B"/><stop offset="1" stop-color="#FF9F1C"/></linearGradient>
+<linearGradient id="ic_vault" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B18CFF"/><stop offset="1" stop-color="#7C4DFF"/></linearGradient>
+<linearGradient id="ic_settings" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#A6ADB8"/><stop offset="1" stop-color="#6B7280"/></linearGradient>
+<linearGradient id="ic_idea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE07A"/><stop offset="1" stop-color="#F5B301"/></linearGradient>
+
+<symbol id="i-emo" viewBox="0 0 100 100"><g filter="url(#dpSH)"><circle cx="50" cy="52" r="30" fill="url(#ic_emo)"/><ellipse cx="40" cy="38" rx="16" ry="11" fill="#fff" opacity=".35"/>
+<ellipse cx="41" cy="52" rx="4" ry="5.5" fill="#5b3d10"/><ellipse cx="59" cy="52" rx="4" ry="5.5" fill="#5b3d10"/>
+<path d="M40 62 q10 10 20 0" stroke="#5b3d10" stroke-width="4" fill="none" stroke-linecap="round"/>
+<circle cx="34" cy="60" r="4.5" fill="#FF8FA3" opacity=".8"/><circle cx="66" cy="60" r="4.5" fill="#FF8FA3" opacity=".8"/></g></symbol>
+
+<symbol id="i-rel" viewBox="0 0 100 100"><g filter="url(#dpSH)"><path d="M50 82 C18 60 20 32 38 30 c9 -1 12 6 12 6 s3 -7 12 -6 c18 2 20 30 -12 52 z" fill="url(#ic_rel)"/>
+<ellipse cx="38" cy="42" rx="10" ry="7" fill="#fff" opacity=".4" transform="rotate(-20 38 42)"/></g></symbol>
+
+<symbol id="i-grow" viewBox="0 0 100 100"><g filter="url(#dpSH)"><rect x="26" y="26" width="48" height="50" rx="7" fill="url(#ic_grow)"/><rect x="26" y="26" width="9" height="50" rx="4" fill="#2467d0"/>
+<rect x="60" y="30" width="8" height="42" rx="3" fill="#fff" opacity=".55"/>
+<path d="M50 40 l3.4 6.9 7.6 1.1 -5.5 5.4 1.3 7.6 -6.8 -3.6 -6.8 3.6 1.3 -7.6 -5.5 -5.4 7.6 -1.1 z" fill="url(#ic_grow_s)"/></g></symbol>
+
+<symbol id="i-goal" viewBox="0 0 100 100"><g filter="url(#dpSH)"><circle cx="48" cy="52" r="28" fill="url(#ic_goal)"/><circle cx="48" cy="52" r="19" fill="#fff"/><circle cx="48" cy="52" r="11" fill="#8B5CF6"/><circle cx="48" cy="52" r="4.5" fill="#FF4D4D"/>
+<ellipse cx="40" cy="40" rx="10" ry="6" fill="#fff" opacity=".3"/><path d="M60 40 l14 -14" stroke="#FF4D4D" stroke-width="4.5" stroke-linecap="round"/><path d="M70 22 l6 2 -2 -6 z" fill="#FF4D4D"/></g></symbol>
+
+<symbol id="i-plan" viewBox="0 0 100 100"><g filter="url(#dpSH)"><rect x="30" y="24" width="6" height="56" rx="3" fill="#0d857f"/><path d="M36 27 h30 l-8 9 8 9 h-30 z" fill="url(#ic_plan)"/>
+<ellipse cx="47" cy="31" rx="9" ry="3.5" fill="#fff" opacity=".4"/><circle cx="33" cy="24" r="5" fill="#12b3a6"/></g></symbol>
+
+<symbol id="i-ach" viewBox="0 0 100 100"><g filter="url(#dpSH)"><path d="M34 26 h32 v10 a16 16 0 0 1 -32 0 z" fill="url(#ic_ach)"/>
+<path d="M34 28 h-8 v4 a10 10 0 0 0 10 10" fill="none" stroke="#E0A31E" stroke-width="4"/><path d="M66 28 h8 v4 a10 10 0 0 1 -10 10" fill="none" stroke="#E0A31E" stroke-width="4"/>
+<rect x="45" y="52" width="10" height="12" fill="#E0A31E"/><rect x="36" y="64" width="28" height="8" rx="3" fill="#D2941A"/>
+<path d="M50 30 l2.6 5.3 5.8 .8 -4.2 4.1 1 5.8 -5.2 -2.7 -5.2 2.7 1 -5.8 -4.2 -4.1 5.8 -.8 z" fill="#fff" opacity=".92"/></g></symbol>
+
+<symbol id="i-money" viewBox="0 0 100 100"><g filter="url(#dpSH)"><circle cx="60" cy="30" r="10" fill="url(#ic_coin)"/><path d="M60 25 v10 M62 27 c-1 -1 -4 -1 -4 1 0 3 5 2 5 4 0 2 -3 2 -4 1" stroke="#8a5a00" stroke-width="1.6" fill="none"/>
+<rect x="24" y="36" width="52" height="40" rx="10" fill="url(#ic_money)"/><ellipse cx="40" cy="46" rx="12" ry="6" fill="#fff" opacity=".28"/>
+<path d="M76 50 h-13 a7 7 0 0 0 0 14 h13 z" fill="#0f8a3e"/><circle cx="64" cy="57" r="3.6" fill="#DDF3E4"/></g></symbol>
+
+<symbol id="i-claim" viewBox="0 0 100 100"><g filter="url(#dpSH)"><path d="M30 22 h30 v50 l-5 -4 -5 4 -5 -4 -5 4 -5 -4 z" fill="url(#ic_claim)" stroke="#E6D3A8" stroke-width="1"/>
+<rect x="36" y="32" width="18" height="3" rx="1.5" fill="#C9B78A"/><rect x="36" y="40" width="13" height="3" rx="1.5" fill="#C9B78A"/><rect x="36" y="48" width="16" height="3" rx="1.5" fill="#C9B78A"/>
+<circle cx="60" cy="60" r="13" fill="url(#ic_coin)"/><path d="M60 53 v14 M63 56 c-1.4 -1.4 -5 -1.2 -5 1.2 0 3 6 2 6 4.4 0 2.2 -3.4 2.4 -5 1" stroke="#8a5a00" stroke-width="1.8" fill="none"/></g></symbol>
+
+<symbol id="i-asset" viewBox="0 0 100 100"><g filter="url(#dpSH)"><rect x="30" y="48" width="40" height="30" rx="5" fill="#FFF3E0"/><path d="M25 51 L50 27 L75 51 Z" fill="url(#ic_asset)"/>
+<ellipse cx="43" cy="40" rx="8" ry="4" fill="#fff" opacity=".28"/><rect x="44" y="58" width="12" height="20" rx="3" fill="#6D5AF0"/>
+<circle cx="39" cy="60" r="4" fill="#7FB6FF"/><circle cx="53" cy="29" r="3.5" fill="#FF6E88"/></g></symbol>
+
+<symbol id="i-insure" viewBox="0 0 100 100"><g filter="url(#dpSH)"><path d="M50 22 l22 8 v13 c0 16 -12 27 -22 31 c-10 -4 -22 -15 -22 -31 v-13 z" fill="url(#ic_insure)"/>
+<ellipse cx="42" cy="36" rx="9" ry="6" fill="#fff" opacity=".3"/><path d="M40 49 l7 7 14 -15" stroke="#fff" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g></symbol>
+
+<symbol id="i-shop" viewBox="0 0 100 100"><g filter="url(#dpSH)"><path d="M30 40 h40 l-4 38 h-32 z" fill="url(#ic_shop)"/><path d="M40 41 v-5 a10 10 0 0 1 20 0 v5" fill="none" stroke="#FF3D77" stroke-width="4"/>
+<ellipse cx="44" cy="49" rx="10" ry="5" fill="#fff" opacity=".28"/>
+<path d="M50 57 c-2.4 -3.2 -8 -1.8 -8 2 0 3.4 5 5.6 8 7.6 3 -2 8 -4.2 8 -7.6 0 -3.8 -5.6 -5.2 -8 -2z" fill="#fff" opacity=".9"/></g></symbol>
+
+<symbol id="i-todo" viewBox="0 0 100 100"><g filter="url(#dpSH)"><rect x="28" y="26" width="44" height="52" rx="9" fill="url(#ic_todo)"/><rect x="36" y="34" width="28" height="37" rx="4" fill="#fff"/>
+<rect x="42" y="21" width="16" height="10" rx="5" fill="#7C4DFF"/>
+<path d="M40 44 l3 3 5 -6" stroke="#34C759" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M40 55 l3 3 5 -6" stroke="#34C759" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="51" y="45" width="10" height="3" rx="1.5" fill="#D9D2EE"/><rect x="51" y="56" width="10" height="3" rx="1.5" fill="#D9D2EE"/></g></symbol>
+
+<symbol id="i-maint" viewBox="0 0 100 100"><g filter="url(#dpSH)"><rect x="26" y="30" width="48" height="44" rx="9" fill="url(#ic_maint)"/><rect x="26" y="30" width="48" height="13" rx="9" fill="#1E7FE0"/>
+<rect x="35" y="23" width="5" height="12" rx="2.5" fill="#FFD24D"/><rect x="60" y="23" width="5" height="12" rx="2.5" fill="#FFD24D"/>
+<rect x="34" y="48" width="32" height="22" rx="5" fill="#fff"/>
+<path d="M50 55 c-3 -4 -9 -2 -9 3 0 4 5.5 7 9 10 3.5 -3 9 -6 9 -10 0 -5 -6 -7 -9 -3z" fill="#FF6E88"/></g></symbol>
+
+<symbol id="i-letter" viewBox="0 0 100 100"><g filter="url(#dpSH)"><rect x="24" y="38" width="52" height="36" rx="7" fill="url(#ic_letter)"/><path d="M24 43 l26 17 26 -17" fill="none" stroke="#E08600" stroke-width="3"/>
+<path d="M50 30 c-4 -5 -12 -2 -12 4 0 6 7 10 12 14 5 -4 12 -8 12 -14 0 -6 -8 -9 -12 -4z" fill="#FF4D8D"/></g></symbol>
+
+<symbol id="i-family" viewBox="0 0 100 100"><g filter="url(#dpSH)"><circle cx="60" cy="40" r="10" fill="#8B5CF6"/><path d="M45 76 a15 15 0 0 1 30 0 z" fill="#8B5CF6"/>
+<circle cx="35" cy="43" r="9" fill="#FF6E88"/><path d="M22 76 a13 13 0 0 1 26 0 z" fill="#FF6E88"/>
+<circle cx="48" cy="47" r="8" fill="#FF9F0A"/><path d="M37 78 a11 11 0 0 1 22 0 z" fill="#FF9F0A"/></g></symbol>
+
+<symbol id="i-vault" viewBox="0 0 100 100"><g filter="url(#dpSH)"><path d="M36 46 v-7 a14 14 0 0 1 28 0 v7" fill="none" stroke="#9B7BF0" stroke-width="7"/>
+<rect x="28" y="44" width="44" height="34" rx="10" fill="url(#ic_vault)"/><ellipse cx="40" cy="53" rx="10" ry="5" fill="#fff" opacity=".25"/>
+<rect x="36" y="60" width="28" height="10" rx="5" fill="#fff"/></g></symbol>
+
+<symbol id="i-settings" viewBox="0 0 100 100"><g filter="url(#dpSH)"><rect x="30" y="30" width="40" height="40" rx="13" fill="url(#ic_settings)"/><rect x="30" y="30" width="40" height="40" rx="13" fill="url(#ic_settings)" transform="rotate(45 50 50)"/>
+<circle cx="50" cy="50" r="13" fill="#EDEDF1"/><circle cx="50" cy="50" r="6.5" fill="#FF6E88"/></g></symbol>
+
+<symbol id="i-idea" viewBox="0 0 100 100"><g filter="url(#dpSH)"><path d="M50 24 a18 18 0 0 1 10 33 c-2 1.5 -3 4 -3 6 h-14 c0 -2 -1 -4.5 -3 -6 a18 18 0 0 1 10 -33z" fill="url(#ic_idea)"/>
+<ellipse cx="43" cy="34" rx="7" ry="10" fill="#fff" opacity=".3"/><rect x="42" y="66" width="16" height="6" rx="3" fill="#8a5a00"/><rect x="44" y="74" width="12" height="4" rx="2" fill="#8a5a00"/></g></symbol>
+</defs>
+</svg>
 
 <!-- ===== SETUP（首次設定）===== -->
 <section id="v-setup" class="view">
@@ -227,26 +469,190 @@
 <!-- ===== HOME ===== -->
 <section id="v-home" class="view">
   <div class="scroll pad-t">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start">
-      <div><div class="eyebrow" id="home-date">—</div><div class="h1">早晨</div></div>
-      <button class="nav gear" onclick="go('settings')" style="margin-top:6px">設定</button>
+    <div class="dphd">
+      <div><div class="date" id="home-date">—</div><div class="hi">早晨</div></div>
+      <button class="dpgear" onclick="go('settings')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.4-2.3 1a7 7 0 0 0-2-1.2l-.4-2.5H8.8l-.4 2.5a7 7 0 0 0-2 1.2l-2.3-1-2 3.4 2 1.5A7 7 0 0 0 4 12c0 .4 0 .8.1 1.2l-2 1.5 2 3.4 2.3-1a7 7 0 0 0 2 1.2l.4 2.5h6.4l.4-2.5a7 7 0 0 0 2-1.2l2.3 1 2-3.4-2-1.5c.1-.4.1-.8.1-1.2Z"/></svg></button>
     </div>
-    <div class="index">
-      <button class="row" onclick="go('finance')"><span class="lab">本月收入</span><span class="rt"><span class="val" id="s-income" style="color:#4f8a5b">$0</span><span class="ch">›</span></span></button>
-      <button class="row" onclick="go('finance')"><span class="lab">本月支出</span><span class="rt"><span class="val" id="s-expense">$0</span><span class="ch">›</span></span></button>
-      <button class="row" onclick="go('finance')"><span class="lab">本月淨額</span><span class="rt"><span class="val big" id="s-net">$0</span><span class="ch">›</span></span></button>
+
+    <div class="dpqs">
+      <button onclick="go('finance')"><div class="k">本月淨額</div><div class="v" id="hq-net">$0</div></button>
+      <button onclick="go('claims')"><div class="k">待收 Claim</div><div class="v" id="hq-claim">$0</div></button>
+      <button onclick="go('todos')"><div class="k">待辦</div><div class="v" id="hq-todo">0</div></button>
     </div>
-    <div class="tiles">
-      <button class="tile wide" onclick="go('finance')"><div class="lead2"><svg viewBox="0 0 24 24"><path d="M4 20V5"/><path d="M4 20h16"/><rect x="7.5" y="12" width="3" height="5.5"/><rect x="12" y="8.5" width="3" height="9"/><rect x="16.5" y="14" width="3" height="3.5"/></svg><span><span class="tl">收支記錄</span><span class="tc">記帳・消費分析</span></span></div><span class="right"><span class="rv" id="fin-sub">$0</span><span class="ch">›</span></span></button>
-      <button class="tile" onclick="go('claims')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5v9"/><path d="M14.2 9.3c-.6-.7-1.5-1-2.4-1-1.2 0-2.2.7-2.2 1.7 0 2.4 4.8 1.2 4.8 3.6 0 1-1 1.7-2.3 1.7-1 0-1.9-.4-2.5-1.1"/></svg><span><span class="tl">待收款項</span><span class="tc" id="t-claim">—</span></span></button>
-      <button class="tile" onclick="go('todos')"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3.5"/><path d="M8 12.5l2.4 2.4 5-5.6"/></svg><span><span class="tl">待辦事項</span><span class="tc" id="t-todo">—</span></span></button>
-      <button class="tile" onclick="go('purchases')"><svg viewBox="0 0 24 24"><path d="M6.5 9h11l-1 10.5h-9L6.5 9z"/><path d="M9.2 9V7.2a2.8 2.8 0 0 1 5.6 0V9"/></svg><span><span class="tl">採購清單</span><span class="tc" id="t-buy">—</span></span></button>
-      <button class="tile" onclick="go('ideas')"><svg viewBox="0 0 24 24"><path d="M12 3.5a5 5 0 0 0-3 9c.6.5 1 1.2 1 2h4c0-.8.4-1.5 1-2a5 5 0 0 0-3-9z"/><path d="M10 18h4"/><path d="M10.6 20.3h2.8"/></svg><span><span class="tl">小點子</span><span class="tc" id="t-idea">—</span></span></button>
+
+    <button class="verse" id="verse-card" onclick="go('verse')">
+      <button class="fav" id="verse-fav" onclick="event.stopPropagation();toggleFavVerse()"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-8.6C1 9.3 2.6 6 5.9 6c2 0 3.2 1.2 4.1 2.5C10.9 7.2 12.1 6 14.1 6c3.3 0 4.9 3.3 3.2 6.4C19 16.6 12 21 12 21Z"/></svg></button>
+      <div class="vl">今日金句</div>
+      <div class="vt" id="verse-text">—</div>
+      <div class="vs" id="verse-ref"></div>
+    </button>
+
+    <div class="dpsl"><span>人生狀態</span></div>
+    <button class="bar" onclick="go('mood')">
+      <div class="bhead"><span class="bic"><svg viewBox="0 0 24 24" style="stroke:#FF9F0A;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><circle cx="12" cy="12" r="9"/><path d="M8.5 14.5a4.5 4.5 0 0 0 7 0"/><path d="M9 9.5h.01M15 9.5h.01"/></svg></span><span class="bl">情緒健康</span><span class="bp" style="color:#FF9F0A" id="hb-mood">—</span></div>
+      <div class="dptrack"><div class="dpfill" id="hb-mood-fill" style="width:0%;background:#FF9F0A"></div></div>
+    </button>
+    <button class="bar" onclick="go('relationships')">
+      <div class="bhead"><span class="bic"><svg viewBox="0 0 24 24" style="fill:#FF375F;stroke:none"><path d="M12 20s-6.5-4-8.5-8C2 9 3.5 6.2 6.4 6.2c1.8 0 2.9 1.1 3.6 2.2.7-1.1 1.8-2.2 3.6-2.2 2.9 0 4.4 2.8 2.9 5.8-2 4-8.5 8-8.5 8Z"/></svg></span><span class="bl">關係</span><span class="bp" style="color:#FF375F" id="hb-rel">—</span></div>
+      <div class="dptrack"><div class="dpfill" id="hb-rel-fill" style="width:0%;background:#FF375F"></div></div>
+    </button>
+
+    <div id="home-due"></div>
+
+    <div class="dpsl"><span>進行中小目標</span><button class="more" onclick="go('goals')">全部 ›</button></div>
+    <div id="home-goals"></div>
+
+    <div class="dpsl"><span>全部功能</span><button class="more" onclick="go('hub')">更多 ›</button></div>
+    <div class="dphub">
+      <button class="dpmini" onclick="go('finance')"><div class="mt">收支</div><div class="mv" id="hm-fin">$0</div></button>
+      <button class="dpmini" onclick="go('todos')"><div class="mt">待辦</div><div class="mv" id="hm-todo">0 項</div></button>
+      <button class="dpmini" onclick="go('purchases')"><div class="mt">採購</div><div class="mv" id="hm-buy">0 項</div></button>
     </div>
   </div>
 </section>
 
-<!-- ===== CLAIMS ===== -->
+<!-- ===== HUB 全部功能 ===== -->
+<section id="v-hub" class="view">
+  <div class="dpnav"><button class="bk" onclick="go('home')">‹ 首頁</button><span class="nt">全部功能</span><span class="sp"></span></div>
+  <div class="scroll">
+    <div class="hubsec" style="--c:#FF9F0A">人生</div>
+    <div class="hubgrid">
+      <button class="hubtile" onclick="go('mood')"><svg><use href="#i-emo"/></svg><div class="l">情緒健康</div></button>
+      <button class="hubtile" onclick="go('relationships')"><svg><use href="#i-rel"/></svg><div class="l">關係</div></button>
+      <button class="hubtile soon" onclick="toast('自我提升：Phase 2 加入')"><svg><use href="#i-grow"/></svg><div class="l">自我提升</div></button>
+      <button class="hubtile" onclick="go('goals')"><svg><use href="#i-goal"/></svg><div class="l">小目標</div></button>
+      <button class="hubtile soon" onclick="toast('小計劃：Phase 2 加入')"><svg><use href="#i-plan"/></svg><div class="l">小計劃</div></button>
+      <button class="hubtile" onclick="go('achievements')"><svg><use href="#i-ach"/></svg><div class="l">成就</div></button>
+    </div>
+    <div class="hubsec" style="--c:#14B8A6">財務</div>
+    <div class="hubgrid">
+      <button class="hubtile" onclick="go('finance')"><svg><use href="#i-money"/></svg><div class="l">收支</div></button>
+      <button class="hubtile" onclick="go('claims')"><svg><use href="#i-claim"/></svg><div class="l">Claim</div></button>
+      <button class="hubtile soon" onclick="toast('資產管理：Phase 2 加入')"><svg><use href="#i-asset"/></svg><div class="l">資產</div></button>
+      <button class="hubtile soon" onclick="toast('保險：Phase 2 加入')"><svg><use href="#i-insure"/></svg><div class="l">保險</div></button>
+    </div>
+    <div class="hubsec" style="--c:#8B5CF6">生活</div>
+    <div class="hubgrid">
+      <button class="hubtile" onclick="go('purchases')"><svg><use href="#i-shop"/></svg><div class="l">採購</div></button>
+      <button class="hubtile" onclick="go('todos')"><svg><use href="#i-todo"/></svg><div class="l">待辦</div></button>
+      <button class="hubtile soon" onclick="toast('資產保養：Phase 2 加入')"><svg><use href="#i-maint"/></svg><div class="l">保養</div></button>
+      <button class="hubtile" onclick="go('ideas')"><svg><use href="#i-idea"/></svg><div class="l">小點子</div></button>
+    </div>
+    <div class="hubsec" style="--c:#FF6E88">傳承 / 系統</div>
+    <div class="hubgrid">
+      <button class="hubtile soon" onclick="toast('給家人的信：Phase 3 加入')"><svg><use href="#i-letter"/></svg><div class="l">給家人的信</div></button>
+      <button class="hubtile soon" onclick="toast('家人入口：Phase 3 加入')"><svg><use href="#i-family"/></svg><div class="l">家人入口</div></button>
+      <button class="hubtile soon" onclick="toast('密碼記錄：Phase 3 加入')"><svg><use href="#i-vault"/></svg><div class="l">密碼記錄</div></button>
+      <button class="hubtile" onclick="go('settings')"><svg><use href="#i-settings"/></svg><div class="l">設定</div></button>
+    </div>
+  </div>
+</section>
+
+<!-- ===== MOOD 情緒健康 ===== -->
+<section id="v-mood" class="view">
+  <div class="dpnav"><button class="bk" onclick="go('home')">‹ 首頁</button><span class="nt">情緒健康</span><span class="sp"></span></div>
+  <div class="scroll">
+    <div class="scoreh">
+      <div class="row"><span class="lab">我的情緒健康</span><span class="big" id="mood-score" style="color:#FF9F0A">—<small>/100</small></span></div>
+      <div class="dptrack thick"><div class="dpfill" id="mood-score-fill" style="width:0%;background:#FF9F0A"></div></div>
+      <div class="spark" id="mood-spark"></div>
+      <div class="sub" id="mood-trend">未有記錄</div>
+    </div>
+    <div class="dptabs"><button class="dptab on" data-t="7" onclick="moodRange(7)">7 天</button><button class="dptab" data-t="30" onclick="moodRange(30)">30 天</button></div>
+    <div class="dpsl"><span>記錄</span></div>
+    <div id="mood-list"></div>
+  </div>
+  <button class="fab" onclick="openMood()">＋ 記錄心情</button>
+</section>
+
+<!-- ===== RELATIONSHIPS ===== -->
+<section id="v-relationships" class="view">
+  <div class="dpnav"><button class="bk" onclick="go('home')">‹ 首頁</button><span class="nt">關係</span><span class="sp"></span></div>
+  <div class="scroll">
+    <div id="rel-list"></div>
+  </div>
+  <button class="fab" onclick="openPerson()">＋ 新增人物</button>
+</section>
+
+<!-- ===== RELATIONSHIP DETAIL ===== -->
+<section id="v-relationship" class="view">
+  <div class="dpnav"><button class="bk" onclick="go('relationships')">‹ 關係</button><span class="nt" id="rd-name">—</span><button class="sp" onclick="editPersonCurrent()">編輯</button></div>
+  <div class="scroll">
+    <div class="scoreh">
+      <div class="rc-top" style="margin-bottom:10px"><div class="rc-av" id="rd-av" style="width:46px;height:46px">—</div>
+        <div><div class="rc-name" id="rd-name2">—</div><div class="rc-sub" id="rd-sub">—</div></div>
+        <div class="rc-pct"><b id="rd-score" style="font-size:20px">—</b><span>分</span></div></div>
+      <div class="dptrack thick"><div class="dpfill" id="rd-fill" style="width:0%;background:#34C759"></div></div>
+    </div>
+    <div class="dpsl"><span>相處 Timeline</span><button class="more" onclick="openEvent()">＋ 新增</button></div>
+    <div class="dptl" id="rd-timeline"></div>
+  </div>
+</section>
+
+<!-- ===== GOALS ===== -->
+<section id="v-goals" class="view">
+  <div class="dpnav"><button class="bk" onclick="go('home')">‹ 首頁</button><span class="nt">小目標</span><button class="sp" onclick="go('achievements')">成就</button></div>
+  <div class="scroll">
+    <div class="dptabs"><button class="dptab on" data-t="active" onclick="goalTab('active')">進行中</button><button class="dptab" data-t="done" onclick="goalTab('done')">已完成</button></div>
+    <div id="goals-list"></div>
+  </div>
+  <button class="fab" onclick="openGoal()">＋ 新增目標</button>
+</section>
+
+<!-- ===== GOAL DETAIL ===== -->
+<section id="v-goal" class="view">
+  <div class="dpnav"><button class="bk" onclick="go('goals')">‹ 目標</button><span class="nt" id="gd-name">—</span><button class="sp" onclick="editGoalCurrent()">編輯</button></div>
+  <div class="scroll">
+    <div class="scoreh">
+      <div class="row"><span class="lab">完成進度</span><span class="big" style="color:#8B5CF6" id="gd-pct">—<small>%</small></span></div>
+      <div class="dptrack thick"><div class="dpfill" id="gd-fill" style="width:0%;background:#8B5CF6"></div></div>
+      <div class="sub" id="gd-sub">—</div>
+    </div>
+    <div style="margin-top:14px"><input type="range" min="0" max="100" id="gd-slider" class="dpsltrack" oninput="gdSliderPreview(this.value)" onchange="gdSliderCommit(this.value)"></div>
+    <div class="dpsl"><span>里程碑</span><button class="more" onclick="openMilestone()">＋ 新增</button></div>
+    <div id="gd-milestones"></div>
+    <div class="dpsl"><span>To Do</span><button class="more" onclick="openGoalTodo()">＋ 新增</button></div>
+    <div id="gd-todos"></div>
+    <button class="dpcta" id="gd-complete" style="background:#8B5CF6" onclick="completeGoal()">標記為完成</button>
+  </div>
+</section>
+
+<!-- ===== ACHIEVEMENTS ===== -->
+<section id="v-achievements" class="view">
+  <div class="dpnav"><button class="bk" onclick="go('goals')">‹ 目標</button><span class="nt">我的成就</span><span class="sp"></span></div>
+  <div class="scroll">
+    <div class="achbig"><div class="an" id="ach-count">0</div><div class="al">你至今完成咗呢個數目嘅目標 · 繼續加油</div></div>
+    <div class="dpsl"><span>年度完成</span></div>
+    <div class="ystat" id="ach-years"></div>
+    <div class="dpsl"><span>最近完成</span></div>
+    <div id="ach-list"></div>
+  </div>
+</section>
+
+<!-- ===== CELEBRATE ===== -->
+<section id="v-celebrate" class="view">
+  <div class="celebrate">
+    <span class="conf" style="background:#FF9F0A;top:80px;left:40px"></span><span class="conf" style="background:#FF375F;top:120px;right:50px"></span>
+    <span class="conf" style="background:#34C759;top:200px;left:60px"></span><span class="conf" style="background:#3B82F6;top:170px;right:40px"></span>
+    <span class="conf" style="background:#8B5CF6;bottom:180px;left:44px"></span><span class="conf" style="background:#F5A300;bottom:150px;right:56px"></span>
+    <div class="ring"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div>
+    <div class="c1">目標達成</div>
+    <div class="c2" id="cel-name">—</div>
+    <div class="c3" id="cel-sub">—</div>
+    <button class="c4" onclick="go('achievements')">查看我的成就</button>
+  </div>
+</section>
+
+<!-- ===== VERSE 金句 ===== -->
+<section id="v-verse" class="view">
+  <div class="dpnav"><button class="bk" onclick="go('home')">‹ 首頁</button><span class="nt">每日金句</span><span class="sp"></span></div>
+  <div class="scroll">
+    <div class="dptabs"><button class="dptab on" data-t="today" onclick="verseTab('today')">今日</button><button class="dptab" data-t="fav" onclick="verseTab('fav')">收藏</button><button class="dptab" data-t="hist" onclick="verseTab('hist')">歷史</button></div>
+    <div id="verse-list"></div>
+  </div>
+</section>
+
+<!-- ===== HOME (old content removed) ===== -->
 <section id="v-claims" class="view">
   <div class="nav"><button class="back" onclick="go('home')">‹ 首頁</button><span class="ttl">待收款項</span><span class="sp"></span></div>
   <div class="scroll">
@@ -372,6 +778,9 @@ function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clea
 function go(v){document.querySelectorAll('.view').forEach(x=>x.classList.remove('on'));$('#v-'+v).classList.add('on');
   if(v==='home')loadHome(); if(v==='claims')loadClaims(); if(v==='todos')loadTodos();
   if(v==='purchases')loadPurch(); if(v==='ideas')loadIdeas(); if(v==='finance')loadFinance();
+  if(v==='mood')loadMood(); if(v==='relationships')loadRelationships();
+  if(v==='goals')loadGoals(); if(v==='achievements')loadAchievements();
+  if(v==='verse')loadVersePage();
   if(v==='settings')$('#set-url').textContent=localStorage.getItem('sb_url')||'—';
   document.querySelector('#v-'+v+' .scroll')?.scrollTo(0,0);
 }
@@ -441,18 +850,19 @@ window.addEventListener('load', ()=>{
 /* ---------- HOME ---------- */
 async function loadHome(){
   const [{data:cl},{data:td},{data:pu},{data:id}] = await Promise.all([
-    db.from('claims').select('status'),
+    db.from('claims').select('amount,status'),
     db.from('todos').select('status'),
     db.from('purchases').select('status'),
     db.from('ideas').select('id')
   ]);
-  const unpaid=(cl||[]).filter(x=>x.status==='unpaid').length;
+  const unpaid=(cl||[]).filter(x=>x.status==='unpaid');
+  const unpaidTotal=unpaid.reduce((a,b)=>a+(Number(b.amount)||0),0);
   const pendTodo=(td||[]).filter(x=>x.status==='pending').length;
   const tobuy=(pu||[]).filter(x=>x.status==='to_buy').length;
-  $('#t-claim').textContent=unpaid+' 筆未收';
-  $('#t-todo').textContent=pendTodo+' 項待辦';
-  $('#t-buy').textContent=tobuy+' 項未買';
-  $('#t-idea').textContent=(id||[]).length+' 則';
+  $('#hq-claim').textContent=money(unpaidTotal);
+  $('#hq-todo').textContent=pendTodo;
+  $('#hm-todo').textContent=pendTodo+' 項';
+  $('#hm-buy').textContent=tobuy+' 項';
   // 本月收支
   const m=todayStr().slice(0,7);
   let tx=[];
@@ -461,16 +871,428 @@ async function loadHome(){
   const inc=mtx.filter(x=>x.type==='income').reduce((a,b)=>a+(+b.amount||0),0);
   const exp=mtx.filter(x=>x.type==='expense').reduce((a,b)=>a+(+b.amount||0),0);
   const net=inc-exp;
-  $('#s-income').textContent=money(inc);
-  $('#s-expense').textContent=money(exp);
-  $('#s-net').textContent=money(net);
-  $('#fin-sub').textContent='淨 '+money(net);
+  $('#hq-net').textContent=money(net);
+  $('#hm-fin').textContent=money(net);
+
+  await Promise.all([loadHomeVerse(), loadHomeMood(), loadHomeRel(), loadHomeGoals()]);
+  $('#home-due').innerHTML='';
 }
+
+/* ---------- 首頁：情緒 / 關係 概覽 ---------- */
+async function loadHomeMood(){
+  try{
+    const {data:set} = await db.from('mood_settings').select('*').eq('id','main').maybeSingle();
+    const {data:logs} = await db.from('mood_logs').select('delta').order('date',{ascending:true});
+    const base = set ? Number(set.initial_score) : null;
+    if(base===null || !logs){ $('#hb-mood').textContent='未設定'; $('#hb-mood-fill').style.width='0%'; return; }
+    const score = clamp0to100(base + (logs||[]).reduce((a,b)=>a+(+b.delta||0),0));
+    $('#hb-mood').textContent=Math.round(score)+'%';
+    $('#hb-mood-fill').style.width=score+'%';
+  }catch(e){ $('#hb-mood').textContent='—'; }
+}
+async function loadHomeRel(){
+  try{
+    const {data} = await db.from('relationships').select('current_score');
+    if(!data || !data.length){ $('#hb-rel').textContent='未有'; $('#hb-rel-fill').style.width='0%'; return; }
+    const avg = data.reduce((a,b)=>a+(+b.current_score||0),0)/data.length;
+    $('#hb-rel').textContent=Math.round(avg)+'%';
+    $('#hb-rel-fill').style.width=avg+'%';
+  }catch(e){ $('#hb-rel').textContent='—'; }
+}
+async function loadHomeGoals(){
+  try{
+    const {data} = await db.from('goals').select('*').eq('status','active').order('created_at',{ascending:false}).limit(3);
+    const host=$('#home-goals');
+    if(!data || !data.length){ host.innerHTML='<div class="empty" style="padding:20px 4px;text-align:left;color:#a59f90;font-size:13px">未有進行中目標。㩒下面「全部」新增一個。</div>'; return; }
+    host.innerHTML=data.map(g=>goalCardHTML(g)).join('');
+  }catch(e){ $('#home-goals').innerHTML=''; }
+}
+function clamp0to100(n){ return Math.max(0, Math.min(100, n)); }
+function goalCardHTML(g){
+  const pct = Math.round(g.progress_pct||0);
+  return `<button class="goalcard" onclick="openGoalDetail('${g.id}')">
+    <div class="gtop"><span class="gname">${esc(g.name)}</span><span class="gp">${pct}%</span></div>
+    <div class="dptrack thin"><div class="dpfill" style="width:${pct}%;background:#8B5CF6"></div></div>
+    <div class="gsub">${g.target_date?('目標 '+fmtDateFull(g.target_date)):'未設目標日'}</div>
+  </button>`;
+}
+function fmtDateFull(s){ if(!s)return ''; const [y,m,d]=s.slice(0,10).split('-'); return y+'年'+Number(m)+'月'+Number(d)+'日'; }
 
 /* ---------- generic chip render ---------- */
 function chips(host,opts,active,fn){
   host.innerHTML='';
   opts.forEach(o=>{const b=document.createElement('button');b.className='chip'+(o.v===active?' on':'');b.textContent=o.t;b.onclick=()=>fn(o.v);host.appendChild(b);});
+}
+
+/* ================= Phase 1 ================= */
+const WEIGHT=2;
+const MOOD_EMOS=[{k:'幸福',c:'#FF9F0A',dir:1},{k:'開心',c:'#FFB300',dir:1},{k:'平靜',c:'#14B8A6',dir:1},{k:'壓力',c:'#8B5CF6',dir:-1},{k:'傷心',c:'#5B8DEF',dir:-1},{k:'生氣',c:'#FF3B30',dir:-1},{k:'委屈',c:'#B0728E',dir:-1},{k:'焦慮',c:'#E0663A',dir:-1}];
+const REL_EMOS=[{k:'幸福',c:'#FF9F0A',dir:1},{k:'開心',c:'#FFB300',dir:1},{k:'傷心',c:'#5B8DEF',dir:-1},{k:'生氣',c:'#FF3B30',dir:-1},{k:'委屈',c:'#B0728E',dir:-1}];
+const AVA_COLORS=['#FF375F','#8B5CF6','#3B82F6','#14B8A6','#FF9F0A','#5B8DEF','#FF6E88'];
+function avColor(seed){let h=0;for(const c of String(seed))h=(h*31+c.charCodeAt(0))>>>0;return AVA_COLORS[h%AVA_COLORS.length];}
+
+/* ---------- 每日金句 ---------- */
+let todaysVerse=null;
+async function pickTodayVerse(){
+  const d=todayStr();
+  try{
+    const {data:hist}=await db.from('bible_history').select('*').eq('date',d).maybeSingle();
+    if(hist && hist.verse_id){
+      const {data:v}=await db.from('bible_verses').select('*').eq('id',hist.verse_id).maybeSingle();
+      if(v) return v;
+    }
+    const {data:all}=await db.from('bible_verses').select('id');
+    if(!all || !all.length) return null;
+    // 用日期做穩定亂數種子，同一日固定揀同一句
+    let seed=0; for(const c of d) seed=(seed*31+c.charCodeAt(0))>>>0;
+    const pick=all[seed % all.length];
+    const {data:v2}=await db.from('bible_verses').select('*').eq('id',pick.id).maybeSingle();
+    try{ await db.from('bible_history').upsert({date:d, verse_id:pick.id}); }catch(e){}
+    return v2;
+  }catch(e){ return null; }
+}
+async function loadHomeVerse(){
+  todaysVerse = await pickTodayVerse();
+  if(!todaysVerse){ $('#verse-text').textContent='（金句庫未設定，請先於 Supabase 執行 phase1 SQL）'; $('#verse-ref').textContent=''; return; }
+  $('#verse-text').textContent=todaysVerse.text;
+  $('#verse-ref').textContent=todaysVerse.reference;
+  await refreshFavIcon();
+}
+async function refreshFavIcon(){
+  if(!todaysVerse) return;
+  try{
+    const {data}=await db.from('bible_favorites').select('id').eq('verse_id',todaysVerse.id).maybeSingle();
+    $('#verse-fav').classList.toggle('on', !!data);
+  }catch(e){}
+}
+async function toggleFavVerse(){
+  if(!todaysVerse) return;
+  try{
+    const {data}=await db.from('bible_favorites').select('id').eq('verse_id',todaysVerse.id).maybeSingle();
+    if(data){ await db.from('bible_favorites').delete().eq('id',data.id); toast('已取消收藏'); }
+    else{ await db.from('bible_favorites').insert({verse_id:todaysVerse.id}); toast('已收藏'); }
+    await refreshFavIcon();
+  }catch(e){ toast('操作失敗'); }
+}
+let verseTabCur='today';
+function verseTab(t){ verseTabCur=t; document.querySelectorAll('#v-verse .dptab').forEach(b=>b.classList.toggle('on', b.dataset.t===t)); renderVersePage(); }
+async function loadVersePage(){ if(!todaysVerse) todaysVerse=await pickTodayVerse(); renderVersePage(); }
+async function renderVersePage(){
+  const L=$('#verse-list');
+  if(verseTabCur==='today'){
+    if(!todaysVerse){ L.innerHTML='<div class="empty">未有金句</div>'; return; }
+    let fav=false; try{ const {data}=await db.from('bible_favorites').select('id').eq('verse_id',todaysVerse.id).maybeSingle(); fav=!!data; }catch(e){}
+    L.innerHTML=`<div class="verse" style="cursor:default"><button class="fav ${fav?'on':''}" onclick="toggleFavVerse();renderVersePage()"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-8.6C1 9.3 2.6 6 5.9 6c2 0 3.2 1.2 4.1 2.5C10.9 7.2 12.1 6 14.1 6c3.3 0 4.9 3.3 3.2 6.4C19 16.6 12 21 12 21Z"/></svg></button><div class="vl">今日金句</div><div class="vt">${esc(todaysVerse.text)}</div><div class="vs">${esc(todaysVerse.reference)}</div></div>`;
+  } else if(verseTabCur==='fav'){
+    try{
+      const {data}=await db.from('bible_favorites').select('verse_id').order('created_at',{ascending:false});
+      if(!data||!data.length){ L.innerHTML='<div class="empty">未有收藏</div>'; return; }
+      const ids=data.map(x=>x.verse_id);
+      const {data:vs}=await db.from('bible_verses').select('*').in('id',ids);
+      const map={}; (vs||[]).forEach(v=>map[v.id]=v);
+      L.innerHTML=ids.map(id=>map[id]).filter(Boolean).map(v=>`<div class="verse" style="cursor:default"><button class="fav on" onclick="unfav('${v.id}')"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-8.6C1 9.3 2.6 6 5.9 6c2 0 3.2 1.2 4.1 2.5C10.9 7.2 12.1 6 14.1 6c3.3 0 4.9 3.3 3.2 6.4C19 16.6 12 21 12 21Z"/></svg></button><div class="vt">${esc(v.text)}</div><div class="vs">${esc(v.reference)}</div></div>`).join('');
+    }catch(e){ L.innerHTML='<div class="empty">載入失敗</div>'; }
+  } else {
+    try{
+      const {data}=await db.from('bible_history').select('date,verse_id').order('date',{ascending:false}).limit(60);
+      if(!data||!data.length){ L.innerHTML='<div class="empty">未有歷史</div>'; return; }
+      const ids=data.map(x=>x.verse_id);
+      const {data:vs}=await db.from('bible_verses').select('*').in('id',ids);
+      const map={}; (vs||[]).forEach(v=>map[v.id]=v);
+      L.innerHTML=data.map(h=>{const v=map[h.verse_id]; if(!v)return ''; return `<div class="verse" style="cursor:default"><div class="vl">${fmtDateFull(h.date)}</div><div class="vt">${esc(v.text)}</div><div class="vs">${esc(v.reference)}</div></div>`;}).join('');
+    }catch(e){ L.innerHTML='<div class="empty">載入失敗</div>'; }
+  }
+}
+async function unfav(vid){ try{ const {data}=await db.from('bible_favorites').select('id').eq('verse_id',vid).maybeSingle(); if(data) await db.from('bible_favorites').delete().eq('id',data.id); renderVersePage(); }catch(e){} }
+
+/* ---------- 情緒健康 ---------- */
+let moodDraft={emotion:null,stars:4,note:''};
+let moodRangeDays=7;
+async function ensureMoodSettings(){
+  const {data}=await db.from('mood_settings').select('*').eq('id','main').maybeSingle();
+  if(data) return data;
+  let v=prompt('第一次使用情緒健康記錄：\n請設定你而家嘅初始健康值（0-100）','70');
+  if(v===null) v='70';
+  v=Math.max(0,Math.min(100,Number(v)||70));
+  const row={id:'main',initial_score:v,weight:WEIGHT};
+  try{ await db.from('mood_settings').upsert(row); }catch(e){}
+  return row;
+}
+async function loadMood(){
+  const set=await ensureMoodSettings();
+  const {data:logs}=await db.from('mood_logs').select('*').order('date',{ascending:true});
+  const base=Number(set.initial_score);
+  let running=base; const points=[];
+  (logs||[]).forEach(l=>{ running=clamp0to100(running+(+l.delta||0)); points.push({...l,score_after:running}); });
+  const score = points.length? points[points.length-1].score_after : base;
+  $('#mood-score').innerHTML=Math.round(score)+'<small>/100</small>';
+  $('#mood-score-fill').style.width=score+'%';
+  // spark: 最近 7 個記錄
+  const recent=points.slice(-7);
+  const sp=$('#mood-spark');
+  if(recent.length){
+    const max=100;
+    sp.innerHTML=recent.map(p=>`<i style="height:${Math.max(8,p.score_after)}%;background:${p.delta>=0?'#FF9F0A':'#E3B673'}"></i>`).join('');
+    const first=recent[0].score_after, last=recent[recent.length-1].score_after;
+    $('#mood-trend').textContent='最近 '+recent.length+' 次記錄 '+(last>=first?'↗ 上升':'↘ 下降')+' '+Math.abs(Math.round(last-first))+' 分';
+  } else { sp.innerHTML=''; $('#mood-trend').textContent='未有記錄，撳下面開始記錄'; }
+  renderMoodList(points);
+}
+function moodRange(n){ moodRangeDays=n; document.querySelectorAll('#v-mood .dptab').forEach(b=>b.classList.toggle('on', Number(b.dataset.t)===n)); loadMood(); }
+function renderMoodList(points){
+  const cutoff=new Date(); cutoff.setDate(cutoff.getDate()-moodRangeDays);
+  const rows=points.filter(p=>new Date(p.date+'T00:00:00')>=cutoff).slice().reverse();
+  const L=$('#mood-list');
+  if(!rows.length){ L.innerHTML='<div class="empty">呢段時間未有記錄。</div>'; return; }
+  L.innerHTML=rows.map(p=>{
+    const emo=MOOD_EMOS.find(e=>e.k===p.emotion)||{c:'#999'};
+    const stars='★'.repeat(p.stars)+'☆'.repeat(5-p.stars);
+    return `<div class="dprow"><div class="m"><div class="t1">${esc(p.emotion)} <span style="color:${emo.c};font-size:12px">${stars}</span></div><div class="t2">${p.note?esc(p.note):fmtDateFull(p.date)}</div></div><div class="rt" style="color:${p.delta>=0?'#34C759':'#FF3B30'}">${p.delta>=0?'+':''}${p.delta}</div></div>`;
+  }).join('');
+}
+function openMood(){
+  moodDraft={emotion:MOOD_EMOS[1].k,stars:4,note:''};
+  renderMoodSheet();
+  $('#sheet-bg').classList.add('on'); requestAnimationFrame(()=>$('#sheet').classList.add('on'));
+}
+function renderMoodSheet(){
+  const emo=MOOD_EMOS.find(e=>e.k===moodDraft.emotion);
+  const delta=emo.dir*moodDraft.stars*WEIGHT;
+  $('#sheet').innerHTML=`<div class="grab"></div>
+    <div class="sh"><button class="c" onclick="closeSheet()">取消</button><span class="t">記錄心情</span><button class="s" onclick="saveMood()">儲存</button></div>
+    <div class="dpfield"><label>今日心情</label><div class="emorow" style="margin-top:8px">${MOOD_EMOS.map(e=>`<button class="ecbtn ${e.k===moodDraft.emotion?'on':''}" style="--c:${e.c}" onclick="pickMoodEmo('${e.k}')">${e.k}</button>`).join('')}</div></div>
+    <div class="dpfield"><label>強度</label><div style="margin-top:6px">${[1,2,3,4,5].map(n=>`<button class="starpick" style="font-size:26px;padding:6px 5px" onclick="pickMoodStars(${n})">${n<=moodDraft.stars?'★':'<span class="off">★</span>'}</button>`).join('')}</div></div>
+    <div class="dpfield"><label>文字記錄（可留空）</label><textarea class="dpta" id="mood-note" placeholder="今日發生咩事⋯">${esc(moodDraft.note)}</textarea></div>
+    <div class="impact"><span class="k">預計分數變化</span><span class="v" style="color:${delta>=0?'#34C759':'#FF3B30'}">${delta>=0?'+':''}${delta}</span></div>`;
+}
+function pickMoodEmo(k){ moodDraft.emotion=k; renderMoodSheet(); }
+function pickMoodStars(n){ moodDraft.stars=n; renderMoodSheet(); }
+async function saveMood(){
+  moodDraft.note=$('#mood-note').value.trim();
+  const emo=MOOD_EMOS.find(e=>e.k===moodDraft.emotion);
+  const delta=emo.dir*moodDraft.stars*WEIGHT;
+  try{
+    await db.from('mood_logs').insert({date:todayStr(),emotion:moodDraft.emotion,stars:moodDraft.stars,note:moodDraft.note,delta});
+    closeSheet(); toast('已記錄'); loadMood();
+  }catch(e){ toast('儲存失敗，請確認已建立 mood_logs 表'); }
+}
+
+/* ---------- 關係管理 ---------- */
+async function ensureSelfPerson(){
+  const {data}=await db.from('relationships').select('id').eq('is_self',true).maybeSingle();
+  if(data) return;
+  try{ await db.from('relationships').insert({name:'我自己',relation:'本人',initial_score:70,current_score:70,is_self:true}); }catch(e){}
+}
+async function loadRelationships(){
+  await ensureSelfPerson();
+  const {data}=await db.from('relationships').select('*').order('is_self',{ascending:false}).order('created_at',{ascending:false});
+  const L=$('#rel-list');
+  if(!data||!data.length){ L.innerHTML='<div class="empty">未有人物。</div>'; return; }
+  L.innerHTML=data.map(p=>{
+    const score=Math.round(p.current_score||0);
+    const col = p.is_self? '#FF9F0A' : (score>=70?'#34C759':score>=40?'#F5A300':'#FF3B30');
+    return `<button class="rcard ${p.is_self?'self':''}" onclick="openRelationshipDetail('${p.id}')">
+      <div class="rc-top"><div class="rc-av" style="background:${avColor(p.name)}">${esc((p.name||'?').slice(0,1))}</div>
+      <div><div class="rc-name">${esc(p.name)}</div><div class="rc-sub">${esc(p.relation||'')}${p.is_self?' · 本人':''}</div></div>
+      <div class="rc-pct"><b style="color:${col}">${score}%</b><span>健康值</span></div></div>
+      <div class="dptrack" style="margin-top:10px"><div class="dpfill" style="width:${score}%;background:${col}"></div></div>
+    </button>`;
+  }).join('');
+}
+function openPerson(){
+  $('#sheet').innerHTML=`<div class="grab"></div>
+    <div class="sh"><button class="c" onclick="closeSheet()">取消</button><span class="t">新增人物</span><button class="s" onclick="savePerson()">儲存</button></div>
+    <div class="dpfield"><label>姓名</label><input id="p-name" placeholder="例如 Joe"></div>
+    <div class="dpfield"><label>關係</label><input id="p-rel" placeholder="例如 老公／朋友／同事"></div>
+    <div class="dpfield"><label>初始健康值（0-100）</label><input id="p-init" type="number" value="70"></div>`;
+  $('#sheet-bg').classList.add('on'); requestAnimationFrame(()=>$('#sheet').classList.add('on'));
+}
+async function savePerson(){
+  const name=$('#p-name').value.trim(); if(!name){ toast('請輸入姓名'); return; }
+  const rel=$('#p-rel').value.trim();
+  const init=Math.max(0,Math.min(100,Number($('#p-init').value)||70));
+  try{ await db.from('relationships').insert({name,relation:rel,initial_score:init,current_score:init}); closeSheet(); toast('已新增'); loadRelationships(); }
+  catch(e){ toast('儲存失敗，請確認已建立 relationships 表'); }
+}
+let curPersonId=null;
+async function openRelationshipDetail(id){
+  curPersonId=id; go('relationship');
+  const {data:p}=await db.from('relationships').select('*').eq('id',id).maybeSingle();
+  if(!p) return;
+  const score=Math.round(p.current_score||0);
+  const col = p.is_self? '#FF9F0A' : (score>=70?'#34C759':score>=40?'#F5A300':'#FF3B30');
+  $('#rd-name').textContent=p.name; $('#rd-name2').textContent=p.name;
+  $('#rd-sub').textContent=(p.relation||'')+(p.is_self?' · 本人':'');
+  $('#rd-av').textContent=(p.name||'?').slice(0,1); $('#rd-av').style.background=avColor(p.name);
+  $('#rd-score').textContent=score; $('#rd-score').style.color=col;
+  $('#rd-fill').style.width=score+'%'; $('#rd-fill').style.background=col;
+  const {data:evs}=await db.from('relationship_events').select('*').eq('relationship_id',id).order('date',{ascending:false}).order('created_at',{ascending:false});
+  const T=$('#rd-timeline');
+  if(!evs||!evs.length){ T.innerHTML='<div class="empty">未有相處記錄。</div>'; return; }
+  T.innerHTML=evs.map(e=>{const emo=REL_EMOS.find(x=>x.k===e.emotion)||{c:'#999'};const stars='★'.repeat(e.stars)+'☆'.repeat(5-e.stars);
+    return `<div class="dptli"><span class="tld" style="background:${emo.c}"></span><div class="c"><div class="a">${esc(e.emotion)} · ${stars}</div>${e.note?`<div class="b">${esc(e.note)}</div>`:''}<div class="d">${fmtDateFull(e.date)} · ${e.delta>=0?'+':''}${e.delta} → ${Math.round(e.score_after)}%</div></div></div>`;
+  }).join('');
+}
+function editPersonCurrent(){
+  if(!curPersonId) return;
+  db.from('relationships').select('*').eq('id',curPersonId).maybeSingle().then(({data:p})=>{
+    if(!p) return;
+    $('#sheet').innerHTML=`<div class="grab"></div>
+      <div class="sh"><button class="c" onclick="closeSheet()">取消</button><span class="t">編輯人物</span><button class="s" onclick="updatePerson()">儲存</button></div>
+      <div class="dpfield"><label>姓名</label><input id="p-name" value="${esc(p.name)}"></div>
+      <div class="dpfield"><label>關係</label><input id="p-rel" value="${esc(p.relation||'')}"></div>
+      ${p.is_self?'':'<button class="del" onclick="deletePerson()">刪除人物</button>'}`;
+    $('#sheet-bg').classList.add('on'); requestAnimationFrame(()=>$('#sheet').classList.add('on'));
+  });
+}
+async function updatePerson(){
+  const name=$('#p-name').value.trim(); if(!name){toast('請輸入姓名');return;}
+  const rel=$('#p-rel').value.trim();
+  try{ await db.from('relationships').update({name,relation:rel}).eq('id',curPersonId); closeSheet(); toast('已更新'); openRelationshipDetail(curPersonId); }
+  catch(e){ toast('儲存失敗'); }
+}
+async function deletePerson(){
+  if(!confirm('確定刪除呢位人物？相處記錄都會一併刪除。'))return;
+  try{ await db.from('relationship_events').delete().eq('relationship_id',curPersonId); await db.from('relationships').delete().eq('id',curPersonId); closeSheet(); toast('已刪除'); go('relationships'); }
+  catch(e){ toast('刪除失敗'); }
+}
+let relEventDraft={emotion:null,stars:4,note:''};
+function openEvent(){
+  relEventDraft={emotion:REL_EMOS[1].k,stars:4,note:''};
+  renderEventSheet();
+  $('#sheet-bg').classList.add('on'); requestAnimationFrame(()=>$('#sheet').classList.add('on'));
+}
+function renderEventSheet(){
+  const emo=REL_EMOS.find(e=>e.k===relEventDraft.emotion);
+  const delta=emo.dir*relEventDraft.stars*WEIGHT;
+  $('#sheet').innerHTML=`<div class="grab"></div>
+    <div class="sh"><button class="c" onclick="closeSheet()">取消</button><span class="t">相處記錄</span><button class="s" onclick="saveEvent()">儲存</button></div>
+    <div class="dpfield"><label>情緒</label><div class="emorow" style="margin-top:8px">${REL_EMOS.map(e=>`<button class="ecbtn ${e.k===relEventDraft.emotion?'on':''}" style="--c:${e.c}" onclick="pickRelEmo('${e.k}')">${e.k}</button>`).join('')}</div></div>
+    <div class="dpfield"><label>影響程度</label><div style="margin-top:6px">${[1,2,3,4,5].map(n=>`<button class="starpick" style="font-size:26px;padding:6px 5px" onclick="pickRelStars(${n})">${n<=relEventDraft.stars?'★':'<span class="off">★</span>'}</button>`).join('')}</div></div>
+    <div class="dpfield"><label>事件描述（可留空）</label><textarea class="dpta" id="rel-note" placeholder="發生咗咩事⋯">${esc(relEventDraft.note)}</textarea></div>
+    <div class="impact"><span class="k">關係值變化</span><span class="v" style="color:${delta>=0?'#34C759':'#FF3B30'}">${delta>=0?'+':''}${delta}</span></div>`;
+}
+function pickRelEmo(k){ relEventDraft.emotion=k; renderEventSheet(); }
+function pickRelStars(n){ relEventDraft.stars=n; renderEventSheet(); }
+async function saveEvent(){
+  relEventDraft.note=$('#rel-note').value.trim();
+  const emo=REL_EMOS.find(e=>e.k===relEventDraft.emotion);
+  const delta=emo.dir*relEventDraft.stars*WEIGHT;
+  try{
+    const {data:p}=await db.from('relationships').select('current_score').eq('id',curPersonId).maybeSingle();
+    const newScore=clamp0to100((p?p.current_score:70)+delta);
+    await db.from('relationship_events').insert({relationship_id:curPersonId,date:todayStr(),emotion:relEventDraft.emotion,stars:relEventDraft.stars,note:relEventDraft.note,delta,score_after:newScore});
+    await db.from('relationships').update({current_score:newScore}).eq('id',curPersonId);
+    closeSheet(); toast('已記錄'); openRelationshipDetail(curPersonId);
+  }catch(e){ toast('儲存失敗，請確認已建立 relationship_events 表'); }
+}
+
+/* ---------- 小目標 ---------- */
+let goalTabCur='active';
+function goalTab(t){ goalTabCur=t; document.querySelectorAll('#v-goals .dptab').forEach(b=>b.classList.toggle('on', b.dataset.t===t)); loadGoals(); }
+async function loadGoals(){
+  const {data}=await db.from('goals').select('*').eq('status',goalTabCur).order('created_at',{ascending:false});
+  const L=$('#goals-list');
+  if(!data||!data.length){ L.innerHTML=`<div class="empty">${goalTabCur==='active'?'未有進行中目標。':'未有已完成目標。'}</div>`; return; }
+  L.innerHTML=data.map(g=>goalCardHTML(g)).join('');
+}
+function openGoal(){
+  $('#sheet').innerHTML=`<div class="grab"></div>
+    <div class="sh"><button class="c" onclick="closeSheet()">取消</button><span class="t">新增小目標</span><button class="s" onclick="saveGoal()">儲存</button></div>
+    <div class="dpfield"><label>目標名稱</label><input id="g-name" placeholder="例如 日本旅行"></div>
+    <div class="dpfield"><label>描述（可留空）</label><textarea class="dpta" id="g-desc"></textarea></div>
+    <div class="dpfield"><label>目標日期（可留空）</label><input id="g-date" type="date"></div>`;
+  $('#sheet-bg').classList.add('on'); requestAnimationFrame(()=>$('#sheet').classList.add('on'));
+}
+async function saveGoal(){
+  const name=$('#g-name').value.trim(); if(!name){ toast('請輸入目標名稱'); return; }
+  const desc=$('#g-desc').value.trim(); const date=$('#g-date').value||null;
+  try{ await db.from('goals').insert({name,description:desc,start_date:todayStr(),target_date:date,status:'active',progress_pct:0}); closeSheet(); toast('已新增'); loadGoals(); loadHomeGoals(); }
+  catch(e){ toast('儲存失敗，請確認已建立 goals 表'); }
+}
+let curGoalId=null, curGoalPct=0;
+async function openGoalDetail(id){
+  curGoalId=id; go('goal');
+  const {data:g}=await db.from('goals').select('*').eq('id',id).maybeSingle();
+  if(!g) return;
+  curGoalPct=g.progress_pct||0;
+  $('#gd-name').textContent=g.name;
+  $('#gd-pct').innerHTML=Math.round(curGoalPct)+'<small>%</small>';
+  $('#gd-fill').style.width=curGoalPct+'%';
+  $('#gd-slider').value=curGoalPct;
+  $('#gd-sub').textContent=g.target_date? ('目標日 '+fmtDateFull(g.target_date)) : (g.description||'未設目標日');
+  $('#gd-complete').style.display = g.status==='done' ? 'none' : 'block';
+  await loadMilestones(); await loadGoalTodos();
+}
+function gdSliderPreview(v){ $('#gd-pct').innerHTML=v+'<small>%</small>'; $('#gd-fill').style.width=v+'%'; }
+async function gdSliderCommit(v){
+  curGoalPct=Number(v);
+  try{ await db.from('goals').update({progress_pct:curGoalPct}).eq('id',curGoalId); loadHomeGoals(); }catch(e){}
+}
+function editGoalCurrent(){
+  if(!curGoalId) return;
+  db.from('goals').select('*').eq('id',curGoalId).maybeSingle().then(({data:g})=>{
+    if(!g) return;
+    $('#sheet').innerHTML=`<div class="grab"></div>
+      <div class="sh"><button class="c" onclick="closeSheet()">取消</button><span class="t">編輯目標</span><button class="s" onclick="updateGoal()">儲存</button></div>
+      <div class="dpfield"><label>目標名稱</label><input id="g-name" value="${esc(g.name)}"></div>
+      <div class="dpfield"><label>描述</label><textarea class="dpta" id="g-desc">${esc(g.description||'')}</textarea></div>
+      <div class="dpfield"><label>目標日期</label><input id="g-date" type="date" value="${g.target_date?g.target_date.slice(0,10):''}"></div>
+      <button class="del" onclick="deleteGoal()">刪除目標</button>`;
+    $('#sheet-bg').classList.add('on'); requestAnimationFrame(()=>$('#sheet').classList.add('on'));
+  });
+}
+async function updateGoal(){
+  const name=$('#g-name').value.trim(); if(!name){toast('請輸入名稱');return;}
+  try{ await db.from('goals').update({name,description:$('#g-desc').value.trim(),target_date:$('#g-date').value||null}).eq('id',curGoalId); closeSheet(); toast('已更新'); openGoalDetail(curGoalId); }
+  catch(e){ toast('儲存失敗'); }
+}
+async function deleteGoal(){
+  if(!confirm('確定刪除呢個目標？'))return;
+  try{ await db.from('goal_milestones').delete().eq('goal_id',curGoalId); await db.from('goal_todos').delete().eq('goal_id',curGoalId); await db.from('goals').delete().eq('id',curGoalId); closeSheet(); toast('已刪除'); go('goals'); }
+  catch(e){ toast('刪除失敗'); }
+}
+async function loadMilestones(){
+  const {data}=await db.from('goal_milestones').select('*').eq('goal_id',curGoalId).order('created_at',{ascending:true});
+  const L=$('#gd-milestones');
+  if(!data||!data.length){ L.innerHTML='<div class="empty" style="padding:14px 4px;text-align:left">未有里程碑。</div>'; return; }
+  L.innerHTML=data.map(m=>`<div class="dprow"><button class="check ${m.done?'done':''}" style="margin-top:1px" onclick="toggleMilestone('${m.id}',${m.done})"></button><div class="m"><div class="t1" style="${m.done?'text-decoration:line-through;color:#b4ae9f':''}">${esc(m.title)}</div></div></div>`).join('');
+}
+function openMilestone(){ const t=prompt('里程碑名稱'); if(!t)return; db.from('goal_milestones').insert({goal_id:curGoalId,title:t.trim(),done:false}).then(()=>loadMilestones()).catch(()=>toast('儲存失敗，請確認已建立 goal_milestones 表')); }
+async function toggleMilestone(id,done){ await db.from('goal_milestones').update({done:!done}).eq('id',id); loadMilestones(); }
+async function loadGoalTodos(){
+  const {data}=await db.from('goal_todos').select('*').eq('goal_id',curGoalId).order('created_at',{ascending:true});
+  const L=$('#gd-todos');
+  if(!data||!data.length){ L.innerHTML='<div class="empty" style="padding:14px 4px;text-align:left">未有 To Do。</div>'; return; }
+  L.innerHTML=data.map(t=>`<div class="dprow"><button class="check ${t.done?'done':''}" style="margin-top:1px" onclick="toggleGoalTodo('${t.id}',${t.done})"></button><div class="m"><div class="t1" style="${t.done?'text-decoration:line-through;color:#b4ae9f':''}">${esc(t.content)}</div></div></div>`).join('');
+}
+function openGoalTodo(){ const t=prompt('To Do 內容'); if(!t)return; db.from('goal_todos').insert({goal_id:curGoalId,content:t.trim(),done:false}).then(()=>loadGoalTodos()).catch(()=>toast('儲存失敗，請確認已建立 goal_todos 表')); }
+async function toggleGoalTodo(id,done){ await db.from('goal_todos').update({done:!done}).eq('id',id); loadGoalTodos(); }
+async function completeGoal(){
+  if(!confirm('標記呢個目標為完成？'))return;
+  try{
+    const {data:g}=await db.from('goals').select('*').eq('id',curGoalId).maybeSingle();
+    const completedAt=new Date().toISOString();
+    await db.from('goals').update({status:'done',progress_pct:100,completed_at:completedAt}).eq('id',curGoalId);
+    const {count}=await db.from('goals').select('id',{count:'exact',head:true}).eq('status','done');
+    let days='';
+    if(g && g.start_date){ const d=Math.round((new Date(completedAt)-new Date(g.start_date))/86400000); days=`用咗 ${d} 日完成`; }
+    $('#cel-name').textContent=g?g.name+' 完成！':'完成！';
+    $('#cel-sub').innerHTML=(days?days+'<br>':'')+'這是你第 <b>'+(count||1)+'</b> 個完成的目標';
+    go('celebrate');
+  }catch(e){ toast('操作失敗'); }
+}
+async function loadAchievements(){
+  const {data}=await db.from('goals').select('*').eq('status','done').order('completed_at',{ascending:false});
+  const rows=data||[];
+  $('#ach-count').textContent=rows.length;
+  const years={};
+  rows.forEach(g=>{ const y=(g.completed_at||g.created_at||'').slice(0,4); if(y) years[y]=(years[y]||0)+1; });
+  const yrs=Object.keys(years).sort();
+  const max=Math.max(1,...yrs.map(y=>years[y]));
+  $('#ach-years').innerHTML=yrs.length? yrs.map(y=>`<div class="b"><div class="bar2" style="height:${Math.max(10,years[y]/max*100)}%"></div><div class="yl">${y}</div></div>`).join('') : '<div class="empty" style="padding:10px 4px">未有資料</div>';
+  const L=$('#ach-list');
+  L.innerHTML = rows.length? rows.slice(0,12).map(g=>`<div class="dprow"><div class="m"><div class="t1">✓ ${esc(g.name)}</div><div class="t2">${g.completed_at?fmtDateFull(g.completed_at):''}</div></div></div>`).join('') : '<div class="empty">未有完成嘅目標。</div>';
 }
 
 /* ---------- CLAIMS ---------- */
