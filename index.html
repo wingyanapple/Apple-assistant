@@ -705,8 +705,11 @@
 <!-- ===== 資產管理：銀行戶口 + 資金歸屬 ===== -->
 <section id="v-assets" class="view">
   <div class="dpnav"><button class="bk" onclick="go('home')">‹ 首頁</button><span class="nt">資產</span><span class="sp"></span></div>
-  <div class="scroll"><div id="assets-body"></div></div>
-  <button class="fab" onclick="openAccount()">＋ 新增戶口</button>
+  <div class="scroll">
+    <div class="dptabs"><button class="dptab on" data-t="bank" onclick="assetTab('bank')">銀行</button><button class="dptab" data-t="mortgage" onclick="assetTab('mortgage')">按揭</button><button class="dptab" data-t="lease" onclick="assetTab('lease')">租約</button></div>
+    <div id="assets-body"></div>
+  </div>
+  <button class="fab" id="assets-fab" onclick="assetFab()">＋ 新增戶口</button>
 </section>
 
 <!-- ===== HOME (old content removed) ===== -->
@@ -1741,9 +1744,9 @@ function esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;'
 let curAssetId=null, curAsset=null, assetPhotos=[], assetItems=[], assetRepairs=[];
 
 function daysSince(dateStr){ if(!dateStr) return null; const d=new Date(dateStr.slice(0,10)+'T00:00:00'); const t=new Date(todayStr()+'T00:00:00'); return Math.round((t-d)/86400000); }
-function dueInfo(dateStr){ const n=daysSince(dateStr); if(n===null) return null; const remain=-n;
+function dueInfo(dateStr,win){ win=win||14; const n=daysSince(dateStr); if(n===null) return null; const remain=-n;
   if(remain<0) return {level:'red',label:'已到期',col:'#FF3B30',bg:'#FFE7E5'};
-  if(remain<=14) return {level:'yellow',label:(remain===0?'今日到期':remain+' 日內'),col:'#B77500',bg:'#FFF1DB'};
+  if(remain<=win) return {level:'yellow',label:(remain===0?'今日到期':remain+' 日內'),col:'#B77500',bg:'#FFF1DB'};
   return {level:'green'}; }
 function assetStatsHTML(a){
   const held=a.purchase_date?Math.max(1,daysSince(a.purchase_date)):null;
@@ -1957,23 +1960,29 @@ async function deleteRepair(id){ if(!confirm('刪除呢條維修記錄？'))retu
 /* ---- 首頁「即將到期」 ---- */
 async function loadHomeDue(){
   const host=$('#home-due'); host.innerHTML='';
+  const cards=[];
   try{
     const {data:items}=await db.from('maint_items').select('*').not('next_due','is',null);
-    if(!items||!items.length) return;
-    const flagged=items.map(it=>({it,info:dueInfo(it.next_due)})).filter(x=>x.info&&x.info.level!=='green');
-    if(!flagged.length) return;
-    const ids=[...new Set(flagged.map(x=>x.it.asset_id))];
-    const {data:assets}=await db.from('maint_assets').select('id,name').in('id',ids);
-    const nameOf=Object.fromEntries((assets||[]).map(a=>[a.id,a.name]));
-    flagged.sort((a,b)=>((a.info.level==='red'?0:1)-(b.info.level==='red'?0:1)) || (daysSince(b.it.next_due)-daysSince(a.it.next_due)));
-    host.innerHTML=`<div class="dpsl"><span>即將到期</span></div>`+flagged.map(x=>{
-      const nm=nameOf[x.it.asset_id]||'資產';
-      return `<button class="bar" onclick="openMaintItemDetail('${x.it.asset_id}')">
-        <div class="bhead"><span class="bl">${esc(nm)} · ${esc(x.it.name)}</span><span class="bp" style="color:${x.info.col}">${x.info.label}</span></div>
-        <div class="gsub">${x.it.next_due?fmtDateFull(x.it.next_due):''}</div>
-      </button>`;
-    }).join('');
+    if(items&&items.length){
+      const flagged=items.map(it=>({it,info:dueInfo(it.next_due)})).filter(x=>x.info&&x.info.level!=='green');
+      if(flagged.length){
+        const ids=[...new Set(flagged.map(x=>x.it.asset_id))];
+        const {data:assets}=await db.from('maint_assets').select('id,name').in('id',ids);
+        const nameOf=Object.fromEntries((assets||[]).map(a=>[a.id,a.name]));
+        flagged.forEach(x=>cards.push({lvl:x.info.level==='red'?0:1, days:daysSince(x.it.next_due), col:x.info.col, label:x.info.label, title:`${nameOf[x.it.asset_id]||'資產'} · ${x.it.name}`, date:x.it.next_due, onclick:`openMaintItemDetail('${x.it.asset_id}')`}));
+      }
+    }
   }catch(e){}
+  try{
+    const {data:leases}=await db.from('leases').select('*').not('end_date','is',null);
+    (leases||[]).forEach(l=>{ const info=dueInfo(l.end_date,60); if(info&&info.level!=='green'){ cards.push({lvl:info.level==='red'?0:1, days:daysSince(l.end_date), col:info.col, label:info.level==='red'?'租約已到期':info.label, title:`${l.name||'租約'} · ${l.kind==='flex'?'生約':'死約'}到期`, date:l.end_date, onclick:`openLeasesTab()`}); } });
+  }catch(e){}
+  if(!cards.length) return;
+  cards.sort((a,b)=>(a.lvl-b.lvl)||(b.days-a.days));
+  host.innerHTML=`<div class="dpsl"><span>即將到期</span></div>`+cards.map(c=>`<button class="bar" onclick="${c.onclick}">
+    <div class="bhead"><span class="bl">${esc(c.title)}</span><span class="bp" style="color:${c.col}">${esc(c.label)}</span></div>
+    <div class="gsub">${c.date?fmtDateFull(c.date):''}</div>
+  </button>`).join('');
 }
 
 /* ==================== 小計劃模組（Phase 2） ==================== */
@@ -2120,10 +2129,21 @@ async function loadPlanTodos(){
 function openPlanTodo(){ const t=prompt('To Do 內容'); if(!t)return; db.from('plan_todos').insert({plan_id:curPlanId,content:t.trim(),done:false}).then(()=>{loadPlanTodos();refreshPlanProgress();}).catch(()=>toast('儲存失敗，請確認已建立 plan_todos 表')); }
 async function togglePlanTodo(id,done){ await db.from('plan_todos').update({done:!done}).eq('id',id); loadPlanTodos(); refreshPlanProgress(); }
 
-/* ==================== 資產管理：銀行戶口 + 資金歸屬（Phase 2） ==================== */
-let assetOwners=[];
+/* ==================== 資產管理：銀行 / 按揭 / 租約（Phase 2） ==================== */
+let assetOwners=[], assetTabCur='bank';
 async function ensureOwners(){ try{ const {data}=await db.from('asset_owners').select('*').order('created_at',{ascending:true}); assetOwners=data||[]; }catch(e){ assetOwners=[]; } return assetOwners; }
-async function loadAssets(){
+function assetTab(t){ assetTabCur=t; loadAssets(); }
+function syncAssetTabUI(){ document.querySelectorAll('#v-assets .dptabs .dptab').forEach(b=>b.classList.toggle('on', b.dataset.t===assetTabCur)); const f=$('#assets-fab'); if(f) f.textContent=assetTabCur==='bank'?'＋ 新增戶口':assetTabCur==='mortgage'?'＋ 新增按揭':'＋ 新增租約'; }
+async function loadAssets(){ syncAssetTabUI(); if(assetTabCur==='mortgage') return loadMortgages(); if(assetTabCur==='lease') return loadLeases(); return loadBankSection(); }
+function assetFab(){ if(assetTabCur==='mortgage') openMortgage(); else if(assetTabCur==='lease') openLease(); else openAccount(); }
+/* 通用擁有人揀選器（按揭/租約用；銀行沿用自己嗰套） */
+function ownerFieldHTML(rowId,hidId,selectedId){ return `<div class="dptabs" id="${rowId}">${ownerChipsInner(rowId,hidId,selectedId)}</div><input type="hidden" id="${hidId}" value="${selectedId||''}">`; }
+function ownerChipsInner(rowId,hidId,selectedId){ return assetOwners.map(o=>`<button type="button" class="dptab ${o.id===selectedId?'on':''}" data-oid="${o.id}" onclick="pickOwnerG('${rowId}','${hidId}','${o.id}')">${esc(o.name)}</button>`).join('')+`<button type="button" class="dptab" onclick="addOwnerG('${rowId}','${hidId}')">＋ 新擁有人</button>`; }
+function pickOwnerG(rowId,hidId,id){ $('#'+hidId).value=id; document.querySelectorAll('#'+rowId+' .dptab').forEach(b=>b.classList.toggle('on', b.dataset.oid===id)); }
+async function addOwnerG(rowId,hidId){ const name=prompt('擁有人名（例如 自己 / 圓圓 / 共同）'); if(!name||!name.trim()) return; try{ const {data}=await db.from('asset_owners').insert({name:name.trim()}).select().maybeSingle(); await ensureOwners(); const sel=data?data.id:($('#'+hidId).value||null); const row=$('#'+rowId); if(row) row.innerHTML=ownerChipsInner(rowId,hidId,sel); if(data) $('#'+hidId).value=data.id; }catch(e){ toast('新增擁有人失敗'); } }
+function monthsSince(dateStr){ if(!dateStr) return 0; const d=new Date(dateStr.slice(0,10)+'T00:00:00'); const t=new Date(todayStr()+'T00:00:00'); let m=(t.getFullYear()-d.getFullYear())*12+(t.getMonth()-d.getMonth()); if(t.getDate()<d.getDate()) m--; return m; }
+function openLeasesTab(){ go('assets'); assetTab('lease'); }
+async function loadBankSection(){
   const host=$('#assets-body');
   try{
     await ensureOwners();
@@ -2195,6 +2215,105 @@ async function saveAccount(id){
   }catch(e){ toast('儲存失敗，請確認已建立 bank_accounts 表'); }
 }
 async function deleteAccount(id){ if(!confirm('刪除呢個戶口？'))return; try{ await db.from('bank_accounts').delete().eq('id',id); closeSheet(); toast('已刪除'); loadAssets(); }catch(e){ toast('刪除失敗'); } }
+
+/* ---- 按揭 ---- */
+async function loadMortgages(){
+  const host=$('#assets-body');
+  try{
+    await ensureOwners();
+    const {data:ms}=await db.from('mortgages').select('*').order('created_at',{ascending:false});
+    const ownerName=Object.fromEntries(assetOwners.map(o=>[o.id,o.name]));
+    if(!ms||!ms.length){ host.innerHTML='<div class="empty">未有按揭。撳右下角「＋ 新增按揭」開始。</div>'; return; }
+    host.innerHTML=ms.map(m=>{
+      const term=Number(m.term_months)||0;
+      const elapsed=m.start_date?Math.min(term,Math.max(0,monthsSince(m.start_date))):0;
+      const remain=Math.max(0,term-elapsed);
+      const pct=term>0?Math.round(elapsed/term*100):0;
+      const ry=Math.floor(remain/12), rm=remain%12;
+      const remTxt=term?`剩 ${ry>0?ry+' 年 ':''}${rm}${' '}個月`:'未設年期';
+      const owner=m.owner_id?(ownerName[m.owner_id]||''):'';
+      const sub=[m.lender?esc(m.lender):null, owner||null, m.monthly_payment!=null?('月供 '+money(m.monthly_payment)):null].filter(Boolean).join(' · ');
+      return `<button class="goalcard" onclick="openMortgage('${m.id}')"><div class="gtop"><span class="gname">${esc(m.name||'按揭')}</span><span class="gp" style="color:#14B8A6">${pct}%</span></div><div class="dptrack thin"><div class="dpfill" style="width:${pct}%;background:#14B8A6"></div></div><div class="gsub">${[sub,remTxt].filter(Boolean).join(' · ')}</div></button>`;
+    }).join('');
+  }catch(e){ host.innerHTML='<div class="empty">未能載入。請先確認已建立 mortgages 表。</div>'; }
+}
+async function openMortgage(id){
+  await ensureOwners();
+  const edit=typeof id==='string';
+  const build=(m)=>{ m=m||{};
+    const years=m.term_months?(Math.round(m.term_months/12*10)/10):'';
+    $('#sheet').innerHTML=`<div class="grab"></div>
+      <div class="sh"><button class="c" onclick="closeSheet()">取消</button><span class="t">${edit?'編輯按揭':'新增按揭'}</span><button class="s" onclick="saveMortgage(${edit?`'${id}'`:'null'})">儲存</button></div>
+      <div class="dpfield"><label>名稱 / 物業</label><input id="mg-name" value="${esc(m.name||'')}" placeholder="例如 自住樓"></div>
+      <div class="dpfield"><label>銀行（可留空）</label><input id="mg-lender" value="${esc(m.lender||'')}" placeholder="例如 匯豐"></div>
+      <div class="dpfield"><label>原本貸款額（可留空）</label><input id="mg-principal" type="number" inputmode="decimal" value="${m.principal!=null?m.principal:''}" placeholder="3000000"></div>
+      <div class="dpfield"><label>每月供款</label><input id="mg-pay" type="number" inputmode="decimal" value="${m.monthly_payment!=null?m.monthly_payment:''}" placeholder="14000"></div>
+      <div class="dpfield"><label>年利率 %（可留空）</label><input id="mg-rate" type="number" inputmode="decimal" value="${m.rate!=null?m.rate:''}" placeholder="3.5"></div>
+      <div class="dpfield"><label>開始供款日期</label><input id="mg-start" type="date" value="${m.start_date?m.start_date.slice(0,10):''}"></div>
+      <div class="dpfield"><label>供款年期（年）</label><input id="mg-years" type="number" inputmode="decimal" value="${years}" placeholder="25"></div>
+      <div class="dpfield"><label>資金歸屬（擁有人，可留空）</label>${ownerFieldHTML('mg-owner-row','mg-owner',m.owner_id||null)}</div>
+      <div class="dpfield"><label>備註（可留空）</label><textarea class="dpta" id="mg-notes">${esc(m.notes||'')}</textarea></div>
+      ${edit?`<button class="del" onclick="deleteMortgage('${id}')">刪除按揭</button>`:''}`;
+    $('#sheet-bg').classList.add('on'); requestAnimationFrame(()=>$('#sheet').classList.add('on'));
+  };
+  if(edit){ db.from('mortgages').select('*').eq('id',id).maybeSingle().then(({data})=>build(data)); } else build(null);
+}
+async function saveMortgage(id){
+  const name=$('#mg-name').value.trim(); if(!name){ toast('請輸入名稱'); return; }
+  const years=$('#mg-years').value?Number($('#mg-years').value):null;
+  const rec={name, lender:$('#mg-lender').value.trim()||null, principal:$('#mg-principal').value?Number($('#mg-principal').value):null, monthly_payment:$('#mg-pay').value?Number($('#mg-pay').value):null, rate:$('#mg-rate').value?Number($('#mg-rate').value):null, start_date:$('#mg-start').value||null, term_months:years?Math.round(years*12):null, owner_id:$('#mg-owner').value||null, notes:$('#mg-notes').value.trim()||null};
+  try{ if(id){ await db.from('mortgages').update(rec).eq('id',id); } else { await db.from('mortgages').insert(rec); } closeSheet(); toast('已儲存'); loadMortgages(); }
+  catch(e){ toast('儲存失敗，請確認已建立 mortgages 表'); }
+}
+async function deleteMortgage(id){ if(!confirm('刪除呢個按揭？'))return; try{ await db.from('mortgages').delete().eq('id',id); closeSheet(); toast('已刪除'); loadMortgages(); }catch(e){ toast('刪除失敗'); } }
+
+/* ---- 租約 ---- */
+async function loadLeases(){
+  const host=$('#assets-body');
+  try{
+    await ensureOwners();
+    const {data:ls}=await db.from('leases').select('*').order('created_at',{ascending:false});
+    const ownerName=Object.fromEntries(assetOwners.map(o=>[o.id,o.name]));
+    if(!ls||!ls.length){ host.innerHTML='<div class="empty">未有租約。撳右下角「＋ 新增租約」開始。</div>'; return; }
+    host.innerHTML=ls.map(l=>{
+      const info=l.end_date?dueInfo(l.end_date,60):null;
+      let badge='';
+      if(info&&info.level!=='green'){ badge=`<span style="font-size:11px;background:${info.bg};color:${info.col};padding:3px 8px;border-radius:6px;white-space:nowrap">${info.level==='red'?'已到期':info.label}</span>`; }
+      else if(l.end_date){ badge=`<span class="gp" style="color:#14B8A6">${fmtDate(l.end_date)}</span>`; }
+      const kind=l.kind==='flex'?'生約':'死約';
+      const owner=l.owner_id?(ownerName[l.owner_id]||''):'';
+      const sub=[kind, l.monthly_rent!=null?('租 '+money(l.monthly_rent)):null, owner||null].filter(Boolean).join(' · ');
+      return `<button class="goalcard" onclick="openLease('${l.id}')"><div class="gtop"><span class="gname">${esc(l.name||'租約')}</span>${badge}</div><div class="gsub">${sub}${l.end_date?(' · 到期 '+fmtDateFull(l.end_date)):''}</div></button>`;
+    }).join('');
+  }catch(e){ host.innerHTML='<div class="empty">未能載入。請先確認已建立 leases 表。</div>'; }
+}
+async function openLease(id){
+  await ensureOwners();
+  const edit=typeof id==='string';
+  const build=(l)=>{ l=l||{kind:'fixed'};
+    $('#sheet').innerHTML=`<div class="grab"></div>
+      <div class="sh"><button class="c" onclick="closeSheet()">取消</button><span class="t">${edit?'編輯租約':'新增租約'}</span><button class="s" onclick="saveLease(${edit?`'${id}'`:'null'})">儲存</button></div>
+      <div class="dpfield"><label>名稱 / 物業</label><input id="ls-name" value="${esc(l.name||'')}" placeholder="例如 CurryBoy 舖 / 住所"></div>
+      <div class="dpfield"><label>類型</label><div class="dptabs" id="ls-kind-row"><button type="button" class="dptab ${(l.kind||'fixed')==='fixed'?'on':''}" data-k="fixed" onclick="pickLeaseKind('fixed')">死約</button><button type="button" class="dptab ${l.kind==='flex'?'on':''}" data-k="flex" onclick="pickLeaseKind('flex')">生約</button></div><input type="hidden" id="ls-kind" value="${l.kind||'fixed'}"></div>
+      <div class="dpfield"><label>業主 / 租客（可留空）</label><input id="ls-landlord" value="${esc(l.landlord||'')}" placeholder="例如 業主陳生"></div>
+      <div class="dpfield"><label>每月租金（可留空）</label><input id="ls-rent" type="number" inputmode="decimal" value="${l.monthly_rent!=null?l.monthly_rent:''}" placeholder="18000"></div>
+      <div class="dpfield"><label>開始日期（可留空）</label><input id="ls-start" type="date" value="${l.start_date?l.start_date.slice(0,10):''}"></div>
+      <div class="dpfield"><label>結束 / 到期日期</label><input id="ls-end" type="date" value="${l.end_date?l.end_date.slice(0,10):''}"></div>
+      <div class="dpfield"><label>資金歸屬（擁有人，可留空）</label>${ownerFieldHTML('ls-owner-row','ls-owner',l.owner_id||null)}</div>
+      <div class="dpfield"><label>備註（可留空）</label><textarea class="dpta" id="ls-notes">${esc(l.notes||'')}</textarea></div>
+      ${edit?`<button class="del" onclick="deleteLease('${id}')">刪除租約</button>`:''}`;
+    $('#sheet-bg').classList.add('on'); requestAnimationFrame(()=>$('#sheet').classList.add('on'));
+  };
+  if(edit){ db.from('leases').select('*').eq('id',id).maybeSingle().then(({data})=>build(data)); } else build(null);
+}
+function pickLeaseKind(k){ $('#ls-kind').value=k; document.querySelectorAll('#ls-kind-row .dptab').forEach(b=>b.classList.toggle('on', b.dataset.k===k)); }
+async function saveLease(id){
+  const name=$('#ls-name').value.trim(); if(!name){ toast('請輸入名稱'); return; }
+  const rec={name, kind:$('#ls-kind').value||'fixed', landlord:$('#ls-landlord').value.trim()||null, monthly_rent:$('#ls-rent').value?Number($('#ls-rent').value):null, start_date:$('#ls-start').value||null, end_date:$('#ls-end').value||null, owner_id:$('#ls-owner').value||null, notes:$('#ls-notes').value.trim()||null};
+  try{ if(id){ await db.from('leases').update(rec).eq('id',id); } else { await db.from('leases').insert(rec); } closeSheet(); toast('已儲存'); loadLeases(); loadHomeDue(); }
+  catch(e){ toast('儲存失敗，請確認已建立 leases 表'); }
+}
+async function deleteLease(id){ if(!confirm('刪除呢個租約？'))return; try{ await db.from('leases').delete().eq('id',id); closeSheet(); toast('已刪除'); loadLeases(); }catch(e){ toast('刪除失敗'); } }
 </script>
 </body>
 </html>
