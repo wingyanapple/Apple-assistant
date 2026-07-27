@@ -193,8 +193,8 @@
     --dp-emo:#FF9F0A; --dp-rel:#FF375F; --dp-grow:#3B82F6; --dp-goal:#8B5CF6; --dp-plan:#14B8A6;
     --dp-green:#34C759; --dp-yellow:#F5A300; --dp-red:#FF3B30;
   }
-  #v-home,#v-hub,#v-mood,#v-relationships,#v-relationship,#v-goals,#v-goal,#v-achievements,#v-celebrate,#v-verse,#v-maint,#v-maintItem,#v-plans,#v-plan,#v-assets,#v-insure,#v-insurePolicy{background:#fff;color:var(--dp-ink);}
-  #v-home .scroll,#v-hub .scroll,#v-mood .scroll,#v-relationships .scroll,#v-relationship .scroll,#v-goals .scroll,#v-goal .scroll,#v-achievements .scroll,#v-verse .scroll,#v-maint .scroll,#v-maintItem .scroll,#v-plans .scroll,#v-plan .scroll,#v-assets .scroll,#v-insure .scroll,#v-insurePolicy .scroll{padding:0 18px calc(110px + var(--safe-b));}
+  #v-home,#v-hub,#v-mood,#v-relationships,#v-relationship,#v-goals,#v-goal,#v-achievements,#v-celebrate,#v-verse,#v-maint,#v-maintItem,#v-plans,#v-plan,#v-assets,#v-insure,#v-insurePolicy,#v-grow,#v-growItem{background:#fff;color:var(--dp-ink);}
+  #v-home .scroll,#v-hub .scroll,#v-mood .scroll,#v-relationships .scroll,#v-relationship .scroll,#v-goals .scroll,#v-goal .scroll,#v-achievements .scroll,#v-verse .scroll,#v-maint .scroll,#v-maintItem .scroll,#v-plans .scroll,#v-plan .scroll,#v-assets .scroll,#v-insure .scroll,#v-insurePolicy .scroll,#v-grow .scroll,#v-growItem .scroll{padding:0 18px calc(110px + var(--safe-b));}
   .ma-photos{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;}
   .ma-ph{position:relative;width:72px;height:72px;border-radius:10px;overflow:hidden;border:0.5px solid #e2e4e8;background:#F3F4F6;padding:0;flex:0 0 auto;}
   .ma-ph img{width:100%;height:100%;object-fit:cover;display:block;}
@@ -516,7 +516,7 @@
     <div class="hubgrid">
       <button class="hubtile" onclick="go('mood')"><svg><use href="#i-emo"/></svg><div class="l">情緒健康</div></button>
       <button class="hubtile" onclick="go('relationships')"><svg><use href="#i-rel"/></svg><div class="l">關係</div></button>
-      <button class="hubtile soon" onclick="toast('自我提升：Phase 2 加入')"><svg><use href="#i-grow"/></svg><div class="l">自我提升</div></button>
+      <button class="hubtile" onclick="go('grow')"><svg><use href="#i-grow"/></svg><div class="l">自我提升</div></button>
       <button class="hubtile" onclick="go('goals')"><svg><use href="#i-goal"/></svg><div class="l">小目標</div></button>
       <button class="hubtile" onclick="go('plans')"><svg><use href="#i-plan"/></svg><div class="l">小計劃</div></button>
       <button class="hubtile" onclick="go('achievements')"><svg><use href="#i-ach"/></svg><div class="l">成就</div></button>
@@ -702,6 +702,35 @@
   </div>
 </section>
 
+<!-- ===== 自我提升：列表 ===== -->
+<section id="v-grow" class="view">
+  <div class="dpnav"><button class="bk" onclick="go('home')">‹ 首頁</button><span class="nt">自我提升</span><span class="sp"></span></div>
+  <div class="scroll">
+    <div class="dptabs"><button class="dptab on" data-t="in_progress" onclick="growTab('in_progress')">進行中</button><button class="dptab" data-t="planning" onclick="growTab('planning')">想學</button><button class="dptab" data-t="done" onclick="growTab('done')">完成</button></div>
+    <div id="grow-list"></div>
+  </div>
+  <button class="fab" onclick="openGrow()">＋ 新增</button>
+</section>
+
+<!-- ===== 自我提升：詳情 ===== -->
+<section id="v-growItem" class="view">
+  <div class="dpnav"><button class="bk" onclick="go('grow')">‹ 自我提升</button><span class="nt" id="gr-name">—</span><button class="sp" onclick="editGrowCurrent()">編輯</button></div>
+  <div class="scroll">
+    <div class="scoreh">
+      <div class="row"><span class="lab">進度</span><span class="big" style="color:#3B82F6" id="gr-pct">—<small>%</small></span></div>
+      <div class="dptrack thick"><div class="dpfill" id="gr-fill" style="width:0%;background:#3B82F6"></div></div>
+      <div class="sub" id="gr-sub">—</div>
+    </div>
+    <div style="margin-top:14px"><input type="range" min="0" max="100" id="gr-slider" class="dpsltrack" oninput="grSliderPreview(this.value)" onchange="grSliderCommit(this.value)"></div>
+    <div class="dpsl"><span>相片</span><button class="more" onclick="triggerGrowPhoto()">＋ 影相 / 相簿</button></div>
+    <div id="gr-photos" class="ma-photos"></div>
+    <div class="dpsl"><span>心得</span><button class="more" onclick="openInsight()">＋ 寫 / 編輯</button></div>
+    <div id="gr-insight"></div>
+    <button class="dpcta" id="gr-complete" style="background:#3B82F6" onclick="completeGrow()">標記為完成</button>
+  </div>
+  <input type="file" accept="image/*" id="grow-photo-input" onchange="onGrowPhotoPick(this)" style="display:none">
+</section>
+
 <!-- ===== 保險：保單列表 ===== -->
 <section id="v-insure" class="view">
   <div class="dpnav"><button class="bk" onclick="go('home')">‹ 首頁</button><span class="nt">保險</span><span class="sp"></span></div>
@@ -864,7 +893,7 @@ function go(v){document.querySelectorAll('.view').forEach(x=>x.classList.remove(
   if(v==='purchases')loadPurch(); if(v==='ideas')loadIdeas(); if(v==='finance')loadFinance();
   if(v==='mood')loadMood(); if(v==='relationships')loadRelationships();
   if(v==='goals')loadGoals(); if(v==='achievements')loadAchievements();
-  if(v==='verse')loadVersePage(); if(v==='maint')loadMaint(); if(v==='plans')loadPlans(); if(v==='assets')loadAssets(); if(v==='insure')loadInsure();
+  if(v==='verse')loadVersePage(); if(v==='maint')loadMaint(); if(v==='plans')loadPlans(); if(v==='assets')loadAssets(); if(v==='insure')loadInsure(); if(v==='grow')loadGrow();
   if(v==='settings')$('#set-url').textContent=sbUrl()||'—';
   document.querySelector('#v-'+v+' .scroll')?.scrollTo(0,0);
 }
@@ -2459,6 +2488,122 @@ async function savePremium(id){
   }catch(e){ toast('儲存失敗，請確認已建立 insurance_premium_history 表'); }
 }
 async function deletePremium(id){ if(!confirm('刪除呢筆保費記錄？'))return; try{ await db.from('insurance_premium_history').delete().eq('id',id); closeSheet(); toast('已刪除'); loadPremiums(); }catch(e){ toast('刪除失敗'); } }
+
+/* ==================== 自我提升模組（Phase 2） ==================== */
+let growTabCur='in_progress', curGrowId=null, curGrow=null, growthPhotos=[];
+function growStatusLabel(s){ return s==='planning'?'想學':s==='done'?'完成':'進行中'; }
+function openLightbox(url){ let o=document.getElementById('photo-lb'); if(!o){ o=document.createElement('div'); o.id='photo-lb'; o.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;z-index:9999'; o.onclick=()=>o.remove(); document.body.appendChild(o); } o.innerHTML=`<img src="${url}" style="max-width:94%;max-height:90%;border-radius:10px">`; }
+function growTab(t){ growTabCur=t; document.querySelectorAll('#v-grow .dptabs .dptab').forEach(b=>b.classList.toggle('on', b.dataset.t===t)); loadGrow(); }
+async function loadGrow(){
+  const L=$('#grow-list');
+  try{
+    const {data}=await db.from('growth_items').select('*').eq('status',growTabCur).order('created_at',{ascending:false});
+    if(!data||!data.length){ L.innerHTML=`<div class="empty">未有${growStatusLabel(growTabCur)}項目。撳右下角「＋ 新增」開始。</div>`; return; }
+    L.innerHTML=data.map(g=>{
+      const pct=Math.round(g.progress_pct||0);
+      const sub=[g.category?esc(g.category):null, (growTabCur==='done'&&g.completed_at)?('完成 '+fmtDateFull(g.completed_at)):null].filter(Boolean).join(' · ');
+      return `<button class="goalcard" onclick="openGrowItem('${g.id}')"><div class="gtop"><span class="gname">${esc(g.title)}</span><span class="gp" style="color:#3B82F6">${pct}%</span></div><div class="dptrack thin"><div class="dpfill" style="width:${pct}%;background:#3B82F6"></div></div><div class="gsub">${sub||growStatusLabel(g.status)}</div></button>`;
+    }).join('');
+  }catch(e){ L.innerHTML='<div class="empty">未能載入。請先確認已建立 growth_items 表。</div>'; }
+}
+async function openGrowItem(id){
+  curGrowId=id; go('growItem');
+  const {data:g}=await db.from('growth_items').select('*').eq('id',id).maybeSingle();
+  if(!g) return; curGrow=g;
+  $('#gr-name').textContent=g.title;
+  const pct=Math.round(g.progress_pct||0);
+  $('#gr-pct').innerHTML=pct+'<small>%</small>'; $('#gr-fill').style.width=pct+'%'; $('#gr-slider').value=pct;
+  $('#gr-sub').textContent=[growStatusLabel(g.status), g.category?esc(g.category):''].filter(Boolean).join(' · ');
+  $('#gr-complete').style.display=g.status==='done'?'none':'block';
+  $('#gr-insight').innerHTML = g.insight ? `<div class="dprow" onclick="openInsight()"><div class="m"><div class="t1" style="white-space:pre-wrap">${esc(g.insight)}</div></div></div>` : '<div class="empty" style="padding:14px 4px;text-align:left">未有心得。撳上面「＋」寫低你嘅得著。</div>';
+  await loadGrowPhotos();
+}
+function grSliderPreview(v){ $('#gr-pct').innerHTML=v+'<small>%</small>'; $('#gr-fill').style.width=v+'%'; }
+async function grSliderCommit(v){ try{ await db.from('growth_items').update({progress_pct:Number(v)}).eq('id',curGrowId); }catch(e){} }
+async function openGrow(id){
+  const edit=typeof id==='string';
+  const cats=['書','技能','課程','知識','成長事件','其他'];
+  const build=(g)=>{ g=g||{category:'書',status:'in_progress'};
+    $('#sheet').innerHTML=`<div class="grab"></div>
+      <div class="sh"><button class="c" onclick="closeSheet()">取消</button><span class="t">${edit?'編輯項目':'新增項目'}</span><button class="s" onclick="saveGrow(${edit?`'${id}'`:'null'})">儲存</button></div>
+      <div class="dpfield"><label>名稱</label><input id="gr-title" value="${esc(g.title||'')}" placeholder="例如 讀《原子習慣》/ 學西班牙文"></div>
+      <div class="dpfield"><label>類型</label><div class="dptabs" id="gr-cat-row">${cats.map(c=>`<button type="button" class="dptab ${(g.category||'書')===c?'on':''}" data-c="${c}" onclick="pickGrowCat('${c}')">${c}</button>`).join('')}</div><input type="hidden" id="gr-cat" value="${g.category||'書'}"></div>
+      <div class="dpfield"><label>狀態</label><div class="dptabs" id="gr-status-row"><button type="button" class="dptab ${g.status==='planning'?'on':''}" data-s="planning" onclick="pickGrowStatus('planning')">想學</button><button type="button" class="dptab ${(g.status||'in_progress')==='in_progress'?'on':''}" data-s="in_progress" onclick="pickGrowStatus('in_progress')">進行中</button><button type="button" class="dptab ${g.status==='done'?'on':''}" data-s="done" onclick="pickGrowStatus('done')">完成</button></div><input type="hidden" id="gr-status" value="${g.status||'in_progress'}"></div>
+      <div class="dpfield"><label>備註（可留空）</label><textarea class="dpta" id="gr-notes">${esc(g.notes||'')}</textarea></div>
+      ${edit?`<button class="del" onclick="deleteGrow('${id}')">刪除項目</button>`:''}`;
+    $('#sheet-bg').classList.add('on'); requestAnimationFrame(()=>$('#sheet').classList.add('on'));
+  };
+  if(edit){ db.from('growth_items').select('*').eq('id',id).maybeSingle().then(({data})=>build(data)); } else build(null);
+}
+function editGrowCurrent(){ if(curGrowId) openGrow(curGrowId); }
+function pickGrowCat(c){ $('#gr-cat').value=c; document.querySelectorAll('#gr-cat-row .dptab').forEach(b=>b.classList.toggle('on', b.dataset.c===c)); }
+function pickGrowStatus(s){ $('#gr-status').value=s; document.querySelectorAll('#gr-status-row .dptab').forEach(b=>b.classList.toggle('on', b.dataset.s===s)); }
+async function saveGrow(id){
+  const title=$('#gr-title').value.trim(); if(!title){ toast('請輸入名稱'); return; }
+  const status=$('#gr-status').value||'in_progress';
+  const rec={title, category:$('#gr-cat').value, status, notes:$('#gr-notes').value.trim()||null};
+  if(status==='done'){ rec.progress_pct=100; rec.completed_at=new Date().toISOString(); }
+  try{
+    if(id){ await db.from('growth_items').update(rec).eq('id',id); closeSheet(); toast('已儲存'); openGrowItem(id); }
+    else { rec.started_at=todayStr(); if(rec.progress_pct==null) rec.progress_pct=0; await db.from('growth_items').insert(rec); closeSheet(); toast('已新增'); loadGrow(); }
+  }catch(e){ toast('儲存失敗，請確認已建立 growth_items 表'); }
+}
+async function completeGrow(){
+  if(!confirm('標記呢個項目為完成？'))return;
+  try{ await db.from('growth_items').update({status:'done',progress_pct:100,completed_at:new Date().toISOString()}).eq('id',curGrowId); toast('完成，好嘢！'); go('grow'); }
+  catch(e){ toast('更新失敗'); }
+}
+async function deleteGrow(id){
+  if(!confirm('確定刪除？相片同心得都會一齊刪走'))return;
+  try{
+    const {data:phs}=await db.from('growth_photos').select('path').eq('item_id',id);
+    const paths=(phs||[]).map(p=>p.path).filter(Boolean);
+    if(paths.length){ try{ await db.storage.from('maint-photos').remove(paths); }catch(e){} }
+    await db.from('growth_items').delete().eq('id',id);
+    closeSheet(); toast('已刪除'); go('grow');
+  }catch(e){ toast('刪除失敗'); }
+}
+function openInsight(){
+  $('#sheet').innerHTML=`<div class="grab"></div>
+    <div class="sh"><button class="c" onclick="closeSheet()">取消</button><span class="t">心得 / 得著</span><button class="s" onclick="saveInsight()">儲存</button></div>
+    <div class="dpfield"><label>寫低你嘅心得</label><textarea class="dpta" id="gr-insight-in" style="min-height:160px">${esc(curGrow?(curGrow.insight||''):'')}</textarea></div>`;
+  $('#sheet-bg').classList.add('on'); requestAnimationFrame(()=>$('#sheet').classList.add('on'));
+}
+async function saveInsight(){
+  try{ await db.from('growth_items').update({insight:$('#gr-insight-in').value.trim()||null}).eq('id',curGrowId); closeSheet(); toast('已儲存'); openGrowItem(curGrowId); }
+  catch(e){ toast('儲存失敗'); }
+}
+/* ---- 自我提升相片（重用 maint-photos bucket，path=growth/）---- */
+function triggerGrowPhoto(){ $('#grow-photo-input').click(); }
+async function loadGrowPhotos(){
+  const host=$('#gr-photos');
+  try{
+    const {data}=await db.from('growth_photos').select('*').eq('item_id',curGrowId).order('created_at',{ascending:false});
+    growthPhotos=data||[];
+    let html=growthPhotos.map((p,i)=>`<div class="ma-ph" onclick="showGrowPhotoAt(${i})"><img src="${p.url}" loading="lazy"><button class="rm" onclick="event.stopPropagation();deleteGrowPhoto('${p.id}')">×</button></div>`).join('');
+    host.innerHTML=html+`<button class="ma-ph add" onclick="triggerGrowPhoto()">＋</button>`;
+  }catch(e){ host.innerHTML=`<button class="ma-ph add" onclick="triggerGrowPhoto()">＋</button>`; }
+}
+function showGrowPhotoAt(i){ const p=growthPhotos[i]; if(p) openLightbox(p.url); }
+async function onGrowPhotoPick(input){
+  const file=input.files&&input.files[0]; input.value=''; if(!file||!curGrowId) return;
+  toast('相片上載中…');
+  try{
+    const blob=await resizeImage(file,1600);
+    const path='growth/'+curGrowId+'/'+Date.now()+'.jpg';
+    const up=await db.storage.from('maint-photos').upload(path,blob,{contentType:'image/jpeg',upsert:false});
+    if(up.error){ toast('相片上載失敗，請確認已跑保養嗰次 SQL（相簿）'); return; }
+    const url=db.storage.from('maint-photos').getPublicUrl(path).data.publicUrl;
+    await db.from('growth_photos').insert({item_id:curGrowId,url,path});
+    toast('相片已加入'); loadGrowPhotos();
+  }catch(e){ toast('相片上載失敗'); }
+}
+async function deleteGrowPhoto(id){
+  if(!confirm('刪除呢張相？'))return;
+  const p=growthPhotos.find(x=>x.id===id);
+  try{ if(p&&p.path){ try{ await db.storage.from('maint-photos').remove([p.path]); }catch(e){} } await db.from('growth_photos').delete().eq('id',id); loadGrowPhotos(); }
+  catch(e){ toast('刪除失敗'); }
+}
 </script>
 </body>
 </html>
