@@ -211,7 +211,7 @@
   .dpqs .k{font-size:10px;color:var(--dp-grey);font-weight:600;}
   .dpqs .v{font-size:14px;font-weight:800;margin-top:2px;font-variant-numeric:tabular-nums;color:var(--dp-ink);}
 
-  .verse{margin-top:11px;border:1px solid var(--dp-line);border-radius:13px;padding:11px 13px;position:relative;background:linear-gradient(180deg,#FFFDF7,#fff);text-align:left;width:100%;}
+  .verse{margin-top:11px;border:1px solid var(--dp-line);border-radius:13px;padding:11px 13px;position:relative;background:linear-gradient(180deg,#FFFDF7,#fff);text-align:left;width:100%;cursor:pointer;}
   .verse .vl{font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:#C9962E;font-weight:700;}
   .verse .vt{font-size:13.5px;font-weight:600;line-height:1.6;margin-top:3px;color:#26251f;}
   .verse .vs{font-size:11px;color:var(--dp-grey);margin-top:4px;}
@@ -480,42 +480,33 @@
       <button onclick="go('todos')"><div class="k">待辦</div><div class="v" id="hq-todo">0</div></button>
     </div>
 
-    <button class="verse" id="verse-card" onclick="go('verse')">
+    <div class="verse" id="verse-card" onclick="go('verse')">
       <button class="fav" id="verse-fav" onclick="event.stopPropagation();toggleFavVerse()"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-8.6C1 9.3 2.6 6 5.9 6c2 0 3.2 1.2 4.1 2.5C10.9 7.2 12.1 6 14.1 6c3.3 0 4.9 3.3 3.2 6.4C19 16.6 12 21 12 21Z"/></svg></button>
       <div class="vl">今日金句</div>
       <div class="vt" id="verse-text">—</div>
       <div class="vs" id="verse-ref"></div>
-    </button>
+    </div>
 
     <div class="dpsl"><span>人生狀態</span></div>
     <button class="bar" onclick="go('mood')">
       <div class="bhead"><span class="bic"><svg viewBox="0 0 24 24" style="stroke:#FF9F0A;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><circle cx="12" cy="12" r="9"/><path d="M8.5 14.5a4.5 4.5 0 0 0 7 0"/><path d="M9 9.5h.01M15 9.5h.01"/></svg></span><span class="bl">情緒健康</span><span class="bp" style="color:#FF9F0A" id="hb-mood">—</span></div>
       <div class="dptrack"><div class="dpfill" id="hb-mood-fill" style="width:0%;background:#FF9F0A"></div></div>
     </button>
-    <button class="bar" onclick="go('relationships')">
-      <div class="bhead"><span class="bic"><svg viewBox="0 0 24 24" style="fill:#FF375F;stroke:none"><path d="M12 20s-6.5-4-8.5-8C2 9 3.5 6.2 6.4 6.2c1.8 0 2.9 1.1 3.6 2.2.7-1.1 1.8-2.2 3.6-2.2 2.9 0 4.4 2.8 2.9 5.8-2 4-8.5 8-8.5 8Z"/></svg></span><span class="bl">關係</span><span class="bp" style="color:#FF375F" id="hb-rel">—</span></div>
-      <div class="dptrack"><div class="dpfill" id="hb-rel-fill" style="width:0%;background:#FF375F"></div></div>
-    </button>
+    <div id="home-rel-bars"></div>
 
     <div id="home-due"></div>
 
     <div class="dpsl"><span>進行中小目標</span><button class="more" onclick="go('goals')">全部 ›</button></div>
     <div id="home-goals"></div>
 
-    <div class="dpsl"><span>全部功能</span><button class="more" onclick="go('hub')">更多 ›</button></div>
+    <div class="dpsl"><span>捷徑</span></div>
     <div class="dphub">
       <button class="dpmini" onclick="go('finance')"><div class="mt">收支</div><div class="mv" id="hm-fin">$0</div></button>
       <button class="dpmini" onclick="go('todos')"><div class="mt">待辦</div><div class="mv" id="hm-todo">0 項</div></button>
       <button class="dpmini" onclick="go('purchases')"><div class="mt">採購</div><div class="mv" id="hm-buy">0 項</div></button>
     </div>
-  </div>
-</section>
 
-<!-- ===== HUB 全部功能 ===== -->
-<section id="v-hub" class="view">
-  <div class="dpnav"><button class="bk" onclick="go('home')">‹ 首頁</button><span class="nt">全部功能</span><span class="sp"></span></div>
-  <div class="scroll">
-    <div class="hubsec" style="--c:#FF9F0A">人生</div>
+    <div class="hubsec" style="--c:#FF9F0A;margin-top:24px">人生</div>
     <div class="hubgrid">
       <button class="hubtile" onclick="go('mood')"><svg><use href="#i-emo"/></svg><div class="l">情緒健康</div></button>
       <button class="hubtile" onclick="go('relationships')"><svg><use href="#i-rel"/></svg><div class="l">關係</div></button>
@@ -757,6 +748,11 @@
 <script>
 "use strict";
 const $ = s => document.querySelector(s);
+/* 預設雲端連接（寫死，避免 iOS 加入主畫面後記憶分離導致要重新輸入） */
+const DEFAULT_SB_URL='https://xwumcrjyaglslwzmnats.supabase.co';
+const DEFAULT_SB_KEY='sb_publishable_Q8QMMZUvN3Bdo1h9nfplMA_xSjUiRTM';
+function sbUrl(){ return localStorage.getItem('sb_url') || DEFAULT_SB_URL; }
+function sbKey(){ return localStorage.getItem('sb_key') || DEFAULT_SB_KEY; }
 const CATS = ['家庭','圓圓','CurryBoy','設計','文件','其他'];
 let db = null, ideaCats = ['CurryBoy','Huge AI'];
 let cClaims=[], cTodos=[], cPurch=[], cIdeas=[], cTxn=[];
@@ -781,13 +777,13 @@ function go(v){document.querySelectorAll('.view').forEach(x=>x.classList.remove(
   if(v==='mood')loadMood(); if(v==='relationships')loadRelationships();
   if(v==='goals')loadGoals(); if(v==='achievements')loadAchievements();
   if(v==='verse')loadVersePage();
-  if(v==='settings')$('#set-url').textContent=localStorage.getItem('sb_url')||'—';
+  if(v==='settings')$('#set-url').textContent=sbUrl()||'—';
   document.querySelector('#v-'+v+' .scroll')?.scrollTo(0,0);
 }
 
 /* ---------- config / boot ---------- */
 function startApp(){
-  db = window.supabase.createClient(localStorage.getItem('sb_url'), localStorage.getItem('sb_key'));
+  db = window.supabase.createClient(sbUrl(), sbKey());
   finMonth = todayStr().slice(0,7);
   $('#home-date').textContent = weekdayName()+' · '+fmtDate(todayStr());
   ensureUnlock();
@@ -831,7 +827,12 @@ async function changePin(){
   try{ await db.from('app_settings').upsert({id:'main',pin_hash:nh,pin_hint:hint,updated_at:new Date().toISOString()}); lockHash=nh; lockHint=hint; toast('密碼已更改'); }
   catch(e){ toast('儲存失敗，請確認已建立 app_settings 表'); }
 }
-function resetConfig(){ if(confirm('更改雲端連接？資料唔會刪除，只係重新輸入連接。')){localStorage.removeItem('sb_url');localStorage.removeItem('sb_key');location.reload();} }
+function resetConfig(){
+  if(!confirm('更改雲端連接？現有資料唔會刪除，只係要求你重新輸入新嘅連接資料。'))return;
+  document.querySelectorAll('.view').forEach(x=>x.classList.remove('on'));
+  $('#su-url').value=sbUrl(); $('#su-key').value='';
+  $('#v-setup').classList.add('on');
+}
 window.addEventListener('load', ()=>{
   // 清走舊版快取，確保永遠載入最新版
   if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())).catch(()=>{});}
@@ -843,8 +844,7 @@ window.addEventListener('load', ()=>{
     localStorage.setItem('sb_url',u);localStorage.setItem('sb_key',k);startApp();
   };
   document.querySelectorAll('#lock-keys .key').forEach(b=>b.addEventListener('click',()=>lockKey(b.dataset.k||b.textContent.trim())));
-  if(localStorage.getItem('sb_url')&&localStorage.getItem('sb_key')){startApp();}
-  else{$('#v-setup').classList.add('on');}
+  startApp();
 });
 
 /* ---------- HOME ---------- */
@@ -892,12 +892,21 @@ async function loadHomeMood(){
 }
 async function loadHomeRel(){
   try{
-    const {data} = await db.from('relationships').select('current_score');
-    if(!data || !data.length){ $('#hb-rel').textContent='未有'; $('#hb-rel-fill').style.width='0%'; return; }
-    const avg = data.reduce((a,b)=>a+(+b.current_score||0),0)/data.length;
-    $('#hb-rel').textContent=Math.round(avg)+'%';
-    $('#hb-rel-fill').style.width=avg+'%';
-  }catch(e){ $('#hb-rel').textContent='—'; }
+    const {data} = await db.from('relationships').select('id,name,current_score').eq('show_on_home',true).order('is_self',{ascending:false}).order('created_at',{ascending:false});
+    const host=$('#home-rel-bars');
+    if(!data || !data.length){
+      host.innerHTML='<button class="bar" onclick="go(\'relationships\')" style="color:#a59f90"><div class="bhead"><span class="bic"><svg viewBox="0 0 24 24" style="fill:#FF375F;stroke:none"><path d="M12 20s-6.5-4-8.5-8C2 9 3.5 6.2 6.4 6.2c1.8 0 2.9 1.1 3.6 2.2.7-1.1 1.8-2.2 3.6-2.2 2.9 0 4.4 2.8 2.9 5.8-2 4-8.5 8-8.5 8Z"/></svg></span><span class="bl" style="color:#a59f90;font-weight:500">關係：未揀人物喺首頁顯示，撳呢度去揀</span></div></button>';
+      return;
+    }
+    host.innerHTML=data.map(p=>{
+      const score=Math.round(p.current_score||0);
+      const col = score>=70?'#34C759':score>=40?'#F5A300':'#FF3B30';
+      return `<button class="bar" onclick="openRelationshipDetail('${p.id}')">
+        <div class="bhead"><span class="bic"><svg viewBox="0 0 24 24" style="fill:#FF375F;stroke:none"><path d="M12 20s-6.5-4-8.5-8C2 9 3.5 6.2 6.4 6.2c1.8 0 2.9 1.1 3.6 2.2.7-1.1 1.8-2.2 3.6-2.2 2.9 0 4.4 2.8 2.9 5.8-2 4-8.5 8-8.5 8Z"/></svg></span><span class="bl">${esc(p.name)}</span><span class="bp" style="color:${col}">${score}%</span></div>
+        <div class="dptrack"><div class="dpfill" style="width:${score}%;background:${col}"></div></div>
+      </button>`;
+    }).join('');
+  }catch(e){ $('#home-rel-bars').innerHTML=''; }
 }
 async function loadHomeGoals(){
   try{
@@ -1006,8 +1015,9 @@ async function renderVersePage(){
 async function unfav(vid){ try{ const {data}=await db.from('bible_favorites').select('id').eq('verse_id',vid).maybeSingle(); if(data) await db.from('bible_favorites').delete().eq('id',data.id); renderVersePage(); }catch(e){} }
 
 /* ---------- 情緒健康 ---------- */
-let moodDraft={emotion:null,stars:4,note:''};
+let moodDraft={id:null,emotion:null,stars:4,note:'',delta:0,touched:false};
 let moodRangeDays=7;
+function calcMoodDefault(){ const emo=MOOD_EMOS.find(e=>e.k===moodDraft.emotion); return emo? emo.dir*moodDraft.stars*WEIGHT : 0; }
 async function ensureMoodSettings(){
   const {data}=await db.from('mood_settings').select('*').eq('id','main').maybeSingle();
   if(data) return data;
@@ -1020,18 +1030,16 @@ async function ensureMoodSettings(){
 }
 async function loadMood(){
   const set=await ensureMoodSettings();
-  const {data:logs}=await db.from('mood_logs').select('*').order('date',{ascending:true});
+  const {data:logs}=await db.from('mood_logs').select('*').order('date',{ascending:true}).order('created_at',{ascending:true});
   const base=Number(set.initial_score);
   let running=base; const points=[];
   (logs||[]).forEach(l=>{ running=clamp0to100(running+(+l.delta||0)); points.push({...l,score_after:running}); });
   const score = points.length? points[points.length-1].score_after : base;
   $('#mood-score').innerHTML=Math.round(score)+'<small>/100</small>';
   $('#mood-score-fill').style.width=score+'%';
-  // spark: 最近 7 個記錄
   const recent=points.slice(-7);
   const sp=$('#mood-spark');
   if(recent.length){
-    const max=100;
     sp.innerHTML=recent.map(p=>`<i style="height:${Math.max(8,p.score_after)}%;background:${p.delta>=0?'#FF9F0A':'#E3B673'}"></i>`).join('');
     const first=recent[0].score_after, last=recent[recent.length-1].score_after;
     $('#mood-trend').textContent='最近 '+recent.length+' 次記錄 '+(last>=first?'↗ 上升':'↘ 下降')+' '+Math.abs(Math.round(last-first))+' 分';
@@ -1047,34 +1055,56 @@ function renderMoodList(points){
   L.innerHTML=rows.map(p=>{
     const emo=MOOD_EMOS.find(e=>e.k===p.emotion)||{c:'#999'};
     const stars='★'.repeat(p.stars)+'☆'.repeat(5-p.stars);
-    return `<div class="dprow"><div class="m"><div class="t1">${esc(p.emotion)} <span style="color:${emo.c};font-size:12px">${stars}</span></div><div class="t2">${p.note?esc(p.note):fmtDateFull(p.date)}</div></div><div class="rt" style="color:${p.delta>=0?'#34C759':'#FF3B30'}">${p.delta>=0?'+':''}${p.delta}</div></div>`;
+    return `<button class="dprow" onclick="openMood('${p.id}')" style="width:100%"><div class="m"><div class="t1">${esc(p.emotion)} <span style="color:${emo.c};font-size:12px">${stars}</span></div><div class="t2">${p.note?esc(p.note):fmtDateFull(p.date)}</div></div><div class="rt" style="color:${p.delta>=0?'#34C759':'#FF3B30'}">${p.delta>=0?'+':''}${p.delta}</div></button>`;
   }).join('');
 }
-function openMood(){
-  moodDraft={emotion:MOOD_EMOS[1].k,stars:4,note:''};
-  renderMoodSheet();
+function openMood(id){
+  if(id){
+    db.from('mood_logs').select('*').eq('id',id).maybeSingle().then(({data:r})=>{
+      if(!r) return;
+      moodDraft={id:r.id,emotion:r.emotion,stars:r.stars,note:r.note||'',delta:Number(r.delta),touched:false};
+      renderMoodSheet();
+    });
+  } else {
+    moodDraft={id:null,emotion:MOOD_EMOS[1].k,stars:4,note:'',delta:0,touched:false};
+    moodDraft.delta=calcMoodDefault();
+    renderMoodSheet();
+  }
   $('#sheet-bg').classList.add('on'); requestAnimationFrame(()=>$('#sheet').classList.add('on'));
 }
 function renderMoodSheet(){
-  const emo=MOOD_EMOS.find(e=>e.k===moodDraft.emotion);
-  const delta=emo.dir*moodDraft.stars*WEIGHT;
+  const editing=!!moodDraft.id;
   $('#sheet').innerHTML=`<div class="grab"></div>
-    <div class="sh"><button class="c" onclick="closeSheet()">取消</button><span class="t">記錄心情</span><button class="s" onclick="saveMood()">儲存</button></div>
+    <div class="sh"><button class="c" onclick="closeSheet()">取消</button><span class="t">${editing?'編輯':'記錄'}心情</span><button class="s" onclick="saveMood()">儲存</button></div>
     <div class="dpfield"><label>今日心情</label><div class="emorow" style="margin-top:8px">${MOOD_EMOS.map(e=>`<button class="ecbtn ${e.k===moodDraft.emotion?'on':''}" style="--c:${e.c}" onclick="pickMoodEmo('${e.k}')">${e.k}</button>`).join('')}</div></div>
     <div class="dpfield"><label>強度</label><div style="margin-top:6px">${[1,2,3,4,5].map(n=>`<button class="starpick" style="font-size:26px;padding:6px 5px" onclick="pickMoodStars(${n})">${n<=moodDraft.stars?'★':'<span class="off">★</span>'}</button>`).join('')}</div></div>
     <div class="dpfield"><label>文字記錄（可留空）</label><textarea class="dpta" id="mood-note" placeholder="今日發生咩事⋯">${esc(moodDraft.note)}</textarea></div>
-    <div class="impact"><span class="k">預計分數變化</span><span class="v" style="color:${delta>=0?'#34C759':'#FF3B30'}">${delta>=0?'+':''}${delta}</span></div>`;
+    <div class="dpfield"><label>分數變化（可自己調整）</label>
+      <div style="display:flex;align-items:center;gap:14px;margin-top:9px">
+        <button type="button" onclick="adjMoodDelta(-1)" style="width:42px;height:42px;border-radius:50%;border:1px solid var(--dp-line);background:#F7F7F9;font-size:20px;color:#333">−</button>
+        <div style="flex:1;text-align:center;font-size:24px;font-weight:800;font-variant-numeric:tabular-nums;color:${moodDraft.delta>=0?'#34C759':'#FF3B30'}">${moodDraft.delta>=0?'+':''}${moodDraft.delta}</div>
+        <button type="button" onclick="adjMoodDelta(1)" style="width:42px;height:42px;border-radius:50%;border:1px solid var(--dp-line);background:#F7F7F9;font-size:20px;color:#333">＋</button>
+      </div>
+    </div>
+    ${editing?'<button class="del" onclick="deleteMood()">刪除記錄</button>':''}`;
 }
-function pickMoodEmo(k){ moodDraft.emotion=k; renderMoodSheet(); }
-function pickMoodStars(n){ moodDraft.stars=n; renderMoodSheet(); }
+function pickMoodEmo(k){ moodDraft.emotion=k; if(!moodDraft.touched) moodDraft.delta=calcMoodDefault(); renderMoodSheet(); }
+function pickMoodStars(n){ moodDraft.stars=n; if(!moodDraft.touched) moodDraft.delta=calcMoodDefault(); renderMoodSheet(); }
+function adjMoodDelta(d){ moodDraft.delta=Number(moodDraft.delta)+d; moodDraft.touched=true; renderMoodSheet(); }
 async function saveMood(){
   moodDraft.note=$('#mood-note').value.trim();
-  const emo=MOOD_EMOS.find(e=>e.k===moodDraft.emotion);
-  const delta=emo.dir*moodDraft.stars*WEIGHT;
+  const row={emotion:moodDraft.emotion,stars:moodDraft.stars,note:moodDraft.note,delta:moodDraft.delta};
   try{
-    await db.from('mood_logs').insert({date:todayStr(),emotion:moodDraft.emotion,stars:moodDraft.stars,note:moodDraft.note,delta});
-    closeSheet(); toast('已記錄'); loadMood();
+    if(moodDraft.id){ await db.from('mood_logs').update(row).eq('id',moodDraft.id); }
+    else{ await db.from('mood_logs').insert({...row,date:todayStr()}); }
+    closeSheet(); toast('已儲存'); loadMood();
   }catch(e){ toast('儲存失敗，請確認已建立 mood_logs 表'); }
+}
+async function deleteMood(){
+  if(!moodDraft.id) return;
+  if(!confirm('確定刪除呢個記錄？'))return;
+  try{ await db.from('mood_logs').delete().eq('id',moodDraft.id); closeSheet(); toast('已刪除'); loadMood(); }
+  catch(e){ toast('刪除失敗'); }
 }
 
 /* ---------- 關係管理 ---------- */
@@ -1104,17 +1134,26 @@ function openPerson(){
     <div class="sh"><button class="c" onclick="closeSheet()">取消</button><span class="t">新增人物</span><button class="s" onclick="savePerson()">儲存</button></div>
     <div class="dpfield"><label>姓名</label><input id="p-name" placeholder="例如 Joe"></div>
     <div class="dpfield"><label>關係</label><input id="p-rel" placeholder="例如 老公／朋友／同事"></div>
-    <div class="dpfield"><label>初始健康值（0-100）</label><input id="p-init" type="number" value="70"></div>`;
+    <div class="dpfield"><label>初始健康值（0-100）</label><input id="p-init" type="number" value="70"></div>
+    <div class="dpfield"><label style="display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:0;font-size:14px;color:var(--dp-ink);font-weight:600"><input type="checkbox" id="p-home" style="width:19px;height:19px;accent-color:#FF375F">喺首頁顯示呢位嘅關係值</label></div>`;
   $('#sheet-bg').classList.add('on'); requestAnimationFrame(()=>$('#sheet').classList.add('on'));
 }
 async function savePerson(){
   const name=$('#p-name').value.trim(); if(!name){ toast('請輸入姓名'); return; }
   const rel=$('#p-rel').value.trim();
   const init=Math.max(0,Math.min(100,Number($('#p-init').value)||70));
-  try{ await db.from('relationships').insert({name,relation:rel,initial_score:init,current_score:init}); closeSheet(); toast('已新增'); loadRelationships(); }
+  const showHome=$('#p-home').checked;
+  try{ await db.from('relationships').insert({name,relation:rel,initial_score:init,current_score:init,show_on_home:showHome}); closeSheet(); toast('已新增'); loadRelationships(); }
   catch(e){ toast('儲存失敗，請確認已建立 relationships 表'); }
 }
 let curPersonId=null;
+async function recomputeRelationshipScore(personId){
+  const {data:p}=await db.from('relationships').select('initial_score').eq('id',personId).maybeSingle();
+  const {data:evs}=await db.from('relationship_events').select('delta').eq('relationship_id',personId);
+  const total=clamp0to100((p?Number(p.initial_score):70)+(evs||[]).reduce((a,b)=>a+(+b.delta||0),0));
+  try{ await db.from('relationships').update({current_score:total}).eq('id',personId); }catch(e){}
+  return total;
+}
 async function openRelationshipDetail(id){
   curPersonId=id; go('relationship');
   const {data:p}=await db.from('relationships').select('*').eq('id',id).maybeSingle();
@@ -1126,11 +1165,13 @@ async function openRelationshipDetail(id){
   $('#rd-av').textContent=(p.name||'?').slice(0,1); $('#rd-av').style.background=avColor(p.name);
   $('#rd-score').textContent=score; $('#rd-score').style.color=col;
   $('#rd-fill').style.width=score+'%'; $('#rd-fill').style.background=col;
-  const {data:evs}=await db.from('relationship_events').select('*').eq('relationship_id',id).order('date',{ascending:false}).order('created_at',{ascending:false});
+  const {data:evsAsc}=await db.from('relationship_events').select('*').eq('relationship_id',id).order('date',{ascending:true}).order('created_at',{ascending:true});
+  let running=Number(p.initial_score)||70;
+  const withScore=(evsAsc||[]).map(e=>{ running=clamp0to100(running+(+e.delta||0)); return {...e,score_after:running}; });
   const T=$('#rd-timeline');
-  if(!evs||!evs.length){ T.innerHTML='<div class="empty">未有相處記錄。</div>'; return; }
-  T.innerHTML=evs.map(e=>{const emo=REL_EMOS.find(x=>x.k===e.emotion)||{c:'#999'};const stars='★'.repeat(e.stars)+'☆'.repeat(5-e.stars);
-    return `<div class="dptli"><span class="tld" style="background:${emo.c}"></span><div class="c"><div class="a">${esc(e.emotion)} · ${stars}</div>${e.note?`<div class="b">${esc(e.note)}</div>`:''}<div class="d">${fmtDateFull(e.date)} · ${e.delta>=0?'+':''}${e.delta} → ${Math.round(e.score_after)}%</div></div></div>`;
+  if(!withScore.length){ T.innerHTML='<div class="empty">未有相處記錄。</div>'; return; }
+  T.innerHTML=withScore.slice().reverse().map(e=>{const emo=REL_EMOS.find(x=>x.k===e.emotion)||{c:'#999'};const stars='★'.repeat(e.stars)+'☆'.repeat(5-e.stars);
+    return `<button class="dptli" onclick="openEvent('${e.id}')" style="width:100%;text-align:left;background:none;border:none"><span class="tld" style="background:${emo.c}"></span><div class="c"><div class="a">${esc(e.emotion)} · ${stars}</div>${e.note?`<div class="b">${esc(e.note)}</div>`:''}<div class="d">${fmtDateFull(e.date)} · ${e.delta>=0?'+':''}${e.delta} → ${Math.round(e.score_after)}%</div></div></button>`;
   }).join('');
 }
 function editPersonCurrent(){
@@ -1141,6 +1182,7 @@ function editPersonCurrent(){
       <div class="sh"><button class="c" onclick="closeSheet()">取消</button><span class="t">編輯人物</span><button class="s" onclick="updatePerson()">儲存</button></div>
       <div class="dpfield"><label>姓名</label><input id="p-name" value="${esc(p.name)}"></div>
       <div class="dpfield"><label>關係</label><input id="p-rel" value="${esc(p.relation||'')}"></div>
+      <div class="dpfield"><label style="display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:0;font-size:14px;color:var(--dp-ink);font-weight:600"><input type="checkbox" id="p-home" ${p.show_on_home?'checked':''} style="width:19px;height:19px;accent-color:#FF375F">喺首頁顯示呢位嘅關係值</label></div>
       ${p.is_self?'':'<button class="del" onclick="deletePerson()">刪除人物</button>'}`;
     $('#sheet-bg').classList.add('on'); requestAnimationFrame(()=>$('#sheet').classList.add('on'));
   });
@@ -1148,7 +1190,8 @@ function editPersonCurrent(){
 async function updatePerson(){
   const name=$('#p-name').value.trim(); if(!name){toast('請輸入姓名');return;}
   const rel=$('#p-rel').value.trim();
-  try{ await db.from('relationships').update({name,relation:rel}).eq('id',curPersonId); closeSheet(); toast('已更新'); openRelationshipDetail(curPersonId); }
+  const showHome=$('#p-home').checked;
+  try{ await db.from('relationships').update({name,relation:rel,show_on_home:showHome}).eq('id',curPersonId); closeSheet(); toast('已更新'); openRelationshipDetail(curPersonId); }
   catch(e){ toast('儲存失敗'); }
 }
 async function deletePerson(){
@@ -1156,35 +1199,59 @@ async function deletePerson(){
   try{ await db.from('relationship_events').delete().eq('relationship_id',curPersonId); await db.from('relationships').delete().eq('id',curPersonId); closeSheet(); toast('已刪除'); go('relationships'); }
   catch(e){ toast('刪除失敗'); }
 }
-let relEventDraft={emotion:null,stars:4,note:''};
-function openEvent(){
-  relEventDraft={emotion:REL_EMOS[1].k,stars:4,note:''};
-  renderEventSheet();
+let relEventDraft={id:null,emotion:null,stars:4,note:'',delta:0,touched:false};
+function calcRelDefault(){ const emo=REL_EMOS.find(e=>e.k===relEventDraft.emotion); return emo? emo.dir*relEventDraft.stars*WEIGHT : 0; }
+function openEvent(id){
+  if(id){
+    db.from('relationship_events').select('*').eq('id',id).maybeSingle().then(({data:r})=>{
+      if(!r) return;
+      relEventDraft={id:r.id,emotion:r.emotion,stars:r.stars,note:r.note||'',delta:Number(r.delta),touched:false};
+      renderEventSheet();
+    });
+  } else {
+    relEventDraft={id:null,emotion:REL_EMOS[1].k,stars:4,note:'',delta:0,touched:false};
+    relEventDraft.delta=calcRelDefault();
+    renderEventSheet();
+  }
   $('#sheet-bg').classList.add('on'); requestAnimationFrame(()=>$('#sheet').classList.add('on'));
 }
 function renderEventSheet(){
-  const emo=REL_EMOS.find(e=>e.k===relEventDraft.emotion);
-  const delta=emo.dir*relEventDraft.stars*WEIGHT;
+  const editing=!!relEventDraft.id;
   $('#sheet').innerHTML=`<div class="grab"></div>
-    <div class="sh"><button class="c" onclick="closeSheet()">取消</button><span class="t">相處記錄</span><button class="s" onclick="saveEvent()">儲存</button></div>
+    <div class="sh"><button class="c" onclick="closeSheet()">取消</button><span class="t">${editing?'編輯':''}相處記錄</span><button class="s" onclick="saveEvent()">儲存</button></div>
     <div class="dpfield"><label>情緒</label><div class="emorow" style="margin-top:8px">${REL_EMOS.map(e=>`<button class="ecbtn ${e.k===relEventDraft.emotion?'on':''}" style="--c:${e.c}" onclick="pickRelEmo('${e.k}')">${e.k}</button>`).join('')}</div></div>
     <div class="dpfield"><label>影響程度</label><div style="margin-top:6px">${[1,2,3,4,5].map(n=>`<button class="starpick" style="font-size:26px;padding:6px 5px" onclick="pickRelStars(${n})">${n<=relEventDraft.stars?'★':'<span class="off">★</span>'}</button>`).join('')}</div></div>
     <div class="dpfield"><label>事件描述（可留空）</label><textarea class="dpta" id="rel-note" placeholder="發生咗咩事⋯">${esc(relEventDraft.note)}</textarea></div>
-    <div class="impact"><span class="k">關係值變化</span><span class="v" style="color:${delta>=0?'#34C759':'#FF3B30'}">${delta>=0?'+':''}${delta}</span></div>`;
+    <div class="dpfield"><label>關係值變化（可自己調整）</label>
+      <div style="display:flex;align-items:center;gap:14px;margin-top:9px">
+        <button type="button" onclick="adjRelDelta(-1)" style="width:42px;height:42px;border-radius:50%;border:1px solid var(--dp-line);background:#F7F7F9;font-size:20px;color:#333">−</button>
+        <div style="flex:1;text-align:center;font-size:24px;font-weight:800;font-variant-numeric:tabular-nums;color:${relEventDraft.delta>=0?'#34C759':'#FF3B30'}">${relEventDraft.delta>=0?'+':''}${relEventDraft.delta}</div>
+        <button type="button" onclick="adjRelDelta(1)" style="width:42px;height:42px;border-radius:50%;border:1px solid var(--dp-line);background:#F7F7F9;font-size:20px;color:#333">＋</button>
+      </div>
+    </div>
+    ${editing?'<button class="del" onclick="deleteEvent()">刪除記錄</button>':''}`;
 }
-function pickRelEmo(k){ relEventDraft.emotion=k; renderEventSheet(); }
-function pickRelStars(n){ relEventDraft.stars=n; renderEventSheet(); }
+function pickRelEmo(k){ relEventDraft.emotion=k; if(!relEventDraft.touched) relEventDraft.delta=calcRelDefault(); renderEventSheet(); }
+function pickRelStars(n){ relEventDraft.stars=n; if(!relEventDraft.touched) relEventDraft.delta=calcRelDefault(); renderEventSheet(); }
+function adjRelDelta(d){ relEventDraft.delta=Number(relEventDraft.delta)+d; relEventDraft.touched=true; renderEventSheet(); }
 async function saveEvent(){
   relEventDraft.note=$('#rel-note').value.trim();
-  const emo=REL_EMOS.find(e=>e.k===relEventDraft.emotion);
-  const delta=emo.dir*relEventDraft.stars*WEIGHT;
+  const row={emotion:relEventDraft.emotion,stars:relEventDraft.stars,note:relEventDraft.note,delta:relEventDraft.delta};
   try{
-    const {data:p}=await db.from('relationships').select('current_score').eq('id',curPersonId).maybeSingle();
-    const newScore=clamp0to100((p?p.current_score:70)+delta);
-    await db.from('relationship_events').insert({relationship_id:curPersonId,date:todayStr(),emotion:relEventDraft.emotion,stars:relEventDraft.stars,note:relEventDraft.note,delta,score_after:newScore});
-    await db.from('relationships').update({current_score:newScore}).eq('id',curPersonId);
-    closeSheet(); toast('已記錄'); openRelationshipDetail(curPersonId);
+    if(relEventDraft.id){ await db.from('relationship_events').update(row).eq('id',relEventDraft.id); }
+    else{ await db.from('relationship_events').insert({...row,relationship_id:curPersonId,date:todayStr()}); }
+    await recomputeRelationshipScore(curPersonId);
+    closeSheet(); toast('已儲存'); openRelationshipDetail(curPersonId); loadHomeRel();
   }catch(e){ toast('儲存失敗，請確認已建立 relationship_events 表'); }
+}
+async function deleteEvent(){
+  if(!relEventDraft.id) return;
+  if(!confirm('確定刪除呢個記錄？'))return;
+  try{
+    await db.from('relationship_events').delete().eq('id',relEventDraft.id);
+    await recomputeRelationshipScore(curPersonId);
+    closeSheet(); toast('已刪除'); openRelationshipDetail(curPersonId); loadHomeRel();
+  }catch(e){ toast('刪除失敗'); }
 }
 
 /* ---------- 小目標 ---------- */
