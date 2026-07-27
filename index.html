@@ -7,14 +7,14 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="小助理">
-<meta name="theme-color" content="#F4F0E7">
+<meta name="theme-color" content="#FFFFFF">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="manifest" href="manifest.json">
 <style>
   :root{
-    --paper:#F4F0E7; --card:#FBF9F4; --ink:#1C1B18; --graphite:#6E6A60;
-    --line:#E5DFD2; --line-soft:#EFEADF; --curry:#BD851E; --curry-deep:#8F6312;
-    --curry-wash:#F3E9D2; --bad:#9c3a2a;
+    --paper:#FFFFFF; --card:#FFFFFF; --ink:#1C1B18; --graphite:#6E6A60;
+    --line:#E3E3E7; --line-soft:#EFEFF2; --curry:#BD851E; --curry-deep:#8F6312;
+    --curry-wash:#F4F4F6; --bad:#9c3a2a;
     --sans:-apple-system,"SF Pro Text","PingFang HK","PingFang TC","Helvetica Neue",system-ui,sans-serif;
     --safe-b:env(safe-area-inset-bottom,0px); --safe-t:env(safe-area-inset-top,0px);
   }
@@ -157,20 +157,20 @@
   .bar .nm{font-weight:500;}
   .bar .rt{color:var(--graphite);font-variant-numeric:tabular-nums;font-size:12px;white-space:nowrap;}
   .bar .rt b{color:var(--ink);font-weight:600;}
-  .bar .track{height:9px;border-radius:6px;background:#EBE5D7;overflow:hidden;}
+  .bar .track{height:9px;border-radius:6px;background:#ECECEF;overflow:hidden;}
   .bar .fill{height:100%;border-radius:6px;}
   .bar.g .fill{background:#5C9468;} .bar.y .fill{background:#CDA13A;} .bar.r .fill{background:#C0563C;}
   .bar .dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-left:6px;vertical-align:middle;}
   .bar.g .dot{background:#5C9468;} .bar.y .dot{background:#CDA13A;} .bar.r .dot{background:#C0563C;}
   .warn{border-radius:12px;padding:11px 13px;margin-bottom:9px;font-size:13px;line-height:1.5;}
-  .warn.r{background:#F6E4DE;color:#8c3a28;} .warn.y{background:#F5ECD4;color:#8a6a1e;}
+  .warn.r{background:#FFE7E5;color:#8c3a28;} .warn.y{background:#FFF1DB;color:#8a6a1e;}
   .txn .item .amt.in{color:#4f8a5b;} .txn .item .amt.ex{color:#1C1B18;}
 
   /* type toggle */
   .ttoggle{display:flex;gap:8px;margin-top:7px;}
   .ttoggle button{flex:1;padding:11px;border-radius:10px;border:1px solid var(--line);background:none;color:var(--graphite);font-weight:600;font-size:14px;}
   .ttoggle button.on.in{background:#E7F0E9;border-color:#5C9468;color:#3f7350;}
-  .ttoggle button.on.ex{background:#F3E9D2;border-color:var(--curry);color:var(--curry-deep);}
+  .ttoggle button.on.ex{background:#F6F6F8;border-color:var(--curry);color:var(--curry-deep);}
 
   /* lock screen */
   .lockwrap{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 40px calc(24px + var(--safe-b));}
@@ -217,7 +217,7 @@
   .dpqs .k{font-size:10px;color:var(--dp-grey);font-weight:600;}
   .dpqs .v{font-size:14px;font-weight:800;margin-top:2px;font-variant-numeric:tabular-nums;color:var(--dp-ink);}
 
-  .verse{margin-top:11px;border:1px solid var(--dp-line);border-radius:13px;padding:11px 13px;position:relative;background:linear-gradient(180deg,#FFFDF7,#fff);text-align:left;width:100%;cursor:pointer;}
+  .verse{margin-top:11px;border:1px solid var(--dp-line);border-radius:13px;padding:11px 13px;position:relative;background:linear-gradient(180deg,#FAFAFC,#fff);text-align:left;width:100%;cursor:pointer;}
   .verse .vl{font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:#C9962E;font-weight:700;}
   .verse .vt{font-size:13.5px;font-weight:600;line-height:1.6;margin-top:3px;color:#26251f;}
   .verse .vs{font-size:11px;color:var(--dp-grey);margin-top:4px;}
