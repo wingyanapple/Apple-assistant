@@ -193,7 +193,8 @@
     --dp-emo:#FF9F0A; --dp-rel:#FF375F; --dp-grow:#3B82F6; --dp-goal:#8B5CF6; --dp-plan:#14B8A6;
     --dp-green:#34C759; --dp-yellow:#F5A300; --dp-red:#FF3B30;
   }
-  #v-home,#v-hub,#v-mood,#v-relationships,#v-relationship,#v-goals,#v-goal,#v-achievements,#v-celebrate,#v-verse,#v-maint,#v-maintItem,#v-plans,#v-plan,#v-assets,#v-insure,#v-insurePolicy,#v-grow,#v-growItem,#v-vault,#v-habits{background:#fff;color:var(--dp-ink);}
+  #v-home,#v-hub,#v-mood,#v-relationships,#v-relationship,#v-goals,#v-goal,#v-achievements,#v-celebrate,#v-verse,#v-maint,#v-maintItem,#v-plans,#v-plan,#v-assets,#v-insure,#v-insurePolicy,#v-grow,#v-growItem,#v-vault,#v-habits,#v-letters,#v-familySetup{background:#fff;color:var(--dp-ink);}
+  #v-letters .scroll,#v-familySetup .scroll{padding:0 18px calc(110px + var(--safe-b));}
   #v-home .scroll,#v-hub .scroll,#v-mood .scroll,#v-relationships .scroll,#v-relationship .scroll,#v-goals .scroll,#v-goal .scroll,#v-achievements .scroll,#v-verse .scroll,#v-maint .scroll,#v-maintItem .scroll,#v-plans .scroll,#v-plan .scroll,#v-assets .scroll,#v-insure .scroll,#v-insurePolicy .scroll,#v-grow .scroll,#v-growItem .scroll,#v-vault .scroll{padding:0 18px calc(110px + var(--safe-b));}
   .ma-photos{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;}
   .ma-ph{position:relative;width:72px;height:72px;border-radius:10px;overflow:hidden;border:0.5px solid #e2e4e8;background:#F3F4F6;padding:0;flex:0 0 auto;}
@@ -546,8 +547,8 @@
     </div>
     <div class="hubsec" style="--c:#FF6E88">傳承 / 系統</div>
     <div class="hubgrid">
-      <button class="hubtile soon" onclick="toast('給家人的信：Phase 3 加入')"><svg><use href="#i-letter"/></svg><div class="l">給家人的信</div></button>
-      <button class="hubtile soon" onclick="toast('家人入口：Phase 3 加入')"><svg><use href="#i-family"/></svg><div class="l">家人入口</div></button>
+      <button class="hubtile" onclick="go('letters')"><svg><use href="#i-letter"/></svg><div class="l">給家人的信</div></button>
+      <button class="hubtile" onclick="go('familySetup')"><svg><use href="#i-family"/></svg><div class="l">家人入口</div></button>
       <button class="hubtile" onclick="go('vault')"><svg><use href="#i-vault"/></svg><div class="l">密碼記錄</div></button>
       <button class="hubtile" onclick="go('settings')"><svg><use href="#i-settings"/></svg><div class="l">設定</div></button>
     </div>
@@ -710,6 +711,19 @@
     <div id="pl-todos"></div>
     <button class="dpcta" id="pl-complete" style="background:#14B8A6" onclick="completePlan()">標記為完成</button>
   </div>
+</section>
+
+<!-- ===== 給家人的信 ===== -->
+<section id="v-letters" class="view">
+  <div class="dpnav"><button class="bk" onclick="go('home')">‹ 首頁</button><span class="nt">給家人的信</span><span class="sp"></span></div>
+  <div class="scroll"><div id="letters-list"></div></div>
+  <button class="fab" onclick="openLetter()">＋ 寫新信</button>
+</section>
+
+<!-- ===== 家人入口設定 ===== -->
+<section id="v-familySetup" class="view">
+  <div class="dpnav"><button class="bk" onclick="go('home')">‹ 首頁</button><span class="nt">家人入口</span><span class="sp"></span></div>
+  <div class="scroll"><div id="family-body"></div></div>
 </section>
 
 <!-- ===== 習慣打卡 ===== -->
@@ -923,7 +937,7 @@ function go(v){document.querySelectorAll('.view').forEach(x=>x.classList.remove(
   if(v==='purchases')loadPurch(); if(v==='ideas')loadIdeas(); if(v==='finance')loadFinance();
   if(v==='mood')loadMood(); if(v==='relationships')loadRelationships();
   if(v==='goals')loadGoals(); if(v==='achievements')loadAchievements();
-  if(v==='verse')loadVersePage(); if(v==='maint')loadMaint(); if(v==='plans')loadPlans(); if(v==='assets')loadAssets(); if(v==='insure')loadInsure(); if(v==='grow')loadGrow(); if(v==='vault')loadVault(); if(v==='habits')loadHabits();
+  if(v==='verse')loadVersePage(); if(v==='maint')loadMaint(); if(v==='plans')loadPlans(); if(v==='assets')loadAssets(); if(v==='insure')loadInsure(); if(v==='grow')loadGrow(); if(v==='vault')loadVault(); if(v==='habits')loadHabits(); if(v==='letters')loadLetters(); if(v==='familySetup')loadFamilySetup();
   if(v==='settings')$('#set-url').textContent=sbUrl()||'—';
   document.querySelector('#v-'+v+' .scroll')?.scrollTo(0,0);
 }
@@ -2779,6 +2793,95 @@ async function saveHabit(id){
   catch(e){ toast('儲存失敗，請確認已建立 habits 表'); }
 }
 async function deleteHabit(id){ if(!confirm('刪除呢個習慣？所有打卡記錄都會刪走'))return; try{ await db.from('habits').delete().eq('id',id); closeSheet(); toast('已刪除'); loadHabits(); }catch(e){ toast('刪除失敗'); } }
+
+/* ==================== 給家人的信（Phase 3） ==================== */
+const RECIPIENTS=[['arthur','哥哥 Arthur'],['joe','老公 Joe'],['dad','爸爸'],['mom','媽媽'],['yuen','女兒圓圓']];
+function recipLabel(k){ const f=RECIPIENTS.find(r=>r[0]===k); return f?f[1]:k; }
+function recipLabels(csv){ return (csv||'').split(',').filter(Boolean).map(recipLabel).join('、'); }
+async function loadLetters(){
+  const L=$('#letters-list');
+  try{
+    const {data}=await db.from('family_letters').select('*').order('updated_at',{ascending:false});
+    if(!data||!data.length){ L.innerHTML='<div class="empty">未有信。撳右下角「＋ 寫新信」開始。</div>'; return; }
+    L.innerHTML=data.map(l=>{
+      const badge=l.status==='done'?`<span style="font-size:11px;background:#E7F0E9;color:#3f7350;padding:3px 8px;border-radius:6px">完成</span>`:`<span style="font-size:11px;background:#F3F4F6;color:#8a8a8e;padding:3px 8px;border-radius:6px">草稿</span>`;
+      const lock=l.pass_hash?' 🔒':'';
+      const sub=[recipLabels(l.recipients)||'未揀收件人', l.updated_at?('更新 '+fmtDateFull(l.updated_at)):null].filter(Boolean).join(' · ');
+      return `<button class="goalcard" onclick="openLetter('${l.id}')"><div class="gtop"><span class="gname">${esc(l.title)}${lock}</span>${badge}</div><div class="gsub">${sub}</div></button>`;
+    }).join('');
+  }catch(e){ L.innerHTML='<div class="empty">未能載入。請先確認已建立 family_letters 表。</div>'; }
+}
+function openLetter(id){
+  const edit=typeof id==='string';
+  const build=(l)=>{ l=l||{status:'draft',recipients:''};
+    const sel=new Set((l.recipients||'').split(',').filter(Boolean));
+    $('#sheet').innerHTML=`<div class="grab"></div>
+      <div class="sh"><button class="c" onclick="closeSheet()">取消</button><span class="t">${edit?'編輯信':'寫新信'}</span><button class="s" onclick="saveLetter(${edit?`'${id}'`:'null'})">儲存</button></div>
+      <div class="dpfield"><label>標題</label><input id="lt-title" value="${esc(l.title||'')}" placeholder="例如 給圓圓的信"></div>
+      <div class="dpfield"><label>收件人（可揀多位）</label><div class="dptabs" id="lt-recip" style="flex-wrap:wrap">${RECIPIENTS.map(([k,lab])=>`<button type="button" class="dptab ${sel.has(k)?'on':''}" data-k="${k}" onclick="this.classList.toggle('on')">${lab}</button>`).join('')}</div></div>
+      <div class="dpfield"><label>內容</label><textarea class="dpta" id="lt-body" style="min-height:220px">${esc(l.body||'')}</textarea></div>
+      <div class="dpfield"><label>狀態</label><div class="dptabs" id="lt-status-row"><button type="button" class="dptab ${(l.status||'draft')==='draft'?'on':''}" data-d="draft" onclick="pickChip('lt-status-row','lt-status','draft')">草稿</button><button type="button" class="dptab ${l.status==='done'?'on':''}" data-d="done" onclick="pickChip('lt-status-row','lt-status','done')">完成</button></div><input type="hidden" id="lt-status" value="${l.status||'draft'}"></div>
+      <div class="dpsl" style="margin:8px 0 2px"><span>呢封信嘅密碼（家人要輸入先睇到）</span></div>
+      <div class="dpfield"><label>密碼${edit&&l.pass_hash?'（已設定，留空 = 唔改）':'（可留空 = 唔上鎖）'}</label><input id="lt-pass" placeholder="${edit&&l.pass_hash?'留空 = 唔改':'例如 圓圓生日'}"></div>
+      <div class="dpfield"><label>密碼提示（可留空）</label><input id="lt-hint" value="${esc(l.pass_hint||'')}" placeholder="例如 圓圓出生年份"></div>
+      ${edit?`<button class="del" onclick="deleteLetter('${id}')">刪除信</button>`:''}`;
+    $('#sheet-bg').classList.add('on'); requestAnimationFrame(()=>$('#sheet').classList.add('on'));
+  };
+  if(edit){ db.from('family_letters').select('*').eq('id',id).maybeSingle().then(({data})=>build(data)); } else build(null);
+}
+async function saveLetter(id){
+  const title=$('#lt-title').value.trim(); if(!title){ toast('請輸入標題'); return; }
+  const recips=[...document.querySelectorAll('#lt-recip .dptab.on')].map(b=>b.dataset.k).join(',');
+  const rec={title, recipients:recips||null, body:$('#lt-body').value||null, status:$('#lt-status').value||'draft', pass_hint:$('#lt-hint').value.trim()||null, updated_at:new Date().toISOString()};
+  const pw=$('#lt-pass').value.trim();
+  if(pw){ rec.pass_hash=await sha256(pw); }
+  try{
+    if(id){ await db.from('family_letters').update(rec).eq('id',id); }
+    else { await db.from('family_letters').insert(rec); }
+    closeSheet(); toast('已儲存'); loadLetters();
+  }catch(e){ toast('儲存失敗，請確認已建立 family_letters 表'); }
+}
+async function deleteLetter(id){ if(!confirm('刪除呢封信？'))return; try{ await db.from('family_letters').delete().eq('id',id); closeSheet(); toast('已刪除'); loadLetters(); }catch(e){ toast('刪除失敗'); } }
+
+/* ==================== 家人入口設定（Phase 3） ==================== */
+function copyText(t){ try{ navigator.clipboard.writeText(t); toast('已複製'); }catch(e){ toast('複製失敗，可長按網址手動複製'); } }
+async function loadFamilySetup(){
+  const host=$('#family-body');
+  const url=location.origin+location.pathname.replace(/[^/]*$/,'')+'family.html';
+  try{
+    const {data}=await db.from('family_access').select('*');
+    const byId=Object.fromEntries((data||[]).map(r=>[r.id,r]));
+    let html=`<div style="font-size:13px;color:#8a8a8e;margin:12px 2px 6px;line-height:1.6">畀家人喺你唔喺度時，用自己出生日期查閱你嘅資產、保險同你寫俾佢嘅信（唯讀）。<br><b style="color:#B77500">重要：</b>條網址要私下先畀信任家人，唔好公開分享。任何有網址嘅人技術上都可能睇到你啲資料。</div>`;
+    html+=`<div class="dpsl"><span>家人入口網址</span></div><button class="goalcard" onclick="copyText('${url}')" style="text-align:left"><div class="gsub" style="word-break:break-all;color:#2E7CF6">${url}</div><div class="gsub" style="font-size:11px">撳一下複製</div></button>`;
+    html+=`<div class="dpsl"><span>各位家人（設定出生日期 + 開通先用到）</span></div>`;
+    html+=RECIPIENTS.map(([k,lab])=>{
+      const r=byId[k]; const on=r&&r.enabled&&r.birthday_hash;
+      const status=on?`<span style="font-size:11px;background:#E7F0E9;color:#3f7350;padding:3px 8px;border-radius:6px">已開通</span>`:`<span style="font-size:11px;background:#F3F4F6;color:#8a8a8e;padding:3px 8px;border-radius:6px">未開通</span>`;
+      return `<button class="goalcard" onclick="openFamilyMember('${k}')"><div class="gtop"><span class="gname">${lab}</span>${status}</div><div class="gsub">${r&&r.birthday_hash?'已設定出生日期，撳去更改／撤銷':'撳去設定出生日期'}</div></button>`;
+    }).join('');
+    host.innerHTML=html;
+  }catch(e){ host.innerHTML='<div class="empty">未能載入。請先確認已建立 family_access 表。</div>'; }
+}
+function openFamilyMember(k){
+  const lab=recipLabel(k);
+  db.from('family_access').select('*').eq('id',k).maybeSingle().then(({data:r})=>{
+    r=r||{};
+    $('#sheet').innerHTML=`<div class="grab"></div>
+      <div class="sh"><button class="c" onclick="closeSheet()">取消</button><span class="t">${lab}</span><button class="s" onclick="saveFamilyMember('${k}')">儲存</button></div>
+      <div class="dpfield"><label>出生日期（8 位數字 YYYYMMDD，例 19900125）</label><input id="fm-bday" inputmode="numeric" placeholder="${r.birthday_hash?'留空 = 唔改':'19900125'}"></div>
+      <div class="dpfield"><label>開通呢位家人</label><div class="dptabs" id="fm-en-row"><button type="button" class="dptab ${r.enabled?'on':''}" data-d="1" onclick="pickChip('fm-en-row','fm-en','1')">開通</button><button type="button" class="dptab ${!r.enabled?'on':''}" data-d="0" onclick="pickChip('fm-en-row','fm-en','0')">關閉</button></div><input type="hidden" id="fm-en" value="${r.enabled?'1':'0'}"></div>
+      <div style="font-size:12px;color:#8a8a8e;margin-top:6px;line-height:1.5">家人喺入口揀「${lab}」後，要輸入呢個出生日期先入到。你可以隨時返嚟改或者揀「關閉」即刻撤銷。</div>`;
+    $('#sheet-bg').classList.add('on'); requestAnimationFrame(()=>$('#sheet').classList.add('on'));
+  });
+}
+async function saveFamilyMember(k){
+  const bday=$('#fm-bday').value.trim();
+  const en=$('#fm-en').value==='1';
+  const rec={id:k, label:recipLabel(k), enabled:en, updated_at:new Date().toISOString()};
+  if(bday){ if(!/^\d{8}$/.test(bday)){ toast('出生日期要 8 位數字，例 19900125'); return; } rec.birthday_hash=await sha256(bday); }
+  try{ await db.from('family_access').upsert(rec); closeSheet(); toast('已儲存'); loadFamilySetup(); }
+  catch(e){ toast('儲存失敗，請確認已建立 family_access 表'); }
+}
 </script>
 </body>
 </html>
