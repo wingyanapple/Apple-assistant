@@ -193,8 +193,14 @@
     --dp-emo:#FF9F0A; --dp-rel:#FF375F; --dp-grow:#3B82F6; --dp-goal:#8B5CF6; --dp-plan:#14B8A6;
     --dp-green:#34C759; --dp-yellow:#F5A300; --dp-red:#FF3B30;
   }
-  #v-home,#v-hub,#v-mood,#v-relationships,#v-relationship,#v-goals,#v-goal,#v-achievements,#v-celebrate,#v-verse{background:#fff;color:var(--dp-ink);}
-  #v-home .scroll,#v-hub .scroll,#v-mood .scroll,#v-relationships .scroll,#v-relationship .scroll,#v-goals .scroll,#v-goal .scroll,#v-achievements .scroll,#v-verse .scroll{padding:0 18px calc(110px + var(--safe-b));}
+  #v-home,#v-hub,#v-mood,#v-relationships,#v-relationship,#v-goals,#v-goal,#v-achievements,#v-celebrate,#v-verse,#v-maint,#v-maintItem{background:#fff;color:var(--dp-ink);}
+  #v-home .scroll,#v-hub .scroll,#v-mood .scroll,#v-relationships .scroll,#v-relationship .scroll,#v-goals .scroll,#v-goal .scroll,#v-achievements .scroll,#v-verse .scroll,#v-maint .scroll,#v-maintItem .scroll{padding:0 18px calc(110px + var(--safe-b));}
+  .ma-photos{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;}
+  .ma-ph{position:relative;width:72px;height:72px;border-radius:10px;overflow:hidden;border:0.5px solid #e2e4e8;background:#F3F4F6;padding:0;flex:0 0 auto;}
+  .ma-ph img{width:100%;height:100%;object-fit:cover;display:block;}
+  .ma-ph .rm{position:absolute;top:2px;right:2px;width:20px;height:20px;border-radius:50%;border:none;background:rgba(0,0,0,.55);color:#fff;font-size:14px;line-height:20px;padding:0;}
+  .ma-ph.add{display:flex;align-items:center;justify-content:center;font-size:26px;color:#2E9BFF;border:1px dashed #c8cace;background:#fff;}
+  .minibtn{font-size:12px;padding:4px 10px;border-radius:8px;border:0.5px solid #d7d4c8;background:#fff;color:var(--dp-ink);}
   .dpnav{display:flex;align-items:center;justify-content:space-between;padding:calc(12px + var(--safe-t)) 2px 4px;}
   .dpnav .bk{font-size:15px;color:#2E7CF6;font-weight:500;background:none;border:none;}
   .dpnav .nt{font-size:16px;font-weight:800;color:var(--dp-ink);}
@@ -526,7 +532,7 @@
     <div class="hubgrid">
       <button class="hubtile" onclick="go('purchases')"><svg><use href="#i-shop"/></svg><div class="l">採購</div></button>
       <button class="hubtile" onclick="go('todos')"><svg><use href="#i-todo"/></svg><div class="l">待辦</div></button>
-      <button class="hubtile soon" onclick="toast('資產保養：Phase 2 加入')"><svg><use href="#i-maint"/></svg><div class="l">保養</div></button>
+      <button class="hubtile" onclick="go('maint')"><svg><use href="#i-maint"/></svg><div class="l">保養</div></button>
       <button class="hubtile" onclick="go('ideas')"><svg><use href="#i-idea"/></svg><div class="l">小點子</div></button>
     </div>
     <div class="hubsec" style="--c:#FF6E88">傳承 / 系統</div>
@@ -641,6 +647,30 @@
     <div class="dptabs"><button class="dptab on" data-t="today" onclick="verseTab('today')">今日</button><button class="dptab" data-t="fav" onclick="verseTab('fav')">收藏</button><button class="dptab" data-t="hist" onclick="verseTab('hist')">歷史</button></div>
     <div id="verse-list"></div>
   </div>
+</section>
+
+<!-- ===== 資產保養：列表 ===== -->
+<section id="v-maint" class="view">
+  <div class="dpnav"><button class="bk" onclick="go('home')">‹ 首頁</button><span class="nt">資產保養</span><span class="sp"></span></div>
+  <div class="scroll">
+    <div id="maint-list"></div>
+  </div>
+  <button class="fab" onclick="openAsset()">＋ 新增資產</button>
+</section>
+
+<!-- ===== 資產保養：詳情 ===== -->
+<section id="v-maintItem" class="view">
+  <div class="dpnav"><button class="bk" onclick="go('maint')">‹ 保養</button><span class="nt" id="ma-name">—</span><button class="sp" onclick="editAssetCurrent()">編輯</button></div>
+  <div class="scroll">
+    <div class="scoreh"><div id="ma-stats"></div></div>
+    <div class="dpsl"><span>收據 / 相片</span><button class="more" onclick="triggerAssetPhoto()">＋ 影相 / 相簿</button></div>
+    <div id="ma-photos" class="ma-photos"></div>
+    <div class="dpsl"><span>保養 / 耗材提醒</span><button class="more" onclick="openReminder()">＋ 新增</button></div>
+    <div id="ma-items"></div>
+    <div class="dpsl"><span>維修歷史</span><button class="more" onclick="openRepair()">＋ 新增</button></div>
+    <div id="ma-repairs"></div>
+  </div>
+  <input type="file" accept="image/*" id="asset-photo-input" onchange="onAssetPhotoPick(this)" style="display:none">
 </section>
 
 <!-- ===== HOME (old content removed) ===== -->
@@ -776,7 +806,7 @@ function go(v){document.querySelectorAll('.view').forEach(x=>x.classList.remove(
   if(v==='purchases')loadPurch(); if(v==='ideas')loadIdeas(); if(v==='finance')loadFinance();
   if(v==='mood')loadMood(); if(v==='relationships')loadRelationships();
   if(v==='goals')loadGoals(); if(v==='achievements')loadAchievements();
-  if(v==='verse')loadVersePage();
+  if(v==='verse')loadVersePage(); if(v==='maint')loadMaint();
   if(v==='settings')$('#set-url').textContent=sbUrl()||'—';
   document.querySelector('#v-'+v+' .scroll')?.scrollTo(0,0);
 }
@@ -875,7 +905,7 @@ async function loadHome(){
   $('#hm-fin').textContent=money(net);
 
   await Promise.all([loadHomeVerse(), loadHomeMood(), loadHomeRel(), loadHomeGoals()]);
-  $('#home-due').innerHTML='';
+  await loadHomeDue();
 }
 
 /* ---------- 首頁：情緒 / 關係 概覽 ---------- */
@@ -1670,6 +1700,245 @@ async function saveTxn(){
 async function delTxn(id){if(!confirm('確定刪除？'))return;await db.from('personal_transactions').delete().eq('id',id);closeSheet();toast('已刪除');loadFinance();}
 
 function esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+/* ==================== 資產保養模組（Phase 2） ==================== */
+let curAssetId=null, curAsset=null, assetPhotos=[], assetItems=[], assetRepairs=[];
+
+function daysSince(dateStr){ if(!dateStr) return null; const d=new Date(dateStr.slice(0,10)+'T00:00:00'); const t=new Date(todayStr()+'T00:00:00'); return Math.round((t-d)/86400000); }
+function dueInfo(dateStr){ const n=daysSince(dateStr); if(n===null) return null; const remain=-n;
+  if(remain<0) return {level:'red',label:'已到期',col:'#FF3B30',bg:'#FFE7E5'};
+  if(remain<=14) return {level:'yellow',label:(remain===0?'今日到期':remain+' 日內'),col:'#B77500',bg:'#FFF1DB'};
+  return {level:'green'}; }
+function assetStatsHTML(a){
+  const held=a.purchase_date?Math.max(1,daysSince(a.purchase_date)):null;
+  const price=(a.purchase_price!=null&&a.purchase_price!=='')?Number(a.purchase_price):null;
+  const daily=(price!=null&&held)?price/held:null;
+  const cell=(k,v,ac)=>`<div style="flex:1;background:${ac?'#E7F3FF':'#F3F4F6'};border-radius:10px;padding:11px 6px;text-align:center;min-width:0"><div style="font-size:11px;color:${ac?'#2E9BFF':'#8a8a8e'}">${k}</div><div style="font-size:15px;font-weight:800;margin-top:3px;color:${ac?'#2E9BFF':'var(--dp-ink)'};font-variant-numeric:tabular-nums">${v}</div></div>`;
+  return `<div style="display:flex;gap:8px">${cell('購買價',price!=null?money(price):'—')}${cell('已持有',held!=null?held+' 日':'—')}${cell('每日成本',daily!=null?money(Math.round(daily)):'—',true)}</div>`;
+}
+
+async function loadMaint(){
+  const L=$('#maint-list');
+  try{
+    const [{data:assets},{data:items}]=await Promise.all([
+      db.from('maint_assets').select('*').order('created_at',{ascending:false}),
+      db.from('maint_items').select('asset_id,next_due')
+    ]);
+    if(!assets||!assets.length){ L.innerHTML='<div class="empty">未有資產。撳右下角「＋ 新增資產」開始。</div>'; return; }
+    const byAsset={};
+    (items||[]).forEach(it=>{ const info=dueInfo(it.next_due); if(info&&info.level!=='green'){ const cur=byAsset[it.asset_id]; if(!cur||(info.level==='red'&&cur.level!=='red')) byAsset[it.asset_id]=info; } });
+    L.innerHTML=assets.map(a=>{
+      const held=a.purchase_date?Math.max(1,daysSince(a.purchase_date)):null;
+      const price=(a.purchase_price!=null&&a.purchase_price!=='')?Number(a.purchase_price):null;
+      const daily=(price!=null&&held)?money(Math.round(price/held)):null;
+      const b=byAsset[a.id];
+      const badge=b?`<span style="font-size:11px;background:${b.bg};color:${b.col};padding:3px 8px;border-radius:6px;white-space:nowrap">${b.label}</span>`:'';
+      const sub=[a.category?esc(a.category):null, held!=null?('持有 '+held+' 日'):null, daily?('每日約 '+daily):null].filter(Boolean).join(' · ')||'未填資料';
+      return `<button class="goalcard" onclick="openMaintItemDetail('${a.id}')"><div class="gtop"><span class="gname">${esc(a.name)}</span>${badge}</div><div class="gsub">${sub}</div></button>`;
+    }).join('');
+  }catch(e){ L.innerHTML='<div class="empty">未能載入。請先去 Supabase 貼上今次嘅 SQL 建立資料表。</div>'; }
+}
+
+function openAsset(){
+  $('#sheet').innerHTML=`<div class="grab"></div>
+    <div class="sh"><button class="c" onclick="closeSheet()">取消</button><span class="t">新增資產</span><button class="s" onclick="saveAsset()">儲存</button></div>
+    <div class="dpfield"><label>資產名稱</label><input id="a-name" placeholder="例如 私家車 / 冷氣機"></div>
+    <div class="dpfield"><label>分類（可留空）</label><input id="a-cat" placeholder="例如 電器 / 車"></div>
+    <div class="dpfield"><label>購買價（可留空）</label><input id="a-price" type="number" inputmode="decimal" placeholder="40000"></div>
+    <div class="dpfield"><label>購買日期（可留空）</label><input id="a-date" type="date"></div>
+    <div class="dpfield"><label>備註（可留空）</label><textarea class="dpta" id="a-notes"></textarea></div>`;
+  $('#sheet-bg').classList.add('on'); requestAnimationFrame(()=>$('#sheet').classList.add('on'));
+}
+async function saveAsset(){
+  const name=$('#a-name').value.trim(); if(!name){ toast('請輸入資產名稱'); return; }
+  const rec={name, category:$('#a-cat').value.trim()||null, purchase_price:$('#a-price').value?Number($('#a-price').value):null, purchase_date:$('#a-date').value||null, notes:$('#a-notes').value.trim()||null};
+  try{ await db.from('maint_assets').insert(rec); closeSheet(); toast('已新增'); loadMaint(); }
+  catch(e){ toast('儲存失敗，請確認已建立 maint_assets 表'); }
+}
+async function openMaintItemDetail(id){
+  curAssetId=id; go('maintItem');
+  const {data:a}=await db.from('maint_assets').select('*').eq('id',id).maybeSingle();
+  if(!a) return;
+  curAsset=a; $('#ma-name').textContent=a.name; $('#ma-stats').innerHTML=assetStatsHTML(a);
+  await Promise.all([loadAssetPhotos(), loadAssetItems(), loadAssetRepairs()]);
+}
+function editAssetCurrent(){
+  if(!curAsset) return; const a=curAsset;
+  $('#sheet').innerHTML=`<div class="grab"></div>
+    <div class="sh"><button class="c" onclick="closeSheet()">取消</button><span class="t">編輯資產</span><button class="s" onclick="updateAsset()">儲存</button></div>
+    <div class="dpfield"><label>資產名稱</label><input id="a-name" value="${esc(a.name)}"></div>
+    <div class="dpfield"><label>分類</label><input id="a-cat" value="${esc(a.category||'')}"></div>
+    <div class="dpfield"><label>購買價</label><input id="a-price" type="number" inputmode="decimal" value="${a.purchase_price!=null?a.purchase_price:''}"></div>
+    <div class="dpfield"><label>購買日期</label><input id="a-date" type="date" value="${a.purchase_date?a.purchase_date.slice(0,10):''}"></div>
+    <div class="dpfield"><label>備註</label><textarea class="dpta" id="a-notes">${esc(a.notes||'')}</textarea></div>
+    <button class="del" onclick="deleteAsset()">刪除資產</button>`;
+  $('#sheet-bg').classList.add('on'); requestAnimationFrame(()=>$('#sheet').classList.add('on'));
+}
+async function updateAsset(){
+  const name=$('#a-name').value.trim(); if(!name){ toast('請輸入名稱'); return; }
+  const rec={name, category:$('#a-cat').value.trim()||null, purchase_price:$('#a-price').value?Number($('#a-price').value):null, purchase_date:$('#a-date').value||null, notes:$('#a-notes').value.trim()||null};
+  try{ await db.from('maint_assets').update(rec).eq('id',curAssetId); closeSheet(); toast('已更新'); openMaintItemDetail(curAssetId); }
+  catch(e){ toast('儲存失敗'); }
+}
+async function deleteAsset(){
+  if(!confirm('確定刪除呢個資產？所有相片、提醒同維修記錄都會一齊刪走')) return;
+  try{
+    const {data:phs}=await db.from('maint_photos').select('path').eq('asset_id',curAssetId);
+    const paths=(phs||[]).map(p=>p.path).filter(Boolean);
+    if(paths.length){ try{ await db.storage.from('maint-photos').remove(paths); }catch(e){} }
+    await db.from('maint_assets').delete().eq('id',curAssetId);
+    closeSheet(); toast('已刪除'); go('maint');
+  }catch(e){ toast('刪除失敗'); }
+}
+
+/* ---- 相片 / 收據 ---- */
+function triggerAssetPhoto(){ $('#asset-photo-input').click(); }
+async function loadAssetPhotos(){
+  const host=$('#ma-photos');
+  try{
+    const {data}=await db.from('maint_photos').select('*').eq('asset_id',curAssetId).order('created_at',{ascending:false});
+    assetPhotos=data||[];
+    let html=assetPhotos.map((p,i)=>`<div class="ma-ph" onclick="showPhotoAt(${i})"><img src="${p.url}" loading="lazy"><button class="rm" onclick="event.stopPropagation();deleteAssetPhoto('${p.id}')">×</button></div>`).join('');
+    host.innerHTML=html+`<button class="ma-ph add" onclick="triggerAssetPhoto()">＋</button>`;
+  }catch(e){ host.innerHTML=`<button class="ma-ph add" onclick="triggerAssetPhoto()">＋</button>`; }
+}
+function showPhotoAt(i){ const p=assetPhotos[i]; if(!p) return;
+  let o=document.getElementById('photo-lb');
+  if(!o){ o=document.createElement('div'); o.id='photo-lb'; o.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;z-index:9999'; o.onclick=()=>o.remove(); document.body.appendChild(o); }
+  o.innerHTML=`<img src="${p.url}" style="max-width:94%;max-height:90%;border-radius:10px">`;
+}
+function resizeImage(file,maxW){ return new Promise(res=>{ try{
+  const img=new Image(); const url=URL.createObjectURL(file);
+  img.onload=()=>{ let w=img.naturalWidth,h=img.naturalHeight; if(w>maxW){ h=Math.round(h*maxW/w); w=maxW; } const c=document.createElement('canvas'); c.width=w; c.height=h; c.getContext('2d').drawImage(img,0,0,w,h); URL.revokeObjectURL(url); c.toBlob(b=>res(b||file),'image/jpeg',0.85); };
+  img.onerror=()=>{ URL.revokeObjectURL(url); res(file); }; img.src=url;
+}catch(e){ res(file); } }); }
+async function onAssetPhotoPick(input){
+  const file=input.files&&input.files[0]; input.value=''; if(!file||!curAssetId) return;
+  toast('相片上載中…');
+  try{
+    const blob=await resizeImage(file,1600);
+    const path=curAssetId+'/'+Date.now()+'.jpg';
+    const up=await db.storage.from('maint-photos').upload(path,blob,{contentType:'image/jpeg',upsert:false});
+    if(up.error){ toast('相片上載失敗，請確認已跑今次 SQL（相簿）'); return; }
+    const url=db.storage.from('maint-photos').getPublicUrl(path).data.publicUrl;
+    await db.from('maint_photos').insert({asset_id:curAssetId,url,path});
+    toast('相片已加入'); loadAssetPhotos();
+  }catch(e){ toast('相片上載失敗'); }
+}
+async function deleteAssetPhoto(id){
+  if(!confirm('刪除呢張相？')) return;
+  const p=assetPhotos.find(x=>x.id===id);
+  try{ if(p&&p.path){ try{ await db.storage.from('maint-photos').remove([p.path]); }catch(e){} } await db.from('maint_photos').delete().eq('id',id); loadAssetPhotos(); }
+  catch(e){ toast('刪除失敗'); }
+}
+
+/* ---- 保養 / 耗材提醒 ---- */
+async function loadAssetItems(){
+  const L=$('#ma-items');
+  try{
+    const {data}=await db.from('maint_items').select('*').eq('asset_id',curAssetId).order('next_due',{ascending:true});
+    assetItems=data||[];
+    if(!assetItems.length){ L.innerHTML='<div class="empty" style="padding:14px 4px;text-align:left">未有保養／耗材提醒。</div>'; return; }
+    L.innerHTML=assetItems.map(it=>{
+      const info=dueInfo(it.next_due);
+      const badge=it.next_due?(info&&info.level!=='green'?`<span style="font-size:11px;background:${info.bg};color:${info.col};padding:3px 8px;border-radius:6px;white-space:nowrap">${fmtDate(it.next_due)} · ${info.label}</span>`:`<span class="t2">${fmtDate(it.next_due)}</span>`):'';
+      return `<div class="dprow"><div class="m"><div class="t1">${esc(it.name)}</div><div class="t2">${it.kind==='consumable'?'耗材':'保養'}${it.cycle_days?(' · 每 '+it.cycle_days+' 日'):''}</div></div><div style="display:flex;gap:6px;align-items:center;flex-shrink:0">${badge}<button class="minibtn" onclick="markItemDone('${it.id}')">做咗</button><button class="minibtn" onclick="openReminder('${it.id}')">✎</button></div></div>`;
+    }).join('');
+  }catch(e){ L.innerHTML='<div class="empty" style="padding:14px 4px;text-align:left">未能載入提醒。</div>'; }
+}
+function openReminder(id){
+  const edit=typeof id==='string';
+  const build=(it)=>{ it=it||{kind:'maintain'};
+    $('#sheet').innerHTML=`<div class="grab"></div>
+      <div class="sh"><button class="c" onclick="closeSheet()">取消</button><span class="t">${edit?'編輯提醒':'新增保養／耗材'}</span><button class="s" onclick="saveReminder(${edit?`'${id}'`:'null'})">儲存</button></div>
+      <div class="dpfield"><label>名稱</label><input id="mi-name" value="${esc(it.name||'')}" placeholder="例如 換機油 / 換濾芯"></div>
+      <input type="hidden" id="mi-kind" value="${it.kind||'maintain'}">
+      <div class="dpfield"><label>類型</label><div class="dptabs" id="mi-kind-row"><button class="dptab ${(it.kind||'maintain')==='maintain'?'on':''}" data-k="maintain" onclick="pickKind('maintain')">保養</button><button class="dptab ${it.kind==='consumable'?'on':''}" data-k="consumable" onclick="pickKind('consumable')">耗材</button></div></div>
+      <div class="dpfield"><label>下次到期日</label><input id="mi-due" type="date" value="${it.next_due?it.next_due.slice(0,10):''}"></div>
+      <div class="dpfield"><label>週期（日數，可留空）</label><input id="mi-cycle" type="number" inputmode="numeric" value="${it.cycle_days||''}" placeholder="填咗撳「做咗」會自動順延"></div>
+      <div class="dpfield"><label>備註（可留空）</label><textarea class="dpta" id="mi-notes">${esc(it.notes||'')}</textarea></div>
+      ${edit?`<button class="del" onclick="deleteReminder('${id}')">刪除</button>`:''}`;
+    $('#sheet-bg').classList.add('on'); requestAnimationFrame(()=>$('#sheet').classList.add('on'));
+  };
+  if(edit){ db.from('maint_items').select('*').eq('id',id).maybeSingle().then(({data})=>build(data)); } else build(null);
+}
+function pickKind(k){ $('#mi-kind').value=k; document.querySelectorAll('#mi-kind-row .dptab').forEach(b=>b.classList.toggle('on', b.dataset.k===k)); }
+async function saveReminder(id){
+  const name=$('#mi-name').value.trim(); if(!name){ toast('請輸入名稱'); return; }
+  const rec={name, kind:$('#mi-kind').value||'maintain', next_due:$('#mi-due').value||null, cycle_days:$('#mi-cycle').value?parseInt($('#mi-cycle').value,10):null, notes:$('#mi-notes').value.trim()||null};
+  try{
+    if(id){ await db.from('maint_items').update(rec).eq('id',id); }
+    else { rec.asset_id=curAssetId; await db.from('maint_items').insert(rec); }
+    closeSheet(); toast('已儲存'); loadAssetItems();
+  }catch(e){ toast('儲存失敗，請確認已建立 maint_items 表'); }
+}
+async function deleteReminder(id){ if(!confirm('刪除呢個提醒？'))return; try{ await db.from('maint_items').delete().eq('id',id); closeSheet(); toast('已刪除'); loadAssetItems(); }catch(e){ toast('刪除失敗'); } }
+async function markItemDone(id){
+  try{
+    const {data:it}=await db.from('maint_items').select('*').eq('id',id).maybeSingle(); if(!it) return;
+    let next;
+    if(it.cycle_days){ const b=new Date(todayStr()+'T00:00:00'); b.setDate(b.getDate()+it.cycle_days); next=b.getFullYear()+'-'+pad(b.getMonth()+1)+'-'+pad(b.getDate()); }
+    else { const inp=prompt('下次到期日（例如 2026-12-01）', it.next_due?it.next_due.slice(0,10):''); if(inp===null) return; next=inp.trim()||null; }
+    await db.from('maint_items').update({next_due:next}).eq('id',id); toast('已更新下次到期'); loadAssetItems();
+  }catch(e){ toast('更新失敗'); }
+}
+
+/* ---- 維修歷史 ---- */
+async function loadAssetRepairs(){
+  const L=$('#ma-repairs');
+  try{
+    const {data}=await db.from('maint_repairs').select('*').eq('asset_id',curAssetId).order('date',{ascending:false});
+    assetRepairs=data||[];
+    if(!assetRepairs.length){ L.innerHTML='<div class="empty" style="padding:14px 4px;text-align:left">未有維修記錄。</div>'; return; }
+    L.innerHTML=assetRepairs.map(r=>`<div class="dprow" onclick="openRepair('${r.id}')"><div class="m"><div class="t1">${esc(r.content||'')}</div><div class="t2">${r.date?fmtDateFull(r.date):''}</div></div><div class="t1" style="flex-shrink:0">${r.cost!=null?money(r.cost):''}</div></div>`).join('');
+  }catch(e){ L.innerHTML='<div class="empty" style="padding:14px 4px;text-align:left">未能載入維修記錄。</div>'; }
+}
+function openRepair(id){
+  const edit=typeof id==='string';
+  const build=(r)=>{ r=r||{};
+    $('#sheet').innerHTML=`<div class="grab"></div>
+      <div class="sh"><button class="c" onclick="closeSheet()">取消</button><span class="t">${edit?'編輯維修':'新增維修記錄'}</span><button class="s" onclick="saveRepair(${edit?`'${id}'`:'null'})">儲存</button></div>
+      <div class="dpfield"><label>日期</label><input id="mr-date" type="date" value="${r.date?r.date.slice(0,10):todayStr()}"></div>
+      <div class="dpfield"><label>內容</label><input id="mr-content" value="${esc(r.content||'')}" placeholder="例如 換轆胎"></div>
+      <div class="dpfield"><label>費用（可留空）</label><input id="mr-cost" type="number" inputmode="decimal" value="${r.cost!=null?r.cost:''}" placeholder="3200"></div>
+      <div class="dpfield"><label>備註（可留空）</label><textarea class="dpta" id="mr-notes">${esc(r.notes||'')}</textarea></div>
+      ${edit?`<button class="del" onclick="deleteRepair('${id}')">刪除</button>`:''}`;
+    $('#sheet-bg').classList.add('on'); requestAnimationFrame(()=>$('#sheet').classList.add('on'));
+  };
+  if(edit){ db.from('maint_repairs').select('*').eq('id',id).maybeSingle().then(({data})=>build(data)); } else build(null);
+}
+async function saveRepair(id){
+  const content=$('#mr-content').value.trim(); if(!content){ toast('請輸入內容'); return; }
+  const rec={date:$('#mr-date').value||todayStr(), content, cost:$('#mr-cost').value?Number($('#mr-cost').value):null, notes:$('#mr-notes').value.trim()||null};
+  try{
+    if(id){ await db.from('maint_repairs').update(rec).eq('id',id); }
+    else { rec.asset_id=curAssetId; await db.from('maint_repairs').insert(rec); }
+    closeSheet(); toast('已儲存'); loadAssetRepairs();
+  }catch(e){ toast('儲存失敗，請確認已建立 maint_repairs 表'); }
+}
+async function deleteRepair(id){ if(!confirm('刪除呢條維修記錄？'))return; try{ await db.from('maint_repairs').delete().eq('id',id); closeSheet(); toast('已刪除'); loadAssetRepairs(); }catch(e){ toast('刪除失敗'); } }
+
+/* ---- 首頁「即將到期」 ---- */
+async function loadHomeDue(){
+  const host=$('#home-due'); host.innerHTML='';
+  try{
+    const {data:items}=await db.from('maint_items').select('*').not('next_due','is',null);
+    if(!items||!items.length) return;
+    const flagged=items.map(it=>({it,info:dueInfo(it.next_due)})).filter(x=>x.info&&x.info.level!=='green');
+    if(!flagged.length) return;
+    const ids=[...new Set(flagged.map(x=>x.it.asset_id))];
+    const {data:assets}=await db.from('maint_assets').select('id,name').in('id',ids);
+    const nameOf=Object.fromEntries((assets||[]).map(a=>[a.id,a.name]));
+    flagged.sort((a,b)=>((a.info.level==='red'?0:1)-(b.info.level==='red'?0:1)) || (daysSince(b.it.next_due)-daysSince(a.it.next_due)));
+    host.innerHTML=`<div class="dpsl"><span>即將到期</span></div>`+flagged.map(x=>{
+      const nm=nameOf[x.it.asset_id]||'資產';
+      return `<button class="bar" onclick="openMaintItemDetail('${x.it.asset_id}')">
+        <div class="bhead"><span class="bl">${esc(nm)} · ${esc(x.it.name)}</span><span class="bp" style="color:${x.info.col}">${x.info.label}</span></div>
+        <div class="gsub">${x.it.next_due?fmtDateFull(x.it.next_due):''}</div>
+      </button>`;
+    }).join('');
+  }catch(e){}
+}
 </script>
 </body>
 </html>
