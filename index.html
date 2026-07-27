@@ -193,8 +193,8 @@
     --dp-emo:#FF9F0A; --dp-rel:#FF375F; --dp-grow:#3B82F6; --dp-goal:#8B5CF6; --dp-plan:#14B8A6;
     --dp-green:#34C759; --dp-yellow:#F5A300; --dp-red:#FF3B30;
   }
-  #v-home,#v-hub,#v-mood,#v-relationships,#v-relationship,#v-goals,#v-goal,#v-achievements,#v-celebrate,#v-verse,#v-maint,#v-maintItem{background:#fff;color:var(--dp-ink);}
-  #v-home .scroll,#v-hub .scroll,#v-mood .scroll,#v-relationships .scroll,#v-relationship .scroll,#v-goals .scroll,#v-goal .scroll,#v-achievements .scroll,#v-verse .scroll,#v-maint .scroll,#v-maintItem .scroll{padding:0 18px calc(110px + var(--safe-b));}
+  #v-home,#v-hub,#v-mood,#v-relationships,#v-relationship,#v-goals,#v-goal,#v-achievements,#v-celebrate,#v-verse,#v-maint,#v-maintItem,#v-plans,#v-plan{background:#fff;color:var(--dp-ink);}
+  #v-home .scroll,#v-hub .scroll,#v-mood .scroll,#v-relationships .scroll,#v-relationship .scroll,#v-goals .scroll,#v-goal .scroll,#v-achievements .scroll,#v-verse .scroll,#v-maint .scroll,#v-maintItem .scroll,#v-plans .scroll,#v-plan .scroll{padding:0 18px calc(110px + var(--safe-b));}
   .ma-photos{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;}
   .ma-ph{position:relative;width:72px;height:72px;border-radius:10px;overflow:hidden;border:0.5px solid #e2e4e8;background:#F3F4F6;padding:0;flex:0 0 auto;}
   .ma-ph img{width:100%;height:100%;object-fit:cover;display:block;}
@@ -518,7 +518,7 @@
       <button class="hubtile" onclick="go('relationships')"><svg><use href="#i-rel"/></svg><div class="l">關係</div></button>
       <button class="hubtile soon" onclick="toast('自我提升：Phase 2 加入')"><svg><use href="#i-grow"/></svg><div class="l">自我提升</div></button>
       <button class="hubtile" onclick="go('goals')"><svg><use href="#i-goal"/></svg><div class="l">小目標</div></button>
-      <button class="hubtile soon" onclick="toast('小計劃：Phase 2 加入')"><svg><use href="#i-plan"/></svg><div class="l">小計劃</div></button>
+      <button class="hubtile" onclick="go('plans')"><svg><use href="#i-plan"/></svg><div class="l">小計劃</div></button>
       <button class="hubtile" onclick="go('achievements')"><svg><use href="#i-ach"/></svg><div class="l">成就</div></button>
     </div>
     <div class="hubsec" style="--c:#14B8A6">財務</div>
@@ -673,6 +673,35 @@
   <input type="file" accept="image/*" id="asset-photo-input" onchange="onAssetPhotoPick(this)" style="display:none">
 </section>
 
+<!-- ===== 小計劃：列表 ===== -->
+<section id="v-plans" class="view">
+  <div class="dpnav"><button class="bk" onclick="go('home')">‹ 首頁</button><span class="nt">小計劃</span><span class="sp"></span></div>
+  <div class="scroll">
+    <div class="dptabs"><button class="dptab on" data-t="active" onclick="planTab('active')">進行中</button><button class="dptab" data-t="done" onclick="planTab('done')">已完成</button></div>
+    <div id="plans-list"></div>
+  </div>
+  <button class="fab" onclick="openPlan()">＋ 新增計劃</button>
+</section>
+
+<!-- ===== 小計劃：詳情 ===== -->
+<section id="v-plan" class="view">
+  <div class="dpnav"><button class="bk" onclick="go('plans')">‹ 小計劃</button><span class="nt" id="pl-name">—</span><button class="sp" onclick="editPlanCurrent()">編輯</button></div>
+  <div class="scroll">
+    <div class="scoreh">
+      <div class="row"><span class="lab">整體進度</span><span class="big" style="color:#14B8A6" id="pl-pct">—<small>%</small></span></div>
+      <div class="dptrack thick"><div class="dpfill" id="pl-fill" style="width:0%;background:#14B8A6"></div></div>
+      <div class="sub" id="pl-sub">—</div>
+    </div>
+    <div class="dpsl"><span>KPI 追蹤</span><button class="more" onclick="openKpi()">＋ 新增</button></div>
+    <div id="pl-kpis"></div>
+    <div class="dpsl"><span>里程碑</span><button class="more" onclick="openPlanMilestone()">＋ 新增</button></div>
+    <div id="pl-milestones"></div>
+    <div class="dpsl"><span>To Do</span><button class="more" onclick="openPlanTodo()">＋ 新增</button></div>
+    <div id="pl-todos"></div>
+    <button class="dpcta" id="pl-complete" style="background:#14B8A6" onclick="completePlan()">標記為完成</button>
+  </div>
+</section>
+
 <!-- ===== HOME (old content removed) ===== -->
 <section id="v-claims" class="view">
   <div class="nav"><button class="back" onclick="go('home')">‹ 首頁</button><span class="ttl">待收款項</span><span class="sp"></span></div>
@@ -806,7 +835,7 @@ function go(v){document.querySelectorAll('.view').forEach(x=>x.classList.remove(
   if(v==='purchases')loadPurch(); if(v==='ideas')loadIdeas(); if(v==='finance')loadFinance();
   if(v==='mood')loadMood(); if(v==='relationships')loadRelationships();
   if(v==='goals')loadGoals(); if(v==='achievements')loadAchievements();
-  if(v==='verse')loadVersePage(); if(v==='maint')loadMaint();
+  if(v==='verse')loadVersePage(); if(v==='maint')loadMaint(); if(v==='plans')loadPlans();
   if(v==='settings')$('#set-url').textContent=sbUrl()||'—';
   document.querySelector('#v-'+v+' .scroll')?.scrollTo(0,0);
 }
@@ -1939,6 +1968,150 @@ async function loadHomeDue(){
     }).join('');
   }catch(e){}
 }
+
+/* ==================== 小計劃模組（Phase 2） ==================== */
+let planTabCur='active', curPlanId=null, curPlan=null;
+function fmtNum(n){ return (Number(n)||0).toLocaleString('en-US',{maximumFractionDigits:2}); }
+function kpiPct(k){ const t=Number(k.target_value); if(!t||t<=0) return null; return clamp0to100(Number(k.current_value||0)/t*100); }
+function planProgress(planId,kpis,mils,tds){
+  const ks=(kpis||[]).filter(k=>k.plan_id===planId).map(kpiPct).filter(v=>v!==null);
+  if(ks.length) return Math.round(ks.reduce((a,b)=>a+b,0)/ks.length);
+  const items=[...(mils||[]).filter(m=>m.plan_id===planId), ...(tds||[]).filter(t=>t.plan_id===planId)];
+  if(items.length){ const done=items.filter(x=>x.done).length; return Math.round(done/items.length*100); }
+  return 0;
+}
+function planTab(t){ planTabCur=t; document.querySelectorAll('#v-plans .dptab').forEach(b=>b.classList.toggle('on', b.dataset.t===t)); loadPlans(); }
+async function loadPlans(){
+  const L=$('#plans-list');
+  try{
+    const {data:plans}=await db.from('plans').select('*').eq('status',planTabCur).order('created_at',{ascending:false});
+    if(!plans||!plans.length){ L.innerHTML=`<div class="empty">${planTabCur==='active'?'未有進行中計劃。撳右下角「＋ 新增計劃」開始。':'未有已完成計劃。'}</div>`; return; }
+    const ids=plans.map(p=>p.id);
+    const [{data:kpis},{data:mils},{data:tds}]=await Promise.all([
+      db.from('plan_kpis').select('plan_id,target_value,current_value').in('plan_id',ids),
+      db.from('plan_milestones').select('plan_id,done').in('plan_id',ids),
+      db.from('plan_todos').select('plan_id,done').in('plan_id',ids)
+    ]);
+    L.innerHTML=plans.map(p=>{
+      const pct=planProgress(p.id,kpis,mils,tds);
+      return `<button class="goalcard" onclick="openPlanDetail('${p.id}')"><div class="gtop"><span class="gname">${esc(p.name)}</span><span class="gp" style="color:#14B8A6">${pct}%</span></div><div class="dptrack thin"><div class="dpfill" style="width:${pct}%;background:#14B8A6"></div></div><div class="gsub">${p.target_date?('目標 '+fmtDateFull(p.target_date)):(p.description?esc(p.description):'未設目標日')}</div></button>`;
+    }).join('');
+  }catch(e){ L.innerHTML='<div class="empty">未能載入。請先確認已建立 plans 表。</div>'; }
+}
+function openPlan(){
+  $('#sheet').innerHTML=`<div class="grab"></div>
+    <div class="sh"><button class="c" onclick="closeSheet()">取消</button><span class="t">新增計劃</span><button class="s" onclick="savePlan()">儲存</button></div>
+    <div class="dpfield"><label>計劃名稱</label><input id="pl-in-name" placeholder="例如 開分店 / 儲首期"></div>
+    <div class="dpfield"><label>描述（可留空）</label><textarea class="dpta" id="pl-in-desc"></textarea></div>
+    <div class="dpfield"><label>目標日期（可留空）</label><input id="pl-in-date" type="date"></div>`;
+  $('#sheet-bg').classList.add('on'); requestAnimationFrame(()=>$('#sheet').classList.add('on'));
+}
+async function savePlan(){
+  const name=$('#pl-in-name').value.trim(); if(!name){ toast('請輸入計劃名稱'); return; }
+  try{ await db.from('plans').insert({name, description:$('#pl-in-desc').value.trim()||null, start_date:todayStr(), target_date:$('#pl-in-date').value||null, status:'active'}); closeSheet(); toast('已新增'); loadPlans(); }
+  catch(e){ toast('儲存失敗，請確認已建立 plans 表'); }
+}
+async function openPlanDetail(id){
+  curPlanId=id; go('plan');
+  const {data:p}=await db.from('plans').select('*').eq('id',id).maybeSingle();
+  if(!p) return; curPlan=p;
+  $('#pl-name').textContent=p.name;
+  $('#pl-sub').textContent=p.target_date?('目標日 '+fmtDateFull(p.target_date)):(p.description||'未設目標日');
+  $('#pl-complete').style.display=p.status==='done'?'none':'block';
+  await Promise.all([loadKpis(), loadPlanMilestones(), loadPlanTodos()]);
+  await refreshPlanProgress();
+}
+async function refreshPlanProgress(){
+  try{
+    const [{data:kpis},{data:mils},{data:tds}]=await Promise.all([
+      db.from('plan_kpis').select('plan_id,target_value,current_value').eq('plan_id',curPlanId),
+      db.from('plan_milestones').select('plan_id,done').eq('plan_id',curPlanId),
+      db.from('plan_todos').select('plan_id,done').eq('plan_id',curPlanId)
+    ]);
+    const pct=planProgress(curPlanId,kpis,mils,tds);
+    $('#pl-pct').innerHTML=pct+'<small>%</small>'; $('#pl-fill').style.width=pct+'%';
+  }catch(e){}
+}
+function editPlanCurrent(){
+  if(!curPlan) return; const p=curPlan;
+  $('#sheet').innerHTML=`<div class="grab"></div>
+    <div class="sh"><button class="c" onclick="closeSheet()">取消</button><span class="t">編輯計劃</span><button class="s" onclick="updatePlan()">儲存</button></div>
+    <div class="dpfield"><label>計劃名稱</label><input id="pl-in-name" value="${esc(p.name)}"></div>
+    <div class="dpfield"><label>描述</label><textarea class="dpta" id="pl-in-desc">${esc(p.description||'')}</textarea></div>
+    <div class="dpfield"><label>目標日期</label><input id="pl-in-date" type="date" value="${p.target_date?p.target_date.slice(0,10):''}"></div>
+    <button class="del" onclick="deletePlan()">刪除計劃</button>`;
+  $('#sheet-bg').classList.add('on'); requestAnimationFrame(()=>$('#sheet').classList.add('on'));
+}
+async function updatePlan(){
+  const name=$('#pl-in-name').value.trim(); if(!name){ toast('請輸入名稱'); return; }
+  try{ await db.from('plans').update({name, description:$('#pl-in-desc').value.trim()||null, target_date:$('#pl-in-date').value||null}).eq('id',curPlanId); closeSheet(); toast('已更新'); openPlanDetail(curPlanId); }
+  catch(e){ toast('儲存失敗'); }
+}
+async function deletePlan(){
+  if(!confirm('確定刪除呢個計劃？所有 KPI、里程碑、To Do 都會一齊刪走')) return;
+  try{ await db.from('plans').delete().eq('id',curPlanId); closeSheet(); toast('已刪除'); go('plans'); }
+  catch(e){ toast('刪除失敗'); }
+}
+async function completePlan(){
+  if(!confirm('標記呢個計劃為完成？')) return;
+  try{ await db.from('plans').update({status:'done',completed_at:new Date().toISOString()}).eq('id',curPlanId); toast('計劃完成，恭喜！'); go('plans'); }
+  catch(e){ toast('更新失敗'); }
+}
+/* ---- KPI ---- */
+async function loadKpis(){
+  const L=$('#pl-kpis');
+  try{
+    const {data}=await db.from('plan_kpis').select('*').eq('plan_id',curPlanId).order('created_at',{ascending:true});
+    if(!data||!data.length){ L.innerHTML='<div class="empty" style="padding:14px 4px;text-align:left">未有 KPI。加一個嚟追蹤數字進度。</div>'; return; }
+    L.innerHTML=data.map(k=>{
+      const t=Number(k.target_value)||0, c=Number(k.current_value)||0;
+      const pct=t>0?clamp0to100(c/t*100):0;
+      const unit=k.unit?(' '+esc(k.unit)):'';
+      return `<div class="goalcard" onclick="openKpi('${k.id}')"><div class="gtop"><span class="gname">${esc(k.name)}</span><span class="gp" style="color:#14B8A6">${Math.round(pct)}%</span></div><div class="dptrack thin"><div class="dpfill" style="width:${pct}%;background:#14B8A6"></div></div><div class="gsub">${fmtNum(c)}${unit} / ${fmtNum(t)}${unit}</div></div>`;
+    }).join('');
+  }catch(e){ L.innerHTML='<div class="empty" style="padding:14px 4px;text-align:left">未能載入 KPI。</div>'; }
+}
+function openKpi(id){
+  const edit=typeof id==='string';
+  const build=(k)=>{ k=k||{};
+    $('#sheet').innerHTML=`<div class="grab"></div>
+      <div class="sh"><button class="c" onclick="closeSheet()">取消</button><span class="t">${edit?'編輯 KPI':'新增 KPI'}</span><button class="s" onclick="saveKpi(${edit?`'${id}'`:'null'})">儲存</button></div>
+      <div class="dpfield"><label>KPI 名稱</label><input id="k-name" value="${esc(k.name||'')}" placeholder="例如 儲蓄 / 跑步公里"></div>
+      <div class="dpfield"><label>單位（可留空）</label><input id="k-unit" value="${esc(k.unit||'')}" placeholder="例如 元 / km / 本"></div>
+      <div class="dpfield"><label>目標值</label><input id="k-target" type="number" inputmode="decimal" value="${k.target_value!=null?k.target_value:''}" placeholder="100"></div>
+      <div class="dpfield"><label>目前值</label><input id="k-current" type="number" inputmode="decimal" value="${k.current_value!=null?k.current_value:'0'}" placeholder="0"></div>
+      ${edit?`<button class="del" onclick="deleteKpi('${id}')">刪除 KPI</button>`:''}`;
+    $('#sheet-bg').classList.add('on'); requestAnimationFrame(()=>$('#sheet').classList.add('on'));
+  };
+  if(edit){ db.from('plan_kpis').select('*').eq('id',id).maybeSingle().then(({data})=>build(data)); } else build(null);
+}
+async function saveKpi(id){
+  const name=$('#k-name').value.trim(); if(!name){ toast('請輸入 KPI 名稱'); return; }
+  const rec={name, unit:$('#k-unit').value.trim()||null, target_value:$('#k-target').value?Number($('#k-target').value):null, current_value:$('#k-current').value?Number($('#k-current').value):0};
+  try{
+    if(id){ await db.from('plan_kpis').update(rec).eq('id',id); }
+    else { rec.plan_id=curPlanId; await db.from('plan_kpis').insert(rec); }
+    closeSheet(); toast('已儲存'); loadKpis(); refreshPlanProgress();
+  }catch(e){ toast('儲存失敗，請確認已建立 plan_kpis 表'); }
+}
+async function deleteKpi(id){ if(!confirm('刪除呢個 KPI？'))return; try{ await db.from('plan_kpis').delete().eq('id',id); closeSheet(); toast('已刪除'); loadKpis(); refreshPlanProgress(); }catch(e){ toast('刪除失敗'); } }
+/* ---- 里程碑 / To Do ---- */
+async function loadPlanMilestones(){
+  const {data}=await db.from('plan_milestones').select('*').eq('plan_id',curPlanId).order('created_at',{ascending:true});
+  const L=$('#pl-milestones');
+  if(!data||!data.length){ L.innerHTML='<div class="empty" style="padding:14px 4px;text-align:left">未有里程碑。</div>'; return; }
+  L.innerHTML=data.map(m=>`<div class="dprow"><button class="check ${m.done?'done':''}" style="margin-top:1px" onclick="togglePlanMilestone('${m.id}',${m.done})"></button><div class="m"><div class="t1" style="${m.done?'text-decoration:line-through;color:#b4ae9f':''}">${esc(m.title)}</div></div></div>`).join('');
+}
+function openPlanMilestone(){ const t=prompt('里程碑名稱'); if(!t)return; db.from('plan_milestones').insert({plan_id:curPlanId,title:t.trim(),done:false}).then(()=>{loadPlanMilestones();refreshPlanProgress();}).catch(()=>toast('儲存失敗，請確認已建立 plan_milestones 表')); }
+async function togglePlanMilestone(id,done){ await db.from('plan_milestones').update({done:!done}).eq('id',id); loadPlanMilestones(); refreshPlanProgress(); }
+async function loadPlanTodos(){
+  const {data}=await db.from('plan_todos').select('*').eq('plan_id',curPlanId).order('created_at',{ascending:true});
+  const L=$('#pl-todos');
+  if(!data||!data.length){ L.innerHTML='<div class="empty" style="padding:14px 4px;text-align:left">未有 To Do。</div>'; return; }
+  L.innerHTML=data.map(t=>`<div class="dprow"><button class="check ${t.done?'done':''}" style="margin-top:1px" onclick="togglePlanTodo('${t.id}',${t.done})"></button><div class="m"><div class="t1" style="${t.done?'text-decoration:line-through;color:#b4ae9f':''}">${esc(t.content)}</div></div></div>`).join('');
+}
+function openPlanTodo(){ const t=prompt('To Do 內容'); if(!t)return; db.from('plan_todos').insert({plan_id:curPlanId,content:t.trim(),done:false}).then(()=>{loadPlanTodos();refreshPlanProgress();}).catch(()=>toast('儲存失敗，請確認已建立 plan_todos 表')); }
+async function togglePlanTodo(id,done){ await db.from('plan_todos').update({done:!done}).eq('id',id); loadPlanTodos(); refreshPlanProgress(); }
 </script>
 </body>
 </html>
