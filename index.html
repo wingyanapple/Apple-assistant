@@ -908,8 +908,7 @@
   <div class="scroll">
     <div class="field"><label>已連接的雲端</label><div style="margin-top:8px;font-size:14px;color:var(--graphite);word-break:break-all" id="set-url">—</div></div>
     <div class="field" style="margin-top:6px"><label>開 App 密碼</label></div>
-    <button onclick="changePin()" style="width:100%;margin-top:10px;background:var(--ink);color:var(--paper);border:none;border-radius:13px;padding:14px;font-size:15px;font-weight:600">更改開 App 密碼</button>
-    <button onclick="lockNow()" style="width:100%;margin-top:10px;background:none;border:1px solid var(--line);border-radius:13px;padding:12px;font-size:14px;color:var(--ink)">立即上鎖</button>
+    <div id="lock-toggle-wrap" style="margin-top:10px"></div>
     <div class="hint" style="margin-top:18px;line-height:1.8">所有資料都存喺你自己的 Supabase 雲端，換手機唔會無。<br>呢部機嘅連接資料存喺機內，換機只需再輸入一次。</div>
     <button class="del" style="margin-top:24px" onclick="resetConfig()">更改雲端連接</button>
   </div>
@@ -953,7 +952,7 @@ function go(v){document.querySelectorAll('.view').forEach(x=>x.classList.remove(
   if(v==='mood')loadMood(); if(v==='relationships')loadRelationships();
   if(v==='goals')loadGoals(); if(v==='achievements')loadAchievements();
   if(v==='verse')loadVersePage(); if(v==='maint')loadMaint(); if(v==='plans')loadPlans(); if(v==='assets')loadAssets(); if(v==='insure')loadInsure(); if(v==='grow')loadGrow(); if(v==='vault')loadVault(); if(v==='habits')loadHabits(); if(v==='letters')loadLetters(); if(v==='familySetup')loadFamilySetup(); if(v==='timeline')loadTimeline();
-  if(v==='settings')$('#set-url').textContent=sbUrl()||'—';
+  if(v==='settings'){ $('#set-url').textContent=sbUrl()||'—'; renderLockSetting(); }
   document.querySelector('#v-'+v+' .scroll')?.scrollTo(0,0);
 }
 
@@ -971,8 +970,10 @@ let lockHash='', lockHint='', lockPin='';
 async function sha256(s){const b=await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');}
 async function ensureUnlock(){
   if(sessionStorage.getItem('unlocked')==='1'){ afterUnlock(); return; }
-  try{ const {data}=await db.from('app_settings').select('pin_hash,pin_hint').eq('id','main').maybeSingle();
-       lockHash=(data&&data.pin_hash)||''; lockHint=(data&&data.pin_hint)||''; }catch(e){ lockHash=''; }
+  let data=null;
+  try{ const r=await db.from('app_settings').select('pin_hash,pin_hint,lock_enabled').eq('id','main').maybeSingle(); data=r.data; }catch(e){}
+  if(data && data.lock_enabled===false){ afterUnlock(); return; }
+  lockHash=(data&&data.pin_hash)||''; lockHint=(data&&data.pin_hint)||'';
   if(!lockHash){ lockHash=await sha256('1713'); lockHint='4 位數字';
     try{ await db.from('app_settings').upsert({id:'main',pin_hash:lockHash,pin_hint:lockHint}); }catch(e){} }
   showLock();
@@ -993,6 +994,19 @@ async function lockKey(k){
   }
 }
 function lockNow(){ sessionStorage.removeItem('unlocked'); showLock(); }
+async function renderLockSetting(){
+  const wrap=$('#lock-toggle-wrap'); if(!wrap) return;
+  let on=true;
+  try{ const {data}=await db.from('app_settings').select('lock_enabled').eq('id','main').maybeSingle(); on=!(data&&data.lock_enabled===false); }catch(e){}
+  wrap.innerHTML=`<div style="font-size:13px;color:var(--graphite);margin-bottom:8px">而家：${on?'開 App 要打密碼（1713）':'開 App 唔使密碼'}</div>
+    <button onclick="toggleAppLock(${on})" style="width:100%;background:${on?'none':'var(--ink)'};color:${on?'var(--ink)':'var(--paper)'};border:${on?'1px solid var(--line)':'none'};border-radius:13px;padding:14px;font-size:15px;font-weight:600">${on?'取消開 App 密碼':'開返開 App 密碼'}</button>`+
+    (on?`<button onclick="changePin()" style="width:100%;margin-top:10px;background:none;border:1px solid var(--line);border-radius:13px;padding:12px;font-size:14px;color:var(--ink)">更改密碼</button>`:'');
+}
+async function toggleAppLock(cur){
+  const next=!cur;
+  try{ await db.from('app_settings').upsert({id:'main', lock_enabled:next}); toast(next?'已開返密碼，下次開 App 要打 1713':'已取消，下次開 App 唔使密碼'); renderLockSetting(); }
+  catch(e){ toast('設定失敗，請再試'); }
+}
 async function changePin(){
   const cur=prompt('輸入而家嘅開 App 密碼'); if(cur===null) return;
   if(await sha256(cur.trim())!==lockHash){ alert('現有密碼唔啱'); return; }
