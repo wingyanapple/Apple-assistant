@@ -584,7 +584,8 @@
 <!-- ===== 目標 · 顯化：列表 ===== -->
 <section id="v-mf" class="view">
   <div class="scroll">
-    <div class="mf-h">目標 · 顯化</div>
+    <button class="bk-min" onclick="go('home')" style="padding-top:calc(16px + var(--safe-t))">‹ 首頁</button>
+    <div class="mf-h" style="padding-top:2px">目標 · 顯化</div>
     <div id="mf-list-body"></div>
   </div>
   <button class="fab" onclick="openMfWizard()">＋ 新目標</button>
@@ -592,7 +593,10 @@
 
 <!-- ===== 目標 · 顯化：引導精靈 ===== -->
 <section id="v-mfWizard" class="view">
-  <div class="scroll"><div id="mf-wizard-body" style="padding-top:calc(24px + var(--safe-t))"></div></div>
+  <div class="scroll">
+    <button class="bk-min" onclick="mfExitWizard()" style="padding-top:calc(16px + var(--safe-t))">‹ 返回</button>
+    <div id="mf-wizard-body" style="padding-top:6px"></div>
+  </div>
 </section>
 
 <!-- ===== 目標 · 顯化：詳情 ===== -->
@@ -3019,6 +3023,7 @@ const MF_STEPS=[
  {key:'affirmation', label:'第 7 步 · 你嘅宣言', q:'呢句係你嘅宣言，每日帶住感受大聲讀兩次。睇啱就完成，想改就改。', note:'思考致富 · 每日朗讀你嘅目標，直到潛意識當佢係真。', type:'area'}
 ];
 function openMfWizard(){ mfDraft={title:'',feeling:'',sacrifice:'',target_date:'',subgoals:[],habits:[],affirmation:''}; mfStep=0; go('mfWizard'); renderWizardStep(); }
+function mfExitWizard(){ try{ captureStep(); }catch(e){} const d=mfDraft||{}; const filled=d.title||d.feeling||d.sacrifice||(d.subgoals&&d.subgoals.length)||(d.habits&&d.habits.length); if(filled && !confirm('返回會放棄呢個新目標，已填嘅嘢唔會儲存。確定返回？')) return; go('mf'); }
 function composeAffirmation(){
   const t=(mfDraft.title||'我嘅目標').replace(/[。.]$/,'');
   const when=mfDraft.target_date?('到 '+fmtDateFull(mfDraft.target_date)+'，'):'';
