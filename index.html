@@ -227,6 +227,50 @@
   .homtile .hti svg{width:28px;height:28px;}
   .homtile .htl{font-size:15px;font-weight:800;color:var(--dp-ink);}
   .homtile .hts{font-size:11px;color:var(--dp-grey);margin-top:3px;}
+  /* ===== 目標 · 顯化（無印） ===== */
+  #v-mf,#v-mfWizard,#v-mfGoal{background:#fff;color:#2E2B26;}
+  #v-mf .scroll,#v-mfWizard .scroll,#v-mfGoal .scroll{padding:0 20px calc(110px + var(--safe-b));}
+  .mf-h{font-size:20px;font-weight:700;letter-spacing:.02em;padding:calc(18px + var(--safe-t)) 2px 14px;}
+  .mf-empty{color:#b0a99c;font-size:14px;padding:34px 8px;text-align:center;line-height:1.9;}
+  .mf-card{display:block;width:100%;text-align:left;border:1px solid #ECE7DC;border-radius:16px;padding:18px;margin-bottom:12px;background:#FFFDF9;}
+  .mf-ct{font-size:17px;font-weight:600;color:#2E2B26;}
+  .mf-cs{font-size:12px;color:#a49d90;margin-top:6px;letter-spacing:.03em;}
+  .mf-dots{display:flex;gap:7px;justify-content:center;margin:8px 0 26px;}
+  .mf-dot{width:7px;height:7px;border-radius:50%;background:#E4DED3;}
+  .mf-dot.done{background:#C9A24B;} .mf-dot.cur{background:#2E2B26;}
+  .mf-steplab{font-size:12px;letter-spacing:.2em;color:#C9A24B;margin-bottom:12px;text-align:center;}
+  .mf-q{font-size:21px;font-weight:600;line-height:1.55;color:#2E2B26;margin-bottom:14px;}
+  .mf-note{font-size:13px;color:#a49d90;line-height:1.75;padding-left:12px;border-left:2px solid #E4DED3;margin-bottom:26px;}
+  .mf-field{width:100%;border:none;border-bottom:1.5px solid #E4DED3;background:none;padding:12px 2px;font-size:18px;outline:none;color:#2E2B26;font-family:inherit;}
+  .mf-area{min-height:120px;resize:none;line-height:1.7;border:1px solid #E4DED3;border-radius:12px;padding:14px;font-size:16px;}
+  .mf-li{display:flex;gap:10px;align-items:center;margin-bottom:10px;}
+  .mf-li input{flex:1;min-width:0;border:none;border-bottom:1px solid #E4DED3;background:none;padding:9px 2px;font-size:16px;outline:none;color:#2E2B26;font-family:inherit;}
+  .mf-x{flex:0 0 auto;width:28px;height:28px;border-radius:50%;border:1px solid #E4DED3;background:none;color:#b0a99c;}
+  .mf-add,.mf-add2{background:none;border:1px dashed #DCD5C8;border-radius:11px;padding:11px;width:100%;color:#8a8375;font-size:14px;margin-top:6px;}
+  .mf-nav{display:flex;gap:10px;margin-top:34px;}
+  .mf-back{flex:0 0 auto;padding:14px 18px;border-radius:12px;border:1px solid #E4DED3;background:none;color:#a49d90;font-size:14px;}
+  .mf-next{flex:1;padding:14px;border-radius:12px;border:none;background:#2E2B26;color:#F7F4EE;font-size:15px;font-weight:600;}
+  .bk-min{background:none;border:none;color:#a49d90;font-size:14px;padding:4px 0;margin-bottom:8px;}
+  .mf-declare{background:#2E2B26;border-radius:16px;padding:24px 20px;margin-bottom:16px;}
+  .mf-dlabel{font-size:11px;letter-spacing:.24em;color:#C9A24B;margin-bottom:14px;}
+  .mf-dtext{font-size:17px;line-height:1.9;color:#F7F4EE;font-weight:500;white-space:pre-wrap;}
+  .mf-dfoot{display:flex;justify-content:space-between;align-items:center;margin-top:20px;padding-top:15px;border-top:1px solid #4a463f;font-size:12px;color:#b8b2a6;}
+  .mf-read{background:none;border:1px solid #C9A24B;color:#C9A24B;border-radius:999px;padding:6px 14px;font-size:12px;}
+  .mf-read.on{background:#C9A24B;color:#2E2B26;border-color:#C9A24B;}
+  .mf-subt{font-size:14px;color:#8a8375;margin-bottom:6px;}
+  .mf-sec{font-size:12px;letter-spacing:.14em;color:#a49d90;margin:22px 2px 10px;}
+  .mf-para{font-size:15px;line-height:1.8;color:#4a463f;background:#FBF9F3;border-radius:12px;padding:14px;}
+  .mf-row{display:flex;align-items:center;gap:12px;padding:11px 2px;border-bottom:1px solid #F0EBE0;font-size:16px;color:#2E2B26;justify-content:space-between;}
+  .mf-row>span{flex:1;min-width:0;}
+  .mf-check{flex:0 0 auto;width:22px;height:22px;border-radius:50%;border:1.5px solid #D9D2C4;background:none;}
+  .mf-check.on{background:#C9A24B;border-color:#C9A24B;}
+  .mf-tick{flex:0 0 auto;width:30px;height:30px;border-radius:50%;border:1.5px solid #D9D2C4;background:none;color:#fff;font-size:14px;}
+  .mf-tick.on{background:#C9A24B;border-color:#C9A24B;}
+  .mf-strike{text-decoration:line-through;color:#b0a99c;}
+  .mf-editbtn{width:100%;margin-top:26px;background:none;border:1px solid #E4DED3;border-radius:12px;padding:13px;font-size:14px;color:#8a8375;}
+  .home-aff{display:block;width:100%;text-align:left;background:#2E2B26;border:none;border-radius:16px;padding:18px;margin:4px 0 2px;}
+  .home-aff .haf-l{font-size:11px;letter-spacing:.2em;color:#C9A24B;margin-bottom:9px;}
+  .home-aff .haf-t{font-size:15px;line-height:1.8;color:#F7F4EE;font-weight:500;white-space:pre-wrap;}
   #v-habits .scroll{padding:0 18px calc(110px + var(--safe-b));}
   .hcard{border:1px solid var(--dp-line);border-radius:14px;padding:12px 13px;margin-bottom:10px;}
   .hhd{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;}
@@ -518,6 +562,8 @@
       <button class="dpgear" onclick="go('settings')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.4-2.3 1a7 7 0 0 0-2-1.2l-.4-2.5H8.8l-.4 2.5a7 7 0 0 0-2 1.2l-2.3-1-2 3.4 2 1.5A7 7 0 0 0 4 12c0 .4 0 .8.1 1.2l-2 1.5 2 3.4 2.3-1a7 7 0 0 0 2 1.2l.4 2.5h6.4l.4-2.5a7 7 0 0 0 2-1.2l2.3 1 2-3.4-2-1.5c.1-.4.1-.8.1-1.2Z"/></svg></button>
     </div>
 
+    <div id="home-affirm"></div>
+
     <div class="homstat">
       <button onclick="go('finance')" style="background:#E1F5EE"><div class="k" style="color:#0F6E56">本月淨額</div><div class="v" id="hq-net" style="color:#0F6E56">$0</div></button>
       <button onclick="go('claims')" style="background:#FFF1DB"><div class="k" style="color:#9A6800">待收 Claim</div><div class="v" id="hq-claim" style="color:#9A6800">$0</div></button>
@@ -528,11 +574,32 @@
       <button class="homtile" onclick="go('claims')"><span class="hti" style="background:#FBE9E4"><svg><use href="#i-claim"/></svg></span><div class="htl">Claim 錢</div><div class="hts">幫人墊支 · 逐項記</div></button>
     </div>
 
+    <button class="homtile" style="width:100%;margin-top:12px;display:flex;align-items:center;gap:14px;text-align:left" onclick="go('mf')"><span class="hti" style="background:#F3EEE2;margin:0"><svg><use href="#i-goal"/></svg></span><div><div class="htl">目標 · 顯化</div><div class="hts">定目標 · 每日宣言 · 習慣打卡</div></div></button>
+
     <div class="dpsl" style="margin-top:22px"><span>最近收支</span><button class="more" onclick="go('finance')">全部 ›</button></div>
     <div id="home-recent"></div>
 
     <button onclick="go('settings')" style="width:100%;margin-top:22px;background:none;border:1px solid var(--dp-line);border-radius:12px;padding:12px;font-size:13px;color:var(--dp-grey)">設定</button>
   </div>
+</section>
+
+<!-- ===== 目標 · 顯化：列表 ===== -->
+<section id="v-mf" class="view">
+  <div class="scroll">
+    <div class="mf-h">目標 · 顯化</div>
+    <div id="mf-list-body"></div>
+  </div>
+  <button class="fab" onclick="openMfWizard()">＋ 新目標</button>
+</section>
+
+<!-- ===== 目標 · 顯化：引導精靈 ===== -->
+<section id="v-mfWizard" class="view">
+  <div class="scroll"><div id="mf-wizard-body" style="padding-top:calc(24px + var(--safe-t))"></div></div>
+</section>
+
+<!-- ===== 目標 · 顯化：詳情 ===== -->
+<section id="v-mfGoal" class="view">
+  <div class="scroll"><div id="mf-goal-body" style="padding-top:calc(16px + var(--safe-t))"></div></div>
 </section>
 
 <!-- ===== MOOD 情緒健康 ===== -->
@@ -920,7 +987,7 @@ function go(v){document.querySelectorAll('.view').forEach(x=>x.classList.remove(
   if(v==='purchases')loadPurch(); if(v==='ideas')loadIdeas(); if(v==='finance')loadFinance();
   if(v==='mood')loadMood(); if(v==='relationships')loadRelationships();
   if(v==='goals')loadGoals(); if(v==='achievements')loadAchievements();
-  if(v==='verse')loadVersePage(); if(v==='maint')loadMaint(); if(v==='plans')loadPlans(); if(v==='assets')loadAssets(); if(v==='insure')loadInsure(); if(v==='grow')loadGrow(); if(v==='vault')loadVault(); if(v==='habits')loadHabits(); if(v==='letters')loadLetters(); if(v==='familySetup')loadFamilySetup(); if(v==='timeline')loadTimeline();
+  if(v==='verse')loadVersePage(); if(v==='maint')loadMaint(); if(v==='plans')loadPlans(); if(v==='assets')loadAssets(); if(v==='insure')loadInsure(); if(v==='grow')loadGrow(); if(v==='vault')loadVault(); if(v==='habits')loadHabits(); if(v==='letters')loadLetters(); if(v==='familySetup')loadFamilySetup(); if(v==='timeline')loadTimeline(); if(v==='mf')loadMf();
   if(v==='settings'){ $('#set-url').textContent=sbUrl()||'—'; renderLockSetting(); }
   document.querySelector('#v-'+v+' .scroll')?.scrollTo(0,0);
 }
@@ -1025,6 +1092,16 @@ async function loadHome(){
     const recent=tx.slice(0,4);
     if(!recent.length){ host.innerHTML='<div class="empty" style="padding:16px 4px;text-align:left;color:#a59f90;font-size:13px">未有收支記錄。撳上面「收支記錄」開始。</div>'; }
     else { host.innerHTML=recent.map(t=>{ const isInc=t.type==='income'; const label=esc(t.category||t.note||(isInc?'收入':'支出')); return `<button class="dprow" style="width:100%;text-align:left;background:none;border:none;border-bottom:1px solid #F1F1F4" onclick="go('finance')"><div class="m"><div class="t1">${label}</div><div class="t2">${t.date?fmtDate(t.date):''}</div></div><div class="t1" style="flex-shrink:0;color:${isInc?'#0F6E56':'var(--dp-ink)'}">${isInc?'+':'-'}${money(Math.abs(Number(t.amount)||0))}</div></button>`; }).join(''); }
+  }
+  // 今日宣言（最新進行中目標）
+  const affHost=$('#home-affirm');
+  if(affHost){
+    affHost.innerHTML='';
+    try{
+      const {data:gs}=await db.from('mf_goals').select('*').eq('status','active').order('created_at',{ascending:false}).limit(1);
+      const g=gs&&gs[0];
+      if(g&&g.affirmation){ const read=g.last_read===todayStr(); affHost.innerHTML=`<button class="home-aff" onclick="openMfGoal('${g.id}')"><div class="haf-l">今日宣言${read?' · 已讀 ✓':''}</div><div class="haf-t">${esc(g.affirmation)}</div></button>`; }
+    }catch(e){}
   }
 }
 async function loadHomePlans(){
@@ -2930,6 +3007,151 @@ async function saveFamilyMember(k){
   try{ await db.from('family_access').upsert(rec); closeSheet(); toast('已儲存'); loadFamilySetup(); }
   catch(e){ toast('儲存失敗，請確認已建立 family_access 表'); }
 }
+
+/* ==================== 目標 · 顯化（吸引力法則 + 思考致富） ==================== */
+let mfDraft=null, mfStep=0, curMfId=null, curMfGoal=null;
+const MF_STEPS=[
+ {key:'title', label:'第 1 步 · 渴望', q:'你最想成為、得到或者做到乜嘢？寫到越具體、越有畫面越好。', note:'思考致富 · 一切成就，由一個明確而熾熱嘅渴望開始。', type:'text', ph:'例如 做一個好媽媽 / 開第二間 CurryBoy'},
+ {key:'feeling', label:'第 2 步 · 感受', q:'達成之後，你嘅生活同感覺會變成點？當佢已經發生，寫低嗰種感受。', note:'吸引力法則 · 先感受，後吸引。越真實嘅感覺，越大嘅吸引力。', type:'area', ph:'例如 我好有耐性，同圓圓關係好親密，屋企好溫暖…'},
+ {key:'sacrifice', label:'第 3 步 · 付出', q:'冇免費午餐。你願意付出啲乜去換呢個目標？', note:'思考致富 · 明確你要付出嘅代價，渴望先會變成決心。', type:'area', ph:'例如 每晚少睇半個鐘手機，用嚟睇書同陪圓圓…'},
+ {key:'target_date', label:'第 4 步 · 期限', q:'你想喺邊一日之前實現？定一個明確日期。', note:'思考致富 · 冇期限嘅願望，只係空想。', type:'date'},
+ {key:'subgoals', label:'第 5 步 · 小目標', q:'一個大目標，係由幾個做得到嘅小目標砌成。你會定邊 2–4 個？', note:'思考致富 · 明確嘅計劃，係渴望同成果之間嘅橋樑。', type:'list', ph:'例如 睇三本育兒書'},
+ {key:'habits', label:'第 6 步 · 每日習慣', q:'邊一兩個每日細動作，會帶你一步步靠近？佢哋會變成你嘅每日打卡。', note:'思考致富 · 每日重複嘅行動同自我暗示，會寫入你潛意識。', type:'list', ph:'例如 睡前讀一章育兒書'},
+ {key:'affirmation', label:'第 7 步 · 你嘅宣言', q:'呢句係你嘅宣言，每日帶住感受大聲讀兩次。睇啱就完成，想改就改。', note:'思考致富 · 每日朗讀你嘅目標，直到潛意識當佢係真。', type:'area'}
+];
+function openMfWizard(){ mfDraft={title:'',feeling:'',sacrifice:'',target_date:'',subgoals:[],habits:[],affirmation:''}; mfStep=0; go('mfWizard'); renderWizardStep(); }
+function composeAffirmation(){
+  const t=(mfDraft.title||'我嘅目標').replace(/[。.]$/,'');
+  const when=mfDraft.target_date?('到 '+fmtDateFull(mfDraft.target_date)+'，'):'';
+  const feel=mfDraft.feeling?('我感到 '+mfDraft.feeling.replace(/[。.]$/,'')+'。'):'我感到平靜、滿足同感恩。';
+  return `我正在實現：${t}。\n${when}呢件事已經成真。${feel}\n我每日帶住信念同感受，活成呢個樣。`;
+}
+function mfLiHTML(v,ph){ return `<div class="mf-li"><input value="${v?esc(v):''}" placeholder="${ph||''}"><button type="button" class="mf-x" onclick="this.closest('.mf-li').remove()">✕</button></div>`; }
+function mfAddLi(ph){ const l=$('#mf-list'); if(l) l.insertAdjacentHTML('beforeend', mfLiHTML('',ph)); }
+function captureStep(){
+  const s=MF_STEPS[mfStep];
+  if(s.type==='list'){ mfDraft[s.key]=[...document.querySelectorAll('#mf-list .mf-li input')].map(i=>i.value.trim()).filter(Boolean); }
+  else { const el=$('#mf-input'); if(el) mfDraft[s.key]=el.value.trim(); }
+}
+function renderWizardStep(){
+  const s=MF_STEPS[mfStep];
+  const dots=MF_STEPS.map((_,i)=>`<span class="mf-dot ${i<mfStep?'done':''} ${i===mfStep?'cur':''}"></span>`).join('');
+  let input='';
+  if(s.type==='text') input=`<input id="mf-input" class="mf-field" value="${esc(mfDraft[s.key]||'')}" placeholder="${s.ph||''}">`;
+  else if(s.type==='date') input=`<input id="mf-input" type="date" class="mf-field" value="${mfDraft[s.key]||''}">`;
+  else if(s.type==='area'){ let v=mfDraft[s.key]||''; if(s.key==='affirmation'&&!v) v=composeAffirmation(); input=`<textarea id="mf-input" class="mf-field mf-area" placeholder="${s.ph||''}">${esc(v)}</textarea>`; }
+  else if(s.type==='list'){ const items=(mfDraft[s.key]&&mfDraft[s.key].length)?mfDraft[s.key]:['']; input=`<div id="mf-list">`+items.map(v=>mfLiHTML(v,s.ph)).join('')+`</div><button type="button" class="mf-add" onclick="mfAddLi('${esc(s.ph||'')}')">＋ 加一個</button>`; }
+  const isLast=mfStep===MF_STEPS.length-1;
+  $('#mf-wizard-body').innerHTML=`
+    <div class="mf-dots">${dots}</div>
+    <div class="mf-steplab">${s.label}</div>
+    <div class="mf-q">${s.q}</div>
+    <div class="mf-note">${s.note}</div>
+    <div>${input}</div>
+    <div class="mf-nav">
+      ${mfStep>0?`<button class="mf-back" onclick="mfPrev()">‹ 上一步</button>`:`<button class="mf-back" onclick="go('mf')">取消</button>`}
+      <button class="mf-next" onclick="${isLast?'mfFinish()':'mfNext()'}">${isLast?'完成，開始顯化 ✦':'下一步 ›'}</button>
+    </div>`;
+}
+function mfNext(){ const s=MF_STEPS[mfStep]; captureStep(); if(s.key==='title'&&!mfDraft.title){ toast('寫低你最想要嘅嘢先'); return; } mfStep++; renderWizardStep(); document.querySelector('#v-mfWizard .scroll')?.scrollTo(0,0); }
+function mfPrev(){ captureStep(); mfStep--; renderWizardStep(); document.querySelector('#v-mfWizard .scroll')?.scrollTo(0,0); }
+async function mfFinish(){
+  captureStep();
+  if(!mfDraft.title){ toast('未有目標名'); return; }
+  try{
+    const {data:g}=await db.from('mf_goals').insert({title:mfDraft.title, feeling:mfDraft.feeling||null, sacrifice:mfDraft.sacrifice||null, target_date:mfDraft.target_date||null, affirmation:mfDraft.affirmation||composeAffirmation(), status:'active'}).select().maybeSingle();
+    if(!g){ toast('儲存失敗，請確認已建立 mf_goals 表'); return; }
+    if(mfDraft.subgoals.length) await db.from('mf_subgoals').insert(mfDraft.subgoals.map(t=>({goal_id:g.id,title:t,done:false})));
+    if(mfDraft.habits.length) await db.from('mf_habits').insert(mfDraft.habits.map(t=>({goal_id:g.id,title:t})));
+    toast('目標已建立 ✦'); openMfGoal(g.id);
+  }catch(e){ toast('儲存失敗，請確認已建立 mf_goals 等表'); }
+}
+async function loadMf(){
+  const L=$('#mf-list-body');
+  try{
+    const {data}=await db.from('mf_goals').select('*').eq('status','active').order('created_at',{ascending:false});
+    if(!data||!data.length){ L.innerHTML='<div class="mf-empty">未有目標。<br>由一個明確而熾熱嘅渴望開始。<br>撳下面「＋ 新目標」。</div>'; return; }
+    L.innerHTML=data.map(g=>`<button class="mf-card" onclick="openMfGoal('${g.id}')"><div class="mf-ct">${esc(g.title)}</div><div class="mf-cs">${g.target_date?('目標 '+fmtDateFull(g.target_date)):'未定期限'}</div></button>`).join('');
+  }catch(e){ L.innerHTML='<div class="mf-empty">未能載入。請先確認已建立 mf_goals 表。</div>'; }
+}
+async function openMfGoal(id){
+  curMfId=id; go('mfGoal');
+  const {data:g}=await db.from('mf_goals').select('*').eq('id',id).maybeSingle();
+  if(!g) return; curMfGoal=g;
+  const read=g.last_read===todayStr();
+  let sub='';
+  if(g.target_date){ const d=-daysSince(g.target_date); sub='到 '+fmtDateFull(g.target_date)+(d>=0?('　·　仲有 '+d+' 日'):'　·　已過期'); }
+  $('#mf-goal-body').innerHTML=`
+    <button class="bk-min" onclick="go('mf')">‹ 目標</button>
+    <div class="mf-declare">
+      <div class="mf-dlabel">我 的 宣 言</div>
+      <div class="mf-dtext">${esc(g.affirmation||'')}</div>
+      <div class="mf-dfoot"><span>每日讀兩次 · 帶住感受</span><button class="mf-read ${read?'on':''}" onclick="mfToggleRead()">${read?'今日已讀 ✓':'今日讀咗'}</button></div>
+    </div>
+    <div class="mf-subt">${esc(g.title)}${sub?('　·　'+sub):''}</div>
+    <div class="mf-sec">小目標</div><div id="mf-subgoals"></div>
+    <div class="mf-sec">每日習慣</div><div id="mf-habits"></div>
+    ${g.feeling?`<div class="mf-sec">我嘅願景</div><div class="mf-para">${esc(g.feeling)}</div>`:''}
+    ${g.sacrifice?`<div class="mf-sec">我願意付出</div><div class="mf-para">${esc(g.sacrifice)}</div>`:''}
+    <button class="mf-editbtn" onclick="openMfEdit()">編輯 / 完成 / 刪除</button>`;
+  await Promise.all([loadMfSubgoals(), loadMfHabits()]);
+}
+async function mfToggleRead(){
+  const already=curMfGoal&&curMfGoal.last_read===todayStr();
+  try{ await db.from('mf_goals').update({last_read: already?null:todayStr()}).eq('id',curMfId); openMfGoal(curMfId); }catch(e){}
+}
+async function loadMfSubgoals(){
+  const L=$('#mf-subgoals'); if(!L) return;
+  try{
+    const {data}=await db.from('mf_subgoals').select('*').eq('goal_id',curMfId).order('created_at',{ascending:true});
+    const rows=(data||[]).map(s=>`<div class="mf-row"><button class="mf-check ${s.done?'on':''}" onclick="mfToggleSub('${s.id}',${s.done})"></button><span class="${s.done?'mf-strike':''}">${esc(s.title||'')}</span></div>`).join('');
+    L.innerHTML=rows+`<button class="mf-add2" onclick="mfAddSub()">＋ 加小目標</button>`;
+  }catch(e){ L.innerHTML=''; }
+}
+async function mfToggleSub(id,done){ await db.from('mf_subgoals').update({done:!done}).eq('id',id); loadMfSubgoals(); }
+function mfAddSub(){ const t=prompt('小目標'); if(!t||!t.trim())return; db.from('mf_subgoals').insert({goal_id:curMfId,title:t.trim(),done:false}).then(()=>loadMfSubgoals()); }
+async function loadMfHabits(){
+  const L=$('#mf-habits'); if(!L) return;
+  try{
+    const today=todayStr();
+    const [{data:hs},{data:logs}]=await Promise.all([
+      db.from('mf_habits').select('*').eq('goal_id',curMfId).order('created_at',{ascending:true}),
+      db.from('mf_habit_logs').select('habit_id').eq('date',today)
+    ]);
+    const doneSet=new Set((logs||[]).map(l=>l.habit_id));
+    const rows=(hs||[]).map(h=>{ const on=doneSet.has(h.id); return `<div class="mf-row"><span>${esc(h.title||'')}</span><button class="mf-tick ${on?'on':''}" onclick="mfCheckHabit('${h.id}',${on})">${on?'✓':''}</button></div>`; }).join('');
+    L.innerHTML=rows+`<button class="mf-add2" onclick="mfAddHabit()">＋ 加每日習慣</button>`;
+  }catch(e){ L.innerHTML=''; }
+}
+async function mfCheckHabit(hid,on){
+  const today=todayStr();
+  try{
+    if(on){ await db.from('mf_habit_logs').delete().eq('habit_id',hid).eq('date',today); }
+    else { await db.from('mf_habit_logs').insert({habit_id:hid, date:today}); }
+    loadMfHabits();
+  }catch(e){ toast('打卡失敗'); }
+}
+function mfAddHabit(){ const t=prompt('每日習慣'); if(!t||!t.trim())return; db.from('mf_habits').insert({goal_id:curMfId,title:t.trim()}).then(()=>loadMfHabits()); }
+function openMfEdit(){
+  const g=curMfGoal; if(!g) return;
+  $('#sheet').innerHTML=`<div class="grab"></div>
+    <div class="sh"><button class="c" onclick="closeSheet()">取消</button><span class="t">編輯目標</span><button class="s" onclick="mfUpdate()">儲存</button></div>
+    <div class="dpfield"><label>目標</label><input id="mf-e-title" value="${esc(g.title)}"></div>
+    <div class="dpfield"><label>期限</label><input id="mf-e-date" type="date" value="${g.target_date?g.target_date.slice(0,10):''}"></div>
+    <div class="dpfield"><label>宣言</label><textarea class="dpta" id="mf-e-aff" style="min-height:120px">${esc(g.affirmation||'')}</textarea></div>
+    <div class="dpfield"><label>願景</label><textarea class="dpta" id="mf-e-feel">${esc(g.feeling||'')}</textarea></div>
+    <div class="dpfield"><label>願意付出</label><textarea class="dpta" id="mf-e-sac">${esc(g.sacrifice||'')}</textarea></div>
+    <button class="dpcta" style="background:#2E2B26" onclick="mfComplete()">標記為完成 ✦</button>
+    <button class="del" onclick="mfDelete()">刪除目標</button>`;
+  $('#sheet-bg').classList.add('on'); requestAnimationFrame(()=>$('#sheet').classList.add('on'));
+}
+async function mfUpdate(){
+  const title=$('#mf-e-title').value.trim(); if(!title){ toast('請輸入目標'); return; }
+  try{ await db.from('mf_goals').update({title, target_date:$('#mf-e-date').value||null, affirmation:$('#mf-e-aff').value.trim()||null, feeling:$('#mf-e-feel').value.trim()||null, sacrifice:$('#mf-e-sac').value.trim()||null}).eq('id',curMfId); closeSheet(); toast('已更新'); openMfGoal(curMfId); }
+  catch(e){ toast('儲存失敗'); }
+}
+async function mfComplete(){ if(!confirm('標記呢個目標為完成？'))return; try{ await db.from('mf_goals').update({status:'done'}).eq('id',curMfId); closeSheet(); toast('恭喜你，顯化成真 ✦'); go('mf'); }catch(e){ toast('更新失敗'); } }
+async function mfDelete(){ if(!confirm('刪除呢個目標？小目標、習慣同打卡都會一齊刪'))return; try{ await db.from('mf_goals').delete().eq('id',curMfId); closeSheet(); toast('已刪除'); go('mf'); }catch(e){ toast('刪除失敗'); } }
 </script>
 </body>
 </html>
