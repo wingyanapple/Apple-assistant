@@ -1077,11 +1077,13 @@ async function loadHome(){
   let claimTotal=0;
   try{ const {data:cl}=await db.from('claims').select('amount,status'); claimTotal=(cl||[]).filter(x=>x.status==='unpaid').reduce((a,b)=>a+(Number(b.amount)||0),0); }catch(e){}
   $('#hq-claim').textContent=money(claimTotal);
-  // 收支結餘（累計所有收入 − 支出）
+  // 收支結餘（本月收入 − 本月支出）
+  const m=todayStr().slice(0,7);
   let tx=[];
-  try{ const r=await db.from('personal_transactions').select('type,amount'); if(!r.error) tx=r.data||[]; }catch(e){}
-  const inc=tx.filter(x=>x.type==='income').reduce((a,b)=>a+(+b.amount||0),0);
-  const exp=tx.filter(x=>x.type==='expense').reduce((a,b)=>a+(+b.amount||0),0);
+  try{ const r=await db.from('personal_transactions').select('type,amount,date'); if(!r.error) tx=r.data||[]; }catch(e){}
+  const mtx=tx.filter(x=>(x.date||'').slice(0,7)===m);
+  const inc=mtx.filter(x=>x.type==='income').reduce((a,b)=>a+(+b.amount||0),0);
+  const exp=mtx.filter(x=>x.type==='expense').reduce((a,b)=>a+(+b.amount||0),0);
   $('#hq-net').textContent=money(inc-exp);
   // 今日宣言（最新進行中目標）
   const affHost=$('#home-affirm');
