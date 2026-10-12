@@ -121,6 +121,11 @@
   .field input,.field select,.field textarea{width:100%;margin-top:7px;border:none;border-bottom:1px solid var(--line);background:none;padding:9px 2px;font-size:16px;outline:none;}
   .twocol{display:flex;gap:16px;}
   .twocol .field{flex:1;}
+  .ci-row{display:flex;gap:8px;align-items:center;margin-bottom:9px;}
+  .ci-row .ci-content{flex:2;min-width:0;border:none;border-bottom:1px solid var(--line);background:none;padding:8px 2px;font-size:15px;outline:none;}
+  .ci-row .ci-amt{flex:1;min-width:0;border:none;border-bottom:1px solid var(--line);background:none;padding:8px 2px;font-size:15px;outline:none;text-align:right;font-variant-numeric:tabular-nums;}
+  .ci-row .ci-x{flex:0 0 auto;width:28px;height:28px;border-radius:50%;border:1px solid var(--line);background:none;color:var(--graphite);font-size:14px;}
+  .ci-add{margin-top:4px;background:none;border:1px dashed var(--line);border-radius:10px;padding:10px;width:100%;color:var(--ink);font-size:14px;font-weight:600;}
   .seg{display:flex;gap:8px;margin-top:9px;flex-wrap:wrap;}
   .seg button{font-size:13px;padding:7px 13px;border-radius:8px;border:1px solid var(--line);color:var(--graphite);background:none;}
   .seg button.on{background:var(--curry-wash);border-color:var(--curry);color:var(--curry-deep);font-weight:600;}
@@ -213,6 +218,15 @@
   .ma-ph .rm{position:absolute;top:2px;right:2px;width:20px;height:20px;border-radius:50%;border:none;background:rgba(0,0,0,.55);color:#fff;font-size:14px;line-height:20px;padding:0;}
   .ma-ph.add{display:flex;align-items:center;justify-content:center;font-size:26px;color:#2E9BFF;border:1px dashed #c8cace;background:#fff;}
   .minibtn{font-size:12px;padding:4px 10px;border-radius:8px;border:0.5px solid #d7d4c8;background:#fff;color:var(--dp-ink);}
+  .homstat{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0 2px;}
+  .homstat button{border:none;text-align:left;border-radius:14px;padding:14px 13px;}
+  .homstat .k{font-size:12px;font-weight:700;} .homstat .v{font-size:21px;font-weight:800;margin-top:4px;font-variant-numeric:tabular-nums;}
+  .homrecta{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;}
+  .homtile{border:1px solid var(--dp-line);border-radius:16px;padding:18px 12px;text-align:center;background:#fff;}
+  .homtile .hti{width:50px;height:50px;border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;}
+  .homtile .hti svg{width:28px;height:28px;}
+  .homtile .htl{font-size:15px;font-weight:800;color:var(--dp-ink);}
+  .homtile .hts{font-size:11px;color:var(--dp-grey);margin-top:3px;}
   #v-habits .scroll{padding:0 18px calc(110px + var(--safe-b));}
   .hcard{border:1px solid var(--dp-line);border-radius:14px;padding:12px 13px;margin-bottom:10px;}
   .hhd{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;}
@@ -504,65 +518,20 @@
       <button class="dpgear" onclick="go('settings')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.4-2.3 1a7 7 0 0 0-2-1.2l-.4-2.5H8.8l-.4 2.5a7 7 0 0 0-2 1.2l-2.3-1-2 3.4 2 1.5A7 7 0 0 0 4 12c0 .4 0 .8.1 1.2l-2 1.5 2 3.4 2.3-1a7 7 0 0 0 2 1.2l.4 2.5h6.4l.4-2.5a7 7 0 0 0 2-1.2l2.3 1 2-3.4-2-1.5c.1-.4.1-.8.1-1.2Z"/></svg></button>
     </div>
 
-    <div class="dpqs">
-      <button onclick="go('finance')"><div class="k">本月淨額</div><div class="v" id="hq-net">$0</div></button>
-      <button onclick="go('claims')"><div class="k">待收 Claim</div><div class="v" id="hq-claim">$0</div></button>
-      <button onclick="go('todos')"><div class="k">待辦</div><div class="v" id="hq-todo">0</div></button>
+    <div class="homstat">
+      <button onclick="go('finance')" style="background:#E1F5EE"><div class="k" style="color:#0F6E56">本月淨額</div><div class="v" id="hq-net" style="color:#0F6E56">$0</div></button>
+      <button onclick="go('claims')" style="background:#FFF1DB"><div class="k" style="color:#9A6800">待收 Claim</div><div class="v" id="hq-claim" style="color:#9A6800">$0</div></button>
     </div>
 
-    <div class="verse" id="verse-card" onclick="go('verse')">
-      <button class="fav" id="verse-fav" onclick="event.stopPropagation();toggleFavVerse()"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-8.6C1 9.3 2.6 6 5.9 6c2 0 3.2 1.2 4.1 2.5C10.9 7.2 12.1 6 14.1 6c3.3 0 4.9 3.3 3.2 6.4C19 16.6 12 21 12 21Z"/></svg></button>
-      <div class="vl">今日金句</div>
-      <div class="vt" id="verse-text">—</div>
-      <div class="vs" id="verse-ref"></div>
+    <div class="homrecta">
+      <button class="homtile" onclick="go('finance')"><span class="hti" style="background:#E7F3FF"><svg><use href="#i-money"/></svg></span><div class="htl">收支記錄</div><div class="hts">入帳 / 支出</div></button>
+      <button class="homtile" onclick="go('claims')"><span class="hti" style="background:#FBE9E4"><svg><use href="#i-claim"/></svg></span><div class="htl">Claim 錢</div><div class="hts">幫人墊支 · 逐項記</div></button>
     </div>
 
-    <div class="dpsl"><span>人生狀態</span></div>
-    <button class="bar" onclick="go('mood')">
-      <div class="bhead"><span class="bic"><svg viewBox="0 0 24 24" style="stroke:#FF9F0A;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><circle cx="12" cy="12" r="9"/><path d="M8.5 14.5a4.5 4.5 0 0 0 7 0"/><path d="M9 9.5h.01M15 9.5h.01"/></svg></span><span class="bl">情緒健康</span><span class="bp" style="color:#FF9F0A" id="hb-mood">—</span></div>
-      <div class="dptrack"><div class="dpfill" id="hb-mood-fill" style="width:0%;background:#FF9F0A"></div></div>
-    </button>
-    <div id="home-rel-bars"></div>
+    <div class="dpsl" style="margin-top:22px"><span>最近收支</span><button class="more" onclick="go('finance')">全部 ›</button></div>
+    <div id="home-recent"></div>
 
-    <div id="home-due"></div>
-
-    <div class="dpsl"><span>進行中小目標</span><button class="more" onclick="go('goals')">全部 ›</button></div>
-    <div id="home-goals"></div>
-
-    <div class="dpsl"><span>進行中小計劃</span><button class="more" onclick="go('plans')">全部 ›</button></div>
-    <div id="home-plans"></div>
-
-    <div class="hubsec" style="--c:#FF9F0A;margin-top:24px">人生</div>
-    <div class="hubgrid">
-      <button class="hubtile" onclick="go('mood')"><svg><use href="#i-emo"/></svg><div class="l">情緒健康</div></button>
-      <button class="hubtile" onclick="go('relationships')"><svg><use href="#i-rel"/></svg><div class="l">關係</div></button>
-      <button class="hubtile" onclick="go('grow')"><svg><use href="#i-grow"/></svg><div class="l">自我提升</div></button>
-      <button class="hubtile" onclick="go('goals')"><svg><use href="#i-goal"/></svg><div class="l">小目標</div></button>
-      <button class="hubtile" onclick="go('plans')"><svg><use href="#i-plan"/></svg><div class="l">小計劃</div></button>
-      <button class="hubtile" onclick="go('achievements')"><svg><use href="#i-ach"/></svg><div class="l">成就</div></button>
-      <button class="hubtile" onclick="go('habits')"><svg><use href="#i-habit"/></svg><div class="l">習慣打卡</div></button>
-    </div>
-    <div class="hubsec" style="--c:#14B8A6">財務</div>
-    <div class="hubgrid">
-      <button class="hubtile" onclick="go('finance')"><svg><use href="#i-money"/></svg><div class="l">收支</div></button>
-      <button class="hubtile" onclick="go('claims')"><svg><use href="#i-claim"/></svg><div class="l">Claim</div></button>
-      <button class="hubtile" onclick="go('assets')"><svg><use href="#i-asset"/></svg><div class="l">資產</div></button>
-      <button class="hubtile" onclick="go('insure')"><svg><use href="#i-insure"/></svg><div class="l">保險</div></button>
-    </div>
-    <div class="hubsec" style="--c:#8B5CF6">生活</div>
-    <div class="hubgrid">
-      <button class="hubtile" onclick="go('purchases')"><svg><use href="#i-shop"/></svg><div class="l">採購</div></button>
-      <button class="hubtile" onclick="go('todos')"><svg><use href="#i-todo"/></svg><div class="l">待辦</div></button>
-      <button class="hubtile" onclick="go('maint')"><svg><use href="#i-maint"/></svg><div class="l">保養</div></button>
-      <button class="hubtile" onclick="go('ideas')"><svg><use href="#i-idea"/></svg><div class="l">小點子</div></button>
-    </div>
-    <div class="hubsec" style="--c:#FF6E88">傳承 / 系統</div>
-    <div class="hubgrid">
-      <button class="hubtile" onclick="go('letters')"><svg><use href="#i-letter"/></svg><div class="l">給家人的信</div></button>
-      <button class="hubtile" onclick="go('familySetup')"><svg><use href="#i-family"/></svg><div class="l">家人入口</div></button>
-      <button class="hubtile" onclick="go('vault')"><svg><use href="#i-vault"/></svg><div class="l">密碼記錄</div></button>
-      <button class="hubtile" onclick="go('settings')"><svg><use href="#i-settings"/></svg><div class="l">設定</div></button>
-    </div>
+    <button onclick="go('settings')" style="width:100%;margin-top:22px;background:none;border:1px solid var(--dp-line);border-radius:12px;padding:12px;font-size:13px;color:var(--dp-grey)">設定</button>
   </div>
 </section>
 
@@ -1039,30 +1008,24 @@ window.addEventListener('load', ()=>{
 
 /* ---------- HOME ---------- */
 async function loadHome(){
-  const [{data:cl},{data:td},{data:pu},{data:id}] = await Promise.all([
-    db.from('claims').select('amount,status'),
-    db.from('todos').select('status'),
-    db.from('purchases').select('status'),
-    db.from('ideas').select('id')
-  ]);
-  const unpaid=(cl||[]).filter(x=>x.status==='unpaid');
-  const unpaidTotal=unpaid.reduce((a,b)=>a+(Number(b.amount)||0),0);
-  const pendTodo=(td||[]).filter(x=>x.status==='pending').length;
-  const tobuy=(pu||[]).filter(x=>x.status==='to_buy').length;
-  $('#hq-claim').textContent=money(unpaidTotal);
-  $('#hq-todo').textContent=pendTodo;
-  // 本月收支
+  // 待收 Claim 總額
+  let claimTotal=0;
+  try{ const {data:cl}=await db.from('claims').select('amount,status'); claimTotal=(cl||[]).filter(x=>x.status==='unpaid').reduce((a,b)=>a+(Number(b.amount)||0),0); }catch(e){}
+  $('#hq-claim').textContent=money(claimTotal);
+  // 本月收支 + 最近記錄
   const m=todayStr().slice(0,7);
   let tx=[];
-  try{const r=await db.from('personal_transactions').select('type,amount,date');if(!r.error)tx=r.data||[];}catch(e){}
+  try{ const r=await db.from('personal_transactions').select('*').order('date',{ascending:false}); if(!r.error) tx=r.data||[]; }catch(e){}
   const mtx=tx.filter(x=>(x.date||'').slice(0,7)===m);
   const inc=mtx.filter(x=>x.type==='income').reduce((a,b)=>a+(+b.amount||0),0);
   const exp=mtx.filter(x=>x.type==='expense').reduce((a,b)=>a+(+b.amount||0),0);
-  const net=inc-exp;
-  $('#hq-net').textContent=money(net);
-
-  await Promise.all([loadHomeVerse(), loadHomeMood(), loadHomeRel(), loadHomeGoals(), loadHomePlans()]);
-  await loadHomeDue();
+  $('#hq-net').textContent=money(inc-exp);
+  const host=$('#home-recent');
+  if(host){
+    const recent=tx.slice(0,4);
+    if(!recent.length){ host.innerHTML='<div class="empty" style="padding:16px 4px;text-align:left;color:#a59f90;font-size:13px">未有收支記錄。撳上面「收支記錄」開始。</div>'; }
+    else { host.innerHTML=recent.map(t=>{ const isInc=t.type==='income'; const label=esc(t.category||t.note||(isInc?'收入':'支出')); return `<button class="dprow" style="width:100%;text-align:left;background:none;border:none;border-bottom:1px solid #F1F1F4" onclick="go('finance')"><div class="m"><div class="t1">${label}</div><div class="t2">${t.date?fmtDate(t.date):''}</div></div><div class="t1" style="flex-shrink:0;color:${isInc?'#0F6E56':'var(--dp-ink)'}">${isInc?'+':'-'}${money(Math.abs(Number(t.amount)||0))}</div></button>`; }).join(''); }
+  }
 }
 async function loadHomePlans(){
   try{
@@ -1665,8 +1628,10 @@ function openSheet(type,id){
   segVal={};
   if(type==='claim'){
     body=field('對方名稱','f-name',rec.person_name)
-      +`<div class="twocol">${field('金額','f-amt',rec.amount,'number')}${field('日期','f-date',rec.date||todayStr(),'date')}</div>`
-      +field('用途','f-purpose',rec.purpose)+field('備註','f-note',rec.note);
+      +`<div class="field"><label>總金額（自動加埋下面每一項）</label><input id="f-amt" type="text" readonly value="${money(rec.amount||0)}" style="font-weight:700;color:var(--curry-deep)"></div>`
+      +`<div class="field"><label>幫佢俾咗啲乜（可以㩒＋加多項）</label><div id="ci-list"></div><button type="button" class="ci-add" onclick="addClaimItemRow()">＋ 加一項</button></div>`
+      +`<div class="twocol">${field('日期','f-date',rec.date||todayStr(),'date')}${field('用途（可留空）','f-purpose',rec.purpose)}</div>`
+      +field('備註','f-note',rec.note);
   } else if(type==='todo'){
     segVal['seg']=rec.category||'家庭';
     body=field('內容','f-content',rec.content)+field('日期（可留空）','f-date',rec.date||'','date')+catSeg('seg',CATS,rec.category||'家庭');
@@ -1682,12 +1647,39 @@ function openSheet(type,id){
     <div class="sh"><button class="c" onclick="closeSheet()">取消</button><span class="t">${editing?'編輯':'新增'} ${title}</span><button class="s" onclick="saveRec('${type}','${id||''}')">儲存</button></div>
     ${body}${del}`;
   $('#sheet-bg').classList.add('on');requestAnimationFrame(()=>$('#sheet').classList.add('on'));
+  if(type==='claim') initClaimItemsUI(id, rec.amount, rec.purpose);
 }
 function closeSheet(){$('#sheet').classList.remove('on');$('#sheet-bg').classList.remove('on');}
+/* ---- Claim 明細列 ---- */
+function claimItemRowHTML(content,amount){ return `<div class="ci-row"><input class="ci-content" placeholder="俾咗乜嘢（例如 買餸）" value="${content?esc(content):''}"><input class="ci-amt" type="number" inputmode="decimal" placeholder="金額" value="${(amount!=null&&amount!=='')?amount:''}" oninput="recalcClaimTotal()"><button type="button" class="ci-x" onclick="removeClaimItemRow(this)">✕</button></div>`; }
+function addClaimItemRow(content,amount){ const list=$('#ci-list'); if(!list) return; list.insertAdjacentHTML('beforeend', claimItemRowHTML(content,amount)); recalcClaimTotal(); }
+function removeClaimItemRow(btn){ const r=btn.closest('.ci-row'); if(r) r.remove(); recalcClaimTotal(); }
+function recalcClaimTotal(){ let t=0; document.querySelectorAll('#ci-list .ci-amt').forEach(inp=>{ t+=Number(inp.value)||0; }); const f=$('#f-amt'); if(f) f.value=money(t); }
+async function initClaimItemsUI(id, existAmt, existPurpose){
+  const list=$('#ci-list'); if(!list) return;
+  let items=[];
+  if(id){ try{ const {data}=await db.from('claim_items').select('*').eq('claim_id',id).order('created_at',{ascending:true}); items=data||[]; }catch(e){} }
+  list.innerHTML='';
+  if(items.length){ items.forEach(it=>addClaimItemRow(it.content,it.amount)); }
+  else if(id && Number(existAmt)>0){ addClaimItemRow(existPurpose||'原有記錄', existAmt); }
+  else { addClaimItemRow(); }
+  recalcClaimTotal();
+}
 
 async function saveRec(type,id){
   let row={},table;
-  if(type==='claim'){table='claims';row={person_name:$('#f-name').value.trim(),amount:Number($('#f-amt').value)||0,date:$('#f-date').value||null,purpose:$('#f-purpose').value.trim(),note:$('#f-note').value.trim()};if(!id)row.status='unpaid';}
+  if(type==='claim'){
+    const items=[...document.querySelectorAll('#ci-list .ci-row')].map(r=>({content:r.querySelector('.ci-content').value.trim(), amount:Number(r.querySelector('.ci-amt').value)||0})).filter(it=>it.content||it.amount);
+    const total=items.reduce((a,b)=>a+(b.amount||0),0);
+    const crow={person_name:$('#f-name').value.trim(), amount:total, date:$('#f-date').value||null, purpose:$('#f-purpose').value.trim(), note:$('#f-note').value.trim()};
+    if(!id) crow.status='unpaid';
+    let cid=id, err;
+    if(id){ ({error:err}=await db.from('claims').update(crow).eq('id',id)); }
+    else { const {data:ins,error:e2}=await db.from('claims').insert(crow).select().maybeSingle(); err=e2; cid=ins?ins.id:null; }
+    if(err||!cid){ toast('儲存失敗，請檢查連接'); return; }
+    try{ await db.from('claim_items').delete().eq('claim_id',cid); if(items.length) await db.from('claim_items').insert(items.map(it=>({claim_id:cid, content:it.content||null, amount:it.amount||0}))); }catch(e){}
+    closeSheet(); toast('已儲存'); loadClaims(); return;
+  }
   if(type==='todo'){table='todos';row={content:$('#f-content').value.trim(),date:$('#f-date').value||null,category:segVal['seg']||'其他'};if(!id)row.status='pending';if(!row.content){toast('內容唔可以空白');return;}}
   if(type==='purchase'){table='purchases';row={item_name:$('#f-item').value.trim(),quantity:$('#f-qty').value.trim(),category:segVal['seg']||'其他',note:$('#f-note').value.trim()};if(!id)row.status='to_buy';if(!row.item_name){toast('物品名稱唔可以空白');return;}}
   if(type==='idea'){table='ideas';row={content:$('#f-content').value.trim(),category:segVal['seg']||ideaCats[0],note:$('#f-note').value.trim()};if(!row.content){toast('內容唔可以空白');return;}}
