@@ -219,14 +219,15 @@
   .ma-ph.add{display:flex;align-items:center;justify-content:center;font-size:26px;color:#2E9BFF;border:1px dashed #c8cace;background:#fff;}
   .minibtn{font-size:12px;padding:4px 10px;border-radius:8px;border:0.5px solid #d7d4c8;background:#fff;color:var(--dp-ink);}
   .homstat{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0 2px;}
-  .homstat button{border:none;text-align:left;border-radius:14px;padding:14px 13px;}
-  .homstat .k{font-size:12px;font-weight:700;} .homstat .v{font-size:21px;font-weight:800;margin-top:4px;font-variant-numeric:tabular-nums;}
+  .homstat button{border:1px solid #EDEAE2;text-align:left;border-radius:14px;padding:15px 14px;background:#F7F5F0;}
+  .homstat .k{font-size:12px;font-weight:600;color:#8a8478;letter-spacing:.03em;} .homstat .v{font-size:21px;font-weight:700;margin-top:5px;font-variant-numeric:tabular-nums;color:#2B2A27;}
   .homrecta{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;}
-  .homtile{border:1px solid var(--dp-line);border-radius:16px;padding:18px 12px;text-align:center;background:#fff;}
-  .homtile .hti{width:50px;height:50px;border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;}
-  .homtile .hti svg{width:28px;height:28px;}
-  .homtile .htl{font-size:15px;font-weight:800;color:var(--dp-ink);}
-  .homtile .hts{font-size:11px;color:var(--dp-grey);margin-top:3px;}
+  .homtile{border:1px solid #EDEAE2;border-radius:16px;padding:20px 14px;text-align:center;background:#fff;}
+  .homtile .htl{font-size:16px;font-weight:600;color:#2B2A27;}
+  .homtile .hts{font-size:11px;color:#a49d90;margin-top:4px;letter-spacing:.02em;}
+  .txngroup{margin-bottom:4px;}
+  .txnday{display:flex;justify-content:space-between;align-items:center;margin:20px 0 2px;padding-bottom:7px;border-bottom:1px solid #EDEAE2;font-size:12px;color:#9a948a;letter-spacing:.05em;}
+  .txnday .ds{font-variant-numeric:tabular-nums;color:#6E6A60;font-weight:600;}
   /* ===== 目標 · 顯化（無印） ===== */
   #v-mf,#v-mfWizard,#v-mfGoal{background:#fff;color:#2E2B26;}
   #v-mf .scroll,#v-mfWizard .scroll,#v-mfGoal .scroll{padding:0 20px calc(110px + var(--safe-b));}
@@ -565,21 +566,18 @@
     <div id="home-affirm"></div>
 
     <div class="homstat">
-      <button onclick="go('finance')" style="background:#E1F5EE"><div class="k" style="color:#0F6E56">本月淨額</div><div class="v" id="hq-net" style="color:#0F6E56">$0</div></button>
-      <button onclick="go('claims')" style="background:#FFF1DB"><div class="k" style="color:#9A6800">待收 Claim</div><div class="v" id="hq-claim" style="color:#9A6800">$0</div></button>
+      <button onclick="go('finance')"><div class="k">收支 Balance</div><div class="v" id="hq-net">$0</div></button>
+      <button onclick="go('claims')"><div class="k">待收 Claim</div><div class="v" id="hq-claim">$0</div></button>
     </div>
 
     <div class="homrecta">
-      <button class="homtile" onclick="go('finance')"><span class="hti" style="background:#E7F3FF"><svg><use href="#i-money"/></svg></span><div class="htl">收支記錄</div><div class="hts">入帳 / 支出</div></button>
-      <button class="homtile" onclick="go('claims')"><span class="hti" style="background:#FBE9E4"><svg><use href="#i-claim"/></svg></span><div class="htl">Claim 錢</div><div class="hts">幫人墊支 · 逐項記</div></button>
+      <button class="homtile" onclick="go('finance')"><div class="htl">收支記錄</div><div class="hts">入帳 / 支出</div></button>
+      <button class="homtile" onclick="go('claims')"><div class="htl">Claim 錢</div><div class="hts">幫人墊支 · 逐項記</div></button>
     </div>
 
-    <button class="homtile" style="width:100%;margin-top:12px;display:flex;align-items:center;gap:14px;text-align:left" onclick="go('mf')"><span class="hti" style="background:#F3EEE2;margin:0"><svg><use href="#i-goal"/></svg></span><div><div class="htl">目標 · 顯化</div><div class="hts">定目標 · 每日宣言 · 習慣打卡</div></div></button>
+    <button class="homtile" style="width:100%;margin-top:12px;text-align:left" onclick="go('mf')"><div class="htl">目標 · 顯化</div><div class="hts">定目標 · 每日宣言 · 習慣打卡</div></button>
 
-    <div class="dpsl" style="margin-top:22px"><span>最近收支</span><button class="more" onclick="go('finance')">全部 ›</button></div>
-    <div id="home-recent"></div>
-
-    <button onclick="go('settings')" style="width:100%;margin-top:22px;background:none;border:1px solid var(--dp-line);border-radius:12px;padding:12px;font-size:13px;color:var(--dp-grey)">設定</button>
+    <button onclick="go('settings')" style="width:100%;margin-top:22px;background:none;border:1px solid #EDEAE2;border-radius:12px;padding:12px;font-size:13px;color:#9a948a">設定</button>
   </div>
 </section>
 
@@ -1079,20 +1077,12 @@ async function loadHome(){
   let claimTotal=0;
   try{ const {data:cl}=await db.from('claims').select('amount,status'); claimTotal=(cl||[]).filter(x=>x.status==='unpaid').reduce((a,b)=>a+(Number(b.amount)||0),0); }catch(e){}
   $('#hq-claim').textContent=money(claimTotal);
-  // 本月收支 + 最近記錄
-  const m=todayStr().slice(0,7);
+  // 收支結餘（累計所有收入 − 支出）
   let tx=[];
-  try{ const r=await db.from('personal_transactions').select('*').order('date',{ascending:false}); if(!r.error) tx=r.data||[]; }catch(e){}
-  const mtx=tx.filter(x=>(x.date||'').slice(0,7)===m);
-  const inc=mtx.filter(x=>x.type==='income').reduce((a,b)=>a+(+b.amount||0),0);
-  const exp=mtx.filter(x=>x.type==='expense').reduce((a,b)=>a+(+b.amount||0),0);
+  try{ const r=await db.from('personal_transactions').select('type,amount'); if(!r.error) tx=r.data||[]; }catch(e){}
+  const inc=tx.filter(x=>x.type==='income').reduce((a,b)=>a+(+b.amount||0),0);
+  const exp=tx.filter(x=>x.type==='expense').reduce((a,b)=>a+(+b.amount||0),0);
   $('#hq-net').textContent=money(inc-exp);
-  const host=$('#home-recent');
-  if(host){
-    const recent=tx.slice(0,4);
-    if(!recent.length){ host.innerHTML='<div class="empty" style="padding:16px 4px;text-align:left;color:#a59f90;font-size:13px">未有收支記錄。撳上面「收支記錄」開始。</div>'; }
-    else { host.innerHTML=recent.map(t=>{ const isInc=t.type==='income'; const label=esc(t.category||t.note||(isInc?'收入':'支出')); return `<button class="dprow" style="width:100%;text-align:left;background:none;border:none;border-bottom:1px solid #F1F1F4" onclick="go('finance')"><div class="m"><div class="t1">${label}</div><div class="t2">${t.date?fmtDate(t.date):''}</div></div><div class="t1" style="flex-shrink:0;color:${isInc?'#0F6E56':'var(--dp-ink)'}">${isInc?'+':'-'}${money(Math.abs(Number(t.amount)||0))}</div></button>`; }).join(''); }
-  }
   // 今日宣言（最新進行中目標）
   const affHost=$('#home-affirm');
   if(affHost){
@@ -1870,6 +1860,7 @@ async function loadFinance(){
   renderFinance(missing);
 }
 function healthColor(cat,pct){const h=HEALTH[cat];if(!h)return 'green';if(pct<=h[0])return 'green';if(pct<=h[1])return 'yellow';return 'red';}
+function weekdayOf(s){ if(!s)return''; const w=['日','一','二','三','四','五','六']; const d=new Date(s.slice(0,10)+'T00:00:00'); return '星期'+w[d.getDay()]; }
 function renderFinance(missing){
   const inc=cTxn.filter(x=>x.type==='income').reduce((a,b)=>a+(+b.amount||0),0);
   const exp=cTxn.filter(x=>x.type==='expense').reduce((a,b)=>a+(+b.amount||0),0);
@@ -1897,10 +1888,16 @@ function renderFinance(missing){
   }
   const L=$('#f-list');
   if(!cTxn.length){L.innerHTML='<div class="empty">本月未有收支記錄。<br>㩒下面「＋」加一筆。</div>';return;}
-  L.innerHTML=cTxn.map(x=>{const inn=x.type==='income';
-    return `<div class="item" onclick="openTxn('${x.id}')"><div class="mid"><div class="t1">${esc(x.category)||'（未分類）'}</div>
-    <div class="t2">${fmtDate((x.date||'').slice(0,10))}${x.note?' · '+esc(x.note):''}</div></div>
-    <div class="amt ${inn?'in':'ex'}">${inn?'+':'−'}${money(x.amount)}</div></div>`;}).join('');
+  const groups={}, order=[];
+  cTxn.forEach(x=>{ const d=(x.date||'').slice(0,10)||'未定'; if(!groups[d]){groups[d]=[];order.push(d);} groups[d].push(x); });
+  L.innerHTML=order.map(d=>{
+    const items=groups[d];
+    const dayNet=items.reduce((a,b)=>a+((b.type==='income'?1:-1)*(+b.amount||0)),0);
+    const head=`<div class="txnday"><span>${d==='未定'?'未定日期':(fmtDate(d)+' '+weekdayOf(d))}</span><span class="ds">${dayNet>=0?'+':'−'}${money(Math.abs(dayNet))}</span></div>`;
+    const rows=items.map(x=>{const inn=x.type==='income';
+      return `<div class="item" onclick="openTxn('${x.id}')"><div class="mid"><div class="t1">${esc(x.category)||'（未分類）'}</div><div class="t2">${x.note?esc(x.note):(inn?'收入':'支出')}</div></div><div class="amt ${inn?'in':'ex'}">${inn?'+':'−'}${money(x.amount)}</div></div>`;}).join('');
+    return `<div class="txngroup">${head}${rows}</div>`;
+  }).join('');
 }
 function openTxn(id){
   let rec={type:'expense',date:todayStr(),amount:'',category:EXP_CATS[0],note:''};
